@@ -18,13 +18,17 @@ This is the foundation all feature work builds on. No application logic lives he
 - [x] (2026-07-28 12:00Z) `backend/requirements.txt`, `backend/requirements-dev.txt`, `backend/pyproject.toml` (ruff) erstellt.
 - [x] (2026-07-28 12:00Z) Backend-Tests erstellt (`tests/conftest.py`, `tests/test_health.py`).
 - [x] (2026-07-28 12:00Z) `.github/workflows/ci.yml` erstellt.
-- [ ] Frontend-Skeleton anlegen: ein Teammitglied mit Node.js 22 und Angular CLI 20 führt `ng new frontend --routing --style=scss --skip-git` im Repo-Root aus. Danach `git add frontend/ && git commit -m "Frontend: Angular-Skeleton"`.
-- [ ] Flask-Migrate initialisieren: nach erstem `flask --app app run` einmalig `flask --app app db init` ausführen. Die generierte `backend/migrations/`-Mappe committen.
-- [ ] CI auf `main` grün beobachten (erster Push nach vollständigem Bootstrap).
+- [x] (2026-07-28 14:00Z) Frontend-Skeleton angelegt via `ng new frontend --routing --style=scss --skip-git` (Angular CLI 22.0.8, Node 22.23.1). ESLint hinzugefügt via `ng add @angular-eslint/schematics`. Committed und gepusht.
+- [x] (2026-07-28 14:00Z) Flask-Migrate initialisiert (`flask --app app db init`). `backend/migrations/` committed; `migrations/` in `pyproject.toml` von ruff ausgeschlossen.
+- [x] (2026-07-28 15:00Z) CI auf `main` vollständig grün: Backend-Job (ruff + pytest) und Frontend-Job (ng lint + ng test) beide erfolgreich. MS1 abgeschlossen.
 
 ## Surprises & Discoveries
 
-Noch keine.
+- Observation: Angular CLI 22 verwendet Vitest als Standard-Test-Runner, nicht mehr Karma/Jasmine.
+  Evidence: `ng test --watch=false --browsers=ChromeHeadless` schlug im CI fehl mit "Missing Vitest browser provider packages". Nach Entfernen des `--browsers=ChromeHeadless`-Flags lief Vitest durch: "1 file | 2 tests passed". Der Decision-Log-Eintrag zu Karma/Jasmine (unten) wurde entsprechend korrigiert.
+
+- Observation: `backend/migrations/env.py` (auto-generiert von Flask-Migrate/Alembic) enthält unsortierte Imports und bestand ruff-Prüfung I001 nicht.
+  Evidence: `ruff check .` gab `I001 Import block is un-sorted or un-formatted` für `migrations/env.py`. Lösung: `exclude = ["migrations/"]` in `pyproject.toml`.
 
 ## Decision Log
 
@@ -41,8 +45,8 @@ Noch keine.
   Rationale: pytest ist de-facto-Standard für Python-Projekte. pytest-flask liefert die `app`- und `client`-Fixtures ohne Boilerplate. Team hat keinen gegenteiligen Beschluss.
   Date/Author: 2026-07-28 / Claude Code (AI)
 
-- Decision: Angular CLI-Standard (Karma/Jasmine) für Frontend-Tests.
-  Rationale: `ng new` generiert Karma/Jasmine out-of-the-box. Migration zu Jest ist jederzeit möglich, aber kein MS1-Thema. CI nutzt `ng test --watch=false --browsers=ChromeHeadless`.
+- Decision: Vitest als Frontend-Test-Runner (Angular CLI 22-Standard).
+  Rationale: Angular CLI 22 generiert Vitest out-of-the-box — Karma/Jasmine ist veraltet. CI nutzt `npx ng test --watch=false` (ohne `--browsers=ChromeHeadless`, da das ein Karma-Flag ist das unter Vitest fehlschlägt). Ursprüngliche Annahme war Karma; korrigiert nach Vitest-Fehler im CI.
   Date/Author: 2026-07-28 / Claude Code (AI)
 
 - Decision: SQLite in-memory für pytest, PostgreSQL für dev/prod.
@@ -51,7 +55,11 @@ Noch keine.
 
 ## Outcomes & Retrospective
 
-Noch nicht ausgefüllt (wird nach Abschluss aller Schritte ergänzt).
+MS1 vollständig abgeschlossen am 2026-07-28. Beide CI-Jobs (Backend: ruff + pytest, Frontend: ng lint + ng test) laufen grün auf `main`. Das Repo-Skeleton ist einsatzbereit für Feature-Entwicklung in MS2.
+
+Wichtigste Abweichung vom Plan: Angular CLI 22 nutzt Vitest statt Karma/Jasmine. Das `--browsers=ChromeHeadless`-Flag musste aus `ci.yml` entfernt werden. Die ursprüngliche Planung ging von Angular CLI 20 aus; installiert wurde CLI 22.0.8.
+
+Nächster Schritt: MS2 — Datenbankmodelle und erster Feature-Endpunkt (FR-1 Lernziele).
 
 ## Context and Orientation
 
