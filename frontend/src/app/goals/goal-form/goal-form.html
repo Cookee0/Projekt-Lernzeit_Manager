@@ -1,0 +1,24 @@
+<h2>Neues Lernziel</h2>
+
+<form class="goal-form" [formGroup]="form" (ngSubmit)="submit()">
+  <label for="title">Titel</label>
+  <input id="title" type="text" formControlName="title" />
+  @if (form.controls.title.touched && form.controls.title.invalid) {
+    <p class="error">Bitte einen Titel mit höchstens 200 Zeichen angeben.</p>
+  }
+
+  <label for="target_date">Zieldatum</label>
+  <input id="target_date" type="date" formControlName="target_date" />
+  @if (form.controls.target_date.touched && form.controls.target_date.invalid) {
+    <p class="error">Bitte ein Zieldatum angeben.</p>
+  }
+
+  @if (serverError()) {
+    <p class="error">{{ serverError() }}</p>
+  }
+
+  <div class="form-actions">
+    <button type="submit" [disabled]="saving()">Speichern</button>
+    <a routerLink="/ziele">Abbrechen</a>
+  </div>
+</form>
