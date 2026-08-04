@@ -8,6 +8,8 @@ from ..models import Goal
 goals_bp = Blueprint("goals", __name__)
 
 MAX_TITLE_LENGTH = 200
+MAX_MODULE_LENGTH = 100
+GOAL_STATUSES = ("offen", "in_arbeit", "erreicht")
 
 
 def validate_goal_payload(payload: object) -> tuple[dict, dict]:
@@ -32,6 +34,16 @@ def validate_goal_payload(payload: object) -> tuple[dict, dict]:
     else:
         values["title"] = title.strip()
 
+    module = payload.get("module")
+    if not isinstance(module, str) or not module.strip():
+        errors["module"] = "Modul/Kurs ist erforderlich."
+    elif len(module.strip()) > MAX_MODULE_LENGTH:
+        errors["module"] = (
+            f"Modul/Kurs darf höchstens {MAX_MODULE_LENGTH} Zeichen lang sein."
+        )
+    else:
+        values["module"] = module.strip()
+
     target_date = payload.get("target_date")
     if not isinstance(target_date, str) or not target_date:
         errors["target_date"] = "Zieldatum ist erforderlich."
@@ -40,6 +52,13 @@ def validate_goal_payload(payload: object) -> tuple[dict, dict]:
             values["target_date"] = date.fromisoformat(target_date)
         except ValueError:
             errors["target_date"] = "Zieldatum muss im Format JJJJ-MM-TT vorliegen."
+
+    status = payload.get("status", "offen")
+    if status not in GOAL_STATUSES:
+        erlaubte = ", ".join(GOAL_STATUSES)
+        errors["status"] = f"Status muss einer der folgenden Werte sein: {erlaubte}."
+    else:
+        values["status"] = status
 
     return values, errors
 
@@ -62,7 +81,12 @@ def create_goal():
     if errors:
         return jsonify({"errors": errors}), 400
 
-    goal = Goal(title=values["title"], target_date=values["target_date"])
+    goal = Goal(
+        title=values["title"],
+        module=values["module"],
+        target_date=values["target_date"],
+        status=values["status"],
+    )
     db.session.add(goal)
     db.session.commit()
     return jsonify(goal.to_dict()), 201

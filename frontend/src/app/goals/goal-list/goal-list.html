@@ -17,14 +17,22 @@
     <thead>
       <tr>
         <th scope="col">Titel</th>
+        <th scope="col">Modul/Kurs</th>
         <th scope="col">Zieldatum</th>
+        <th scope="col">Status</th>
       </tr>
     </thead>
     <tbody>
       @for (goal of goals(); track goal.id) {
         <tr>
           <td>{{ goal.title }}</td>
+          <td>{{ goal.module }}</td>
           <td>{{ goal.target_date | date: 'dd.MM.yyyy' }}</td>
+          <td>
+            <span class="status status--{{ goal.status }}">
+              {{ statusLabels[goal.status] }}
+            </span>
+          </td>
         </tr>
       }
     </tbody>

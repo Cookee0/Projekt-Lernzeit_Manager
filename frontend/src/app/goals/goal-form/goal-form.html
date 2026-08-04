@@ -7,11 +7,29 @@
     <p class="error">Bitte einen Titel mit höchstens 200 Zeichen angeben.</p>
   }
 
+  <label for="module">Modul/Kurs</label>
+  <input
+    id="module"
+    type="text"
+    formControlName="module"
+    placeholder="z. B. Projekt Software Engineering (ISEF01)"
+  />
+  @if (form.controls.module.touched && form.controls.module.invalid) {
+    <p class="error">Bitte ein Modul mit höchstens 100 Zeichen angeben.</p>
+  }
+
   <label for="target_date">Zieldatum</label>
   <input id="target_date" type="date" formControlName="target_date" />
   @if (form.controls.target_date.touched && form.controls.target_date.invalid) {
     <p class="error">Bitte ein Zieldatum angeben.</p>
   }
+
+  <label for="status">Status</label>
+  <select id="status" formControlName="status">
+    <option value="offen">{{ statusLabels.offen }}</option>
+    <option value="in_arbeit">{{ statusLabels.in_arbeit }}</option>
+    <option value="erreicht">{{ statusLabels.erreicht }}</option>
+  </select>
 
   @if (serverError()) {
     <p class="error">{{ serverError() }}</p>

@@ -16,3 +16,19 @@
   padding: 0.5rem 0.75rem;
   border-bottom: 1px solid #dfe3e8;
 }
+
+.status {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  background: #e8eaed;
+}
+
+.status--in_arbeit {
+  background: #fff2cc;
+}
+
+.status--erreicht {
+  background: #d8f0d8;
+}
