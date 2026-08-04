@@ -50,6 +50,20 @@ Validation is not optional. Include instructions to run tests, to start the syst
 
 Capture evidence. When your steps produce terminal output, short diffs, or logs, include them inside the single fenced block as indented examples. Keep them concise and focused on what proves success. If you need to include a patch, prefer file-scoped diffs or small excerpts that a reader can recreate by following your instructions rather than pasting large blobs.
 
+## Granularity: write for a junior engineer or a small model
+
+Assume your reader is either a junior engineer on their first week in this codebase, or a smaller language model with a limited ability to infer. Both fail in the same way: they can follow an instruction faithfully but cannot fill a gap you left open. Write so that no gap needs filling. If a step requires a judgement call the reader is not equipped to make, make that judgement in the plan and state the outcome.
+
+Be concrete about every file you touch. For a new file, give its full repository-relative path and the complete intended content, not a sketch. For an existing file, quote the surrounding lines as they currently exist, then show what the region must look like afterwards, so the reader can locate the spot without guessing. Never write "add the usual imports", "wire it up as needed", "handle errors appropriately", or "adjust the config accordingly" — name the import, name the call site, name the error and its status code, name the config key and its value.
+
+Break the work into steps small enough that each one is a single, mechanical action with a single, checkable result: create this file, run this command, add this test, observe this output. A step that says "implement the API" is too coarse; "create `backend/app/routes/goals.py` with the blueprint shown below, then register it in `create_app` after the health blueprint" is the right size. Prefer many small steps over few large ones, and put them in an order where nothing depends on something that has not been written yet.
+
+State the expected result after every command. Show the output a reader should see when it works, and name the most likely failure with its fix, so that a reader who sees something different knows immediately whether to continue or stop. Where a command depends on the environment being in a particular state (the database container running, the virtual environment activated, dependencies installed), say so at that step rather than assuming it was remembered from earlier.
+
+Spell out anything the reader cannot see from the code alone: version-specific behaviour of a framework, a convention this repository follows, a setting that exists for a non-obvious reason. If a change in one place will break something in another place, say which file breaks and how to fix it in the same step — a reader who discovers a red test three steps later will not connect it back.
+
+Length is not the enemy; ambiguity is. Do not shorten a plan by dropping detail a reader would need. Do keep prose tight and avoid repeating the same explanation twice in the same document.
+
 ## Milestones
 
 Milestones are narrative, not bureaucracy. If you break the work into milestones, introduce each with a brief paragraph that describes the scope, what will exist at the end of the milestone that did not exist before, the commands to run, and the acceptance you expect to observe. Keep it readable as a story: goal, work, result, proof. Progress and milestones are distinct: milestones tell the story, progress tracks granular work. Both must exist. Never abbreviate a milestone merely for the sake of brevity, do not leave out details that could be crucial to a future implementation.

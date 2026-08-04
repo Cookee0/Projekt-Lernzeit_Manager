@@ -13,24 +13,42 @@ study-time planning and tracking app (see `Projektbericht_Themen_ISEF01.md`, sec
 
 ## Current phase
 
-Planning phase. Per `Aufgabenstellung_Projektbericht_ISEF01.md`, the project moves through
-milestones MS0-MS6; MS0 (milestone plan) and MS1 (project configuration) are the immediate next
-deliverables. No code exists yet. The programming language/framework, frontend/backend split, and
-testing tools are explicitly still open — see `Lernzeit-Manager/04_Tech-Stack_und_Tools.md` for
-what's already decided versus what's pending a team kickoff decision.
+Per `docs/06_Zeitplanung_Projektablauf.md`, the project moves through milestones MS0-MS6. MS0
+(milestone plan) and MS1 (project configuration) are delivered, and the repository bootstrap is
+done: a Flask backend with a health endpoint, an Angular frontend, PostgreSQL via Docker Compose,
+Flask-Migrate, and a green GitHub Actions pipeline all exist. No feature code exists yet — there
+are no database tables and no application screens. The next work is FR-1 (Lernziele festlegen)
+from `docs/01_Funktionale_Anforderungen.md`.
+
+The tech stack is decided (Angular, Flask, PostgreSQL, Docker, Railway, GitHub Actions; pytest and
+vitest for tests). Authentication is still open — see `docs/04_Tech-Stack_und_Tools.md`. Until it
+is decided, the application has no user accounts and no protected endpoints.
+
+**Read `README.md` before making any change**, and update it in the same change whenever something
+you do makes a statement in it wrong or incomplete. The README is the description of the current
+state of the project; keeping it accurate is part of every task, not a follow-up.
 
 ## Key files
 
 - `Aufgabenstellung_Projektbericht_ISEF01.md` — the graded assignment brief from IU. Defines the
   required milestones and deliverables. This is the university's task description: treat it as
   authoritative, do not edit it.
-- `Lernzeit-Manager/` — the project's own requirements documents (functional requirements, quality
-  requirements, constraints, tech stack).
+- `README.md` — the current state of the project: stack, setup, daily workflow, CI, deployment.
+  Read this first.
+- `docs/` — the project's own requirements documents (functional requirements, quality
+  requirements, constraints, tech stack, schedule).
 - `Projektbericht_Themen_ISEF01.md` — the full list of topics the team could have chosen; only
   section A (Lernzeit-Manager) applies to this project.
-- `LLM/golden-principles.md` — behavioral principles that apply to every task in this vault.
-- `LLM/PLANS.md` — the ExecPlan specification. Required reading before writing a plan for any
+- `docs/golden-principles.md` — behavioral principles that apply to every task in this vault.
+- `docs/PLANS.md` — the ExecPlan specification. Required reading before writing a plan for any
   larger change.
+- `docs/ExecPlans/active/` — plans currently being worked on; `docs/ExecPlans/completed/` — finished
+  plans.
+- `docs/design-reference/` — UI mockups for all six planned screens, each as `.html` and `.png`.
+  Authoritative for fields, labels, and ordering. The visual layer (colors, fonts, nav bar) is
+  deliberately deferred until the features work — team decision of 2026-08-04 — so do not restyle
+  components to match the mockups yet. The mockups also show the finished product: progress bars,
+  ECTS workload, and grades belong to FR-2, FR-5, and FR-6, not FR-1.
 
 ## System of record
 
@@ -40,8 +58,9 @@ task as officially delivered just because it's marked done here — the Redmine 
 
 ## Conventions for any agent working here
 
-- Always apply `LLM/golden-principles.md`.
-- For any change larger than a small, self-contained edit, write an ExecPlan per `LLM/PLANS.md`
+- Read `README.md` first, and keep it accurate as part of every change.
+- Always apply `docs/golden-principles.md`.
+- For any change larger than a small, self-contained edit, write an ExecPlan per `docs/PLANS.md`
   before implementing.
 - This is a team project. Check whether content already exists (and who it's attributed to) before
   overwriting it — don't assume you're the only author.

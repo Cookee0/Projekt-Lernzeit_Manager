@@ -8,9 +8,17 @@ Team: Elias (Product Owner), Assis (Developer, Schwerpunkt Coding), Julian (Deve
 Infrastruktur/Deployment/Testing).
 Abgabeziel: **31.08.2026**.
 
-> **Status: Planungsphase.** Es existiert noch kein Anwendungscode. Dieses README beschreibt den
-> Ziel-Setup, damit alle drei Entwickler mit identischer Umgebung starten können. Abschnitte, die
-> noch nicht im Repo existieren, sind mit *(noch anzulegen)* markiert.
+> **Status: Grundgerüst steht, Feature-Entwicklung beginnt.** Das Repository-Bootstrap (MS 1) ist
+> abgeschlossen: Flask-Backend mit Health-Endpoint, Angular-Frontend, PostgreSQL via Docker
+> Compose, Flask-Migrate und eine grüne CI-Pipeline existieren. Fachliche Features aus
+> [`docs/01_Funktionale_Anforderungen.md`](docs/01_Funktionale_Anforderungen.md) sind noch nicht
+> implementiert – die Datenbank enthält bisher keine Tabellen, und das Frontend zeigt noch die
+> Angular-Startseite. Als Nächstes steht FR-1 (Lernziele festlegen) an; die zugehörigen ExecPlans
+> liegen in [`docs/ExecPlans/active/`](docs/ExecPlans/active/).
+
+> **Dieses README ist die verbindliche Beschreibung des Ist-Zustands.** Wer etwas ändert, das eine
+> Aussage hier falsch macht (neuer Befehl, neues Setup, neue Abhängigkeit, neues Feature),
+> aktualisiert das README im selben Commit. Ein veraltetes README ist ein Fehler, kein Restposten.
 
 ---
 
@@ -41,6 +49,14 @@ Abgabeziel: **31.08.2026**.
 | [`docs/golden-principles.md`](docs/golden-principles.md) | Verhaltensregeln für Code-Änderungen (Mensch **und** KI) |
 | [`AGENTS.md`](AGENTS.md) | Gemeinsamer Kontext für alle KI-Tools |
 | [`docs/ExecPlans/`](docs/ExecPlans/) | `active/` = laufende Pläne, `completed/` = abgeschlossene |
+| [`docs/design-reference/`](docs/design-reference/) | Gestaltungsentwürfe aller sechs Bildschirme (je `.html` + `.png`) |
+
+**Zu den Gestaltungsentwürfen:** `docs/design-reference/` enthält Entwürfe für Übersicht,
+Lernziele, Grobplanung, Detailplanung, Auswertung und Erinnerungen. Sie sind **verbindlich für
+Felder, Beschriftungen und Reihenfolge**, aber die visuelle Umsetzung (Farben, Schriften,
+Navigationsleiste) ist bewusst zurückgestellt, bis die Funktionen stehen – Teambeschluss vom
+04.08.2026. Die Entwürfe zeigen außerdem den Endausbau: Fortschrittsbalken, ECTS-Workload und
+Noten gehören zu FR-2, FR-5 und FR-6, nicht zu FR-1.
 
 **System of Record bleibt Redmine** (https://redmine-se.iubh.de/). Eine Aufgabe gilt erst als
 geliefert, wenn das Redmine-Ticket steht – nicht, weil hier etwas gemerged wurde. GitHub Projects
@@ -61,13 +77,20 @@ ist nur das ergänzende technische Board.
 | CI | [GitHub Actions](https://docs.github.com/en/actions) | Tests + Linting bei jedem Push |
 | Diagramme | [draw.io](https://app.diagrams.net/) | Architektur-/UML-Diagramme für den Bericht |
 
+**Testing steht** (seit dem Repository-Bootstrap): `pytest` im Backend, `vitest` im Frontend.
+Vitest ist seit Angular 22 der Standard-Test-Runner der Angular CLI – `ng test` startet ihn, ein
+Browser wird nicht benötigt. Karma/Jasmine kommt hier **nicht** zum Einsatz. E2E-Tests
+(Playwright/Cypress) sind bewusst noch nicht eingeführt.
+
 **Noch offen** (siehe [`docs/04_Tech-Stack_und_Tools.md`](docs/04_Tech-Stack_und_Tools.md)) – bitte
 nicht eigenmächtig festlegen, sondern im Mittwochs-Meeting entscheiden:
 
-- Auth-Bibliothek für Flask (Recherche offen – Kandidaten: `Flask-Login` + `Werkzeug`-Hashing für
-  Session-Auth, oder `Flask-JWT-Extended` für Token-Auth, was besser zu einer Angular-SPA passt)
-- Testing-Frameworks (muss **spätestens zu MS3** stehen). Naheliegend: `pytest` (Backend),
-  Karma/Jasmine oder Jest (Frontend), optional Playwright/Cypress für E2E.
+- Auth-Bibliothek für Flask. Kandidaten: `Flask-Login` + `Werkzeug`-Hashing für Session-Auth, oder
+  `Flask-JWT-Extended` für Token-Auth, was besser zu einer Angular-SPA passt. Im Decision Log von
+  [`docs/ExecPlans/active/2026-07-28_MS1-Repository-Bootstrap.md`](docs/ExecPlans/active/2026-07-28_MS1-Repository-Bootstrap.md)
+  ist `Flask-JWT-Extended` als Vorschlag festgehalten, aber **noch nicht im Team beschlossen** und
+  auch noch nicht installiert. Solange das offen ist, kennt die Anwendung keine Nutzerkonten:
+  Daten gehören niemandem, und alle API-Endpoints sind ungeschützt.
 
 **Bereits entschieden:** Monorepo. Frontend und Backend liegen in diesem Repo (`frontend/`,
 `backend/`), weil bei drei Personen zwei Repos mehr Overhead als Nutzen bringen.
@@ -123,7 +146,7 @@ cd Projekt-Lernzeit_Manager
 
 ### 2. Umgebungsvariablen anlegen
 
-Es gibt eine `.env.example` *(noch anzulegen)* als Vorlage. Kopiere sie:
+Es gibt eine `.env.example` als Vorlage. Kopiere sie:
 
 ```powershell
 Copy-Item .env.example .env
@@ -147,7 +170,7 @@ SECRET_KEY=nur-fuer-lokal-bitte-aendern
 
 ### 3. Datenbank per Docker starten
 
-`docker-compose.yml` im Repo-Root *(noch anzulegen)*:
+`docker-compose.yml` liegt im Repo-Root und sieht so aus:
 
 ```yaml
 services:
@@ -160,7 +183,7 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
       POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "${POSTGRES_PORT}:5432"
+      - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
@@ -184,13 +207,16 @@ Der Container behält seine Daten im Volume `pgdata` – ein `docker compose dow
 cd backend
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1     # macOS/Linux: source .venv/bin/activate
-pip install -r requirements.txt
-flask --app app run --debug
+pip install -r requirements-dev.txt
+flask run --debug
 ```
 
+`requirements-dev.txt` enthält `requirements.txt` plus `pytest` und `ruff` – zum Entwickeln also
+immer die dev-Variante installieren. Dass `flask run` ohne `--app` funktioniert, liegt an
+`backend/.flaskenv`, wo `FLASK_APP=run.py` gesetzt ist.
+
 Erwartung: `Running on http://127.0.0.1:5000`. Zur Prüfung
-http://localhost:5000/api/health aufrufen – erwartet wird HTTP 200 mit `{"status": "ok"}`
-*(Health-Endpoint noch anzulegen)*.
+http://localhost:5000/api/health aufrufen – erwartet wird HTTP 200 mit `{"status": "ok"}`.
 
 Falls PowerShell die Aktivierung blockiert
 (`… kann nicht geladen werden, da die Ausführung von Skripts …`):
@@ -226,7 +252,7 @@ Wenn alle drei Teile laufen, hast du:
 ```powershell
 docker compose up -d                       # DB hochfahren
 cd backend; .\.venv\Scripts\Activate.ps1   # Backend
-flask --app app run --debug
+flask run --debug
 cd frontend; ng serve                      # Frontend (zweites Terminal)
 ```
 
@@ -280,12 +306,17 @@ SELECT * FROM users;
 `could not connect to server: Connection refused` fehl. Erst `docker compose up -d`, dann pgAdmin.
 
 **Migrationen:** Schema-Änderungen laufen über
-[Flask-Migrate/Alembic](https://flask-migrate.readthedocs.io/) *(Setup noch anzulegen)*:
+[Flask-Migrate/Alembic](https://flask-migrate.readthedocs.io/). Das Setup existiert
+(`backend/migrations/`), es gibt aber noch **keine einzige Migration** – die Datenbank ist leer,
+weil noch keine Modelle definiert sind. Sobald das erste Modell existiert:
 
 ```powershell
-flask --app app db migrate -m "beschreibung"   # Migration erzeugen
-flask --app app db upgrade                     # Migration anwenden
+flask db migrate -m "beschreibung"   # Migration erzeugen (in backend/, venv aktiv)
+flask db upgrade                     # Migration anwenden
 ```
+
+Für beide Befehle muss der Docker-Container laufen, sonst bricht Alembic mit
+`could not connect to server` ab.
 
 Migrationsdateien werden **immer committet**. Nach `git pull` immer `flask db upgrade` laufen
 lassen, sonst passen Code und lokales Schema nicht mehr zusammen.
@@ -313,10 +344,10 @@ git commit -m "Timer: Start/Pause/Stop implementiert (FR-4.1)"
 git push -u origin feature/fr-4.1-timer
 ```
 
-Danach PR auf GitHub öffnen. **GitHub Actions** *(Workflow noch anzulegen unter
-`.github/workflows/ci.yml`)* führt bei jedem Push aus: Backend-Tests (`pytest`), Backend-Linting
-(`ruff`), Frontend-Tests (`ng test --watch=false`), Frontend-Linting (`ng lint`). Merge erst bei
-grüner Pipeline.
+Danach PR auf GitHub öffnen. **GitHub Actions** (`.github/workflows/ci.yml`) führt bei jedem Push
+auf `main`, `feature/**`, `fix/**`, `docs/**` sowie bei jedem PR gegen `main` zwei Jobs aus:
+Backend (`ruff check .`, `pytest`) und Frontend (`npx ng lint`, `npx ng test --watch=false`).
+Merge erst bei grüner Pipeline.
 
 ---
 
@@ -370,7 +401,7 @@ den Commit löschen.
 | `ng: command not found` | Angular CLI fehlt: `npm install -g @angular/cli`, dann neue Shell öffnen. |
 | `.venv\Scripts\Activate.ps1 kann nicht geladen werden` | `Set-ExecutionPolicy -Scope CurrentUser RemoteSigned` |
 | Frontend-Requests scheitern mit CORS-Fehler | Im Flask-Backend `flask-cors` für `http://localhost:4200` konfigurieren. |
-| `relation "…" does not exist` | Migration fehlt: `flask --app app db upgrade`. |
+| `relation "…" does not exist` | Migration fehlt: `flask db upgrade` in `backend/`. |
 | Node-Module kaputt nach Branch-Wechsel | `Remove-Item -Recurse -Force node_modules; npm install` |
 
 ---

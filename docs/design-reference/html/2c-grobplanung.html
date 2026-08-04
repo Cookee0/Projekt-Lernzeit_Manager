@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lernzeit-Manager – Grobplanung</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&family=Manrope:wght@400;500;600;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#fff}</style>
+</head>
+<body>
+
+  <div style="min-height:900px;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#211f1c">
+
+    <div style="background:oklch(0.30 0.045 200);color:#fff;padding:0 30px;display:flex;align-items:center;gap:30px;height:60px">
+      <div style="display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.01em"><span style="width:9px;height:18px;background:oklch(0.68 0.13 45)"></span>Lernzeit-Manager</div>
+      <div style="display:flex;gap:4px;margin-left:12px">
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Übersicht</div>
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Lernziele</div>
+        <div style="padding:7px 13px;border-radius:6px;background:rgba(255,255,255,.14);font-size:13px;font-weight:600">Grobplanung</div>
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Detailplanung</div>
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Auswertung</div>
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Erinnerungen</div>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+        <div style="padding:7px 14px;border:1px solid rgba(255,255,255,.28);border-radius:6px;font-size:12.5px">Semester WS 26/27</div>
+        <div style="width:30px;height:30px;border-radius:50%;background:oklch(0.68 0.13 45);display:grid;place-items:center;font-size:11.5px;font-weight:600">LM</div>
+      </div>
+    </div>
+
+    <div style="padding:28px 30px 34px;display:flex;flex-direction:column;gap:22px">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,.1);padding-bottom:16px">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;letter-spacing:-0.02em">Grobplanung Aug 2026 – Jan 2027</div>
+          <div style="font-size:13px;color:#6b6660;margin-top:5px">Wochenbudgets aus ECTS abgeleitet · 1 ECTS ≈ 25 h Workload · manuell überschreibbar</div>
+        </div>
+        <div style="display:flex;gap:9px">
+          <div style="padding:9px 15px;border:1px solid rgba(0,0,0,.16);background:#fff;font-size:13px">Ferien &amp; Urlaub</div>
+          <div style="padding:9px 15px;border:1px solid rgba(0,0,0,.16);background:#fff;font-size:13px">Neu berechnen</div>
+          <div style="padding:9px 16px;background:oklch(0.68 0.13 45);color:#fff;font-size:13px;font-weight:600">+ Lernziel</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border:1px solid rgba(0,0,0,.09)">
+        <div style="padding:18px 20px;border-right:1px solid rgba(0,0,0,.08)">
+          <div style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#8b857d">Gesamt-Workload</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:27px;font-weight:700;margin-top:7px">750 h</div>
+          <div style="font-size:12px;color:#6b6660;margin-top:3px">30 ECTS · 6 Monate</div>
+        </div>
+        <div style="padding:18px 20px;border-right:1px solid rgba(0,0,0,.08)">
+          <div style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#8b857d">Ø Woche</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:27px;font-weight:700;margin-top:7px">28,8 h</div>
+          <div style="font-size:12px;color:#6b6660;margin-top:3px">26 Kalenderwochen</div>
+        </div>
+        <div style="padding:18px 20px;border-right:1px solid rgba(0,0,0,.08)">
+          <div style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#8b857d">Bereits erfasst</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:27px;font-weight:700;margin-top:7px">112 h</div>
+          <div style="margin-top:9px;height:6px;background:#eae5dd"><div style="width:15%;height:100%;background:oklch(0.45 0.09 200)"></div></div>
+        </div>
+        <div style="padding:18px 20px">
+          <div style="font-size:11.5px;letter-spacing:.08em;text-transform:uppercase;color:#8b857d">Ziele erreicht</div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:27px;font-weight:700;margin-top:7px">2 / 7</div>
+          <div style="font-size:12px;color:oklch(0.55 0.12 145);margin-top:3px">im Plan</div>
+        </div>
+      </div>
+
+      <div style="background:#fff;border:1px solid rgba(0,0,0,.09)">
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(0,0,0,.08)">
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:15.5px;font-weight:700">Zeitachse Lernziele &amp; Wochenbudgets</div>
+          <div style="display:flex;gap:16px;font-size:11.5px;color:#6b6660">
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:16px;height:8px;background:oklch(0.45 0.09 200)"></span>Lernzeit-Budget</span>
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:16px;height:8px;background:oklch(0.68 0.13 45)"></span>Zieltermin</span>
+            <span style="display:flex;align-items:center;gap:6px"><span style="width:16px;height:8px;background:repeating-linear-gradient(45deg,#d8d2c8 0 3px,#f0ebe3 3px 6px)"></span>Urlaub / Feiertage</span>
+          </div>
+        </div>
+
+        <div style="display:grid;grid-template-columns:250px 1fr">
+          <div style="border-right:1px solid rgba(0,0,0,.08)">
+            <div style="height:38px;display:flex;align-items:center;padding:0 20px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#8b857d;background:#fbf9f5;border-bottom:1px solid rgba(0,0,0,.06)">Modul / Lernziel</div>
+            <div style="height:62px;display:flex;flex-direction:column;justify-content:center;padding:0 20px;border-bottom:1px solid rgba(0,0,0,.06)"><div style="font-size:13.5px;font-weight:600">Statistik II</div><div style="font-size:11.5px;color:#8b857d">6 ECTS · 150 h · Klausur</div></div>
+            <div style="height:62px;display:flex;flex-direction:column;justify-content:center;padding:0 20px;border-bottom:1px solid rgba(0,0,0,.06)"><div style="font-size:13.5px;font-weight:600">Datenbanken</div><div style="font-size:11.5px;color:#8b857d">5 ECTS · 125 h · Klausur</div></div>
+            <div style="height:62px;display:flex;flex-direction:column;justify-content:center;padding:0 20px;border-bottom:1px solid rgba(0,0,0,.06)"><div style="font-size:13.5px;font-weight:600">Projektbericht</div><div style="font-size:11.5px;color:#8b857d">10 ECTS · 250 h · Abgabe</div></div>
+            <div style="height:62px;display:flex;flex-direction:column;justify-content:center;padding:0 20px;border-bottom:1px solid rgba(0,0,0,.06)"><div style="font-size:13.5px;font-weight:600">Wirtschaftsinformatik</div><div style="font-size:11.5px;color:#8b857d">5 ECTS · 125 h · Hausarbeit</div></div>
+            <div style="height:62px;display:flex;flex-direction:column;justify-content:center;padding:0 20px"><div style="font-size:13.5px;font-weight:600">Englisch B2</div><div style="font-size:11.5px;color:#8b857d">4 ECTS · 100 h · mündl. Prüfung</div></div>
+          </div>
+
+          <div>
+            <div style="display:grid;grid-template-columns:repeat(6,1fr);height:38px;background:#fbf9f5;border-bottom:1px solid rgba(0,0,0,.06)">
+              <div style="display:grid;place-items:center;font-size:12px;font-weight:600;color:#4a4640;border-left:1px solid rgba(0,0,0,.06)">Aug</div>
+              <div style="display:grid;place-items:center;font-size:12px;font-weight:600;color:#4a4640;border-left:1px solid rgba(0,0,0,.06)">Sep</div>
+              <div style="display:grid;place-items:center;font-size:12px;font-weight:600;color:#4a4640;border-left:1px solid rgba(0,0,0,.06)">Okt</div>
+              <div style="display:grid;place-items:center;font-size:12px;font-weight:600;color:#4a4640;border-left:1px solid rgba(0,0,0,.06)">Nov</div>
+              <div style="display:grid;place-items:center;font-size:12px;font-weight:600;color:#4a4640;border-left:1px solid rgba(0,0,0,.06)">Dez</div>
+              <div style="display:grid;place-items:center;font-size:12px;font-weight:600;color:#4a4640;border-left:1px solid rgba(0,0,0,.06)">Jan</div>
+            </div>
+
+            <div style="position:relative;height:322px;margin-top:12px;background:linear-gradient(to right,transparent 0,transparent calc(16.666% - 1px),rgba(0,0,0,.06) calc(16.666% - 1px),rgba(0,0,0,.06) 16.666%);background-size:16.666% 100%">
+              <div style="position:absolute;left:66.66%;top:0;bottom:0;width:16.666%;background:repeating-linear-gradient(45deg,#e8e2d8 0 4px,#f4f0e8 4px 8px);opacity:.75"></div>
+              <div style="position:absolute;left:41%;top:0;bottom:0;width:2px;background:oklch(0.60 0.15 15)"></div>
+              <div style="position:absolute;left:calc(41% + 6px);top:-16px;font-size:10.5px;color:oklch(0.50 0.12 15);font-weight:600;z-index:2">heute</div>
+
+              <div style="position:absolute;left:8px;top:14px;width:calc(66% - 8px);height:34px;background:oklch(0.45 0.09 200);display:flex;align-items:center;padding:0 12px;box-sizing:border-box;color:#fff;font-size:12px;font-weight:500;gap:10px"><span>6,0 h / Woche</span><span style="opacity:.7;font-size:11px">Klausur 12.12.</span></div>
+              <div style="position:absolute;left:66%;top:14px;width:9px;height:34px;background:oklch(0.68 0.13 45)"></div>
+
+              <div style="position:absolute;left:8px;top:76px;width:calc(50% - 8px);height:34px;background:oklch(0.55 0.09 165);display:flex;align-items:center;padding:0 12px;box-sizing:border-box;color:#fff;font-size:12px;font-weight:500">4,0 h / Woche</div>
+              <div style="position:absolute;left:50%;top:76px;width:9px;height:34px;background:oklch(0.68 0.13 45)"></div>
+
+              <div style="position:absolute;left:16.666%;top:138px;width:calc(83% - 16.666%);height:34px;background:oklch(0.58 0.12 45);display:flex;align-items:center;padding:0 12px;box-sizing:border-box;color:#fff;font-size:12px;font-weight:500;gap:10px"><span>9,5 h / Woche</span><span style="opacity:.75;font-size:11px">Abgabe 15.01.</span></div>
+              <div style="position:absolute;left:83%;top:138px;width:9px;height:34px;background:oklch(0.68 0.13 45)"></div>
+
+              <div style="position:absolute;left:33.3%;top:200px;width:calc(58% - 33.3%);height:34px;background:oklch(0.50 0.10 300);display:flex;align-items:center;padding:0 12px;box-sizing:border-box;color:#fff;font-size:12px;font-weight:500">5,0 h / Woche</div>
+              <div style="position:absolute;left:58%;top:200px;width:9px;height:34px;background:oklch(0.68 0.13 45)"></div>
+
+              <div style="position:absolute;left:8px;top:262px;width:calc(92% - 8px);height:34px;background:oklch(0.60 0.10 95);display:flex;align-items:center;padding:0 12px;box-sizing:border-box;color:#fff;font-size:12px;font-weight:500">3,0 h / Woche</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 340px;gap:18px;align-items:start">
+
+        <div style="background:#fff;border:1px solid rgba(0,0,0,.09)">
+          <div style="display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid rgba(0,0,0,.08)">
+            <div><div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700">Automatische Aufteilung auf Monate</div><div style="font-size:12px;color:#6b6660;margin-top:3px">Vorschlag aus dem Wochenbudget · jede Zelle manuell anpassbar</div></div>
+            <div style="display:flex;gap:8px"><div style="padding:7px 12px;background:oklch(0.30 0.045 200);color:#fff;font-size:12px;font-weight:600">Monate</div><div style="padding:7px 12px;border:1px solid rgba(0,0,0,.14);font-size:12px">Wochen</div></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1.6fr repeat(6,1fr) 0.9fr;font-size:12.5px">
+            <div style="padding:11px 20px;background:#fbf9f5;border-bottom:1px solid rgba(0,0,0,.08);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d">Modul</div>
+            <div style="padding:11px 8px;background:#fbf9f5;border-bottom:1px solid rgba(0,0,0,.08);text-align:center;font-size:11px;color:#8b857d">Aug</div>
+            <div style="padding:11px 8px;background:#fbf9f5;border-bottom:1px solid rgba(0,0,0,.08);text-align:center;font-size:11px;color:#8b857d">Sep</div>
+            <div style="padding:11px 8px;background:#fbf9f5;border-bottom:1px solid rgba(0,0,0,.08);text-align:center;font-size:11px;color:#8b857d">Okt</div>
+            <div style="padding:11px 8px;background:#fbf9f5;border-bottom:1px solid rgba(0,0,0,.08);text-align:center;font-size:11px;color:#8b857d">Nov</div>
+            <div style="padding:11px 8px;background:#fbf9f5;border-bottom:1px solid rgba(0,0,0,.08);text-align:center;font-size:11px;color:#8b857d">Dez</div>
+            <div style="padding:11px 8px;background:#fbf9f5;border-bottom:1px solid rgba(0,0,0,.08);text-align:center;font-size:11px;color:#8b857d">Jan</div>
+            <div style="padding:11px 12px;background:#fbf9f5;border-bottom:1px solid rgba(0,0,0,.08);text-align:right;font-size:11px;color:#8b857d">Summe</div>
+
+            <div style="padding:12px 20px;border-bottom:1px solid #f0ece5;display:flex;align-items:center;gap:8px"><span style="width:9px;height:9px;background:oklch(0.45 0.09 200)"></span>Statistik II</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">26</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">26</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">26</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">36</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace;background:oklch(0.96 0.02 200);font-weight:600">36</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;color:#c2bcb2">–</div>
+            <div style="padding:12px 12px;border-bottom:1px solid #f0ece5;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:600">150</div>
+
+            <div style="padding:12px 20px;border-bottom:1px solid #f0ece5;display:flex;align-items:center;gap:8px"><span style="width:9px;height:9px;background:oklch(0.55 0.09 165)"></span>Datenbanken</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">30</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">30</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">30</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">35</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;color:#c2bcb2">–</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;color:#c2bcb2">–</div>
+            <div style="padding:12px 12px;border-bottom:1px solid #f0ece5;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:600">125</div>
+
+            <div style="padding:12px 20px;border-bottom:1px solid #f0ece5;display:flex;align-items:center;gap:8px"><span style="width:9px;height:9px;background:oklch(0.68 0.13 45)"></span>Projektbericht</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;color:#c2bcb2">–</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">40</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">45</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">45</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">50</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">70</div>
+            <div style="padding:12px 12px;border-bottom:1px solid #f0ece5;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:600">250</div>
+
+            <div style="padding:12px 20px;border-bottom:1px solid #f0ece5;display:flex;align-items:center;gap:8px"><span style="width:9px;height:9px;background:oklch(0.50 0.10 300)"></span>Wirtschaftsinf.</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;color:#c2bcb2">–</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;color:#c2bcb2">–</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">42</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">42</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">41</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;color:#c2bcb2">–</div>
+            <div style="padding:12px 12px;border-bottom:1px solid #f0ece5;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:600">125</div>
+
+            <div style="padding:12px 20px;border-bottom:1px solid #f0ece5;display:flex;align-items:center;gap:8px"><span style="width:9px;height:9px;background:oklch(0.60 0.10 95)"></span>Englisch B2</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">17</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">17</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">17</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">17</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">16</div>
+            <div style="padding:12px 8px;border-bottom:1px solid #f0ece5;text-align:center;font-family:'IBM Plex Mono',monospace">16</div>
+            <div style="padding:12px 12px;border-bottom:1px solid #f0ece5;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:600">100</div>
+
+            <div style="padding:13px 20px;background:#fbf9f5;font-weight:600">Summe Monat</div>
+            <div style="padding:13px 8px;background:#fbf9f5;text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:600">73</div>
+            <div style="padding:13px 8px;background:#fbf9f5;text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:600">113</div>
+            <div style="padding:13px 8px;background:#fbf9f5;text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:600">160</div>
+            <div style="padding:13px 8px;background:#fbf9f5;text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:600">175</div>
+            <div style="padding:13px 8px;background:#fbf9f5;text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:600">143</div>
+            <div style="padding:13px 8px;background:#fbf9f5;text-align:center;font-family:'IBM Plex Mono',monospace;font-weight:600">86</div>
+            <div style="padding:13px 12px;background:#fbf9f5;text-align:right;font-family:'IBM Plex Mono',monospace;font-weight:700">750</div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div style="background:#fff;border:1px solid rgba(0,0,0,.09);padding:18px 20px">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px">Abwesenheiten &amp; Feiertage</div>
+            <div style="font-size:12px;color:#6b6660;margin-bottom:15px">Werden aus dem Budget herausgerechnet</div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid #f0ece5">
+                <div><div style="font-size:13px;font-weight:600">Urlaub Dezember</div><div style="font-size:11.5px;color:#8b857d;margin-top:2px;font-family:'IBM Plex Mono',monospace">22.12. – 03.01.</div></div>
+                <div style="font-size:12px;color:oklch(0.52 0.13 45);font-weight:600">− 46 h</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid #f0ece5">
+                <div><div style="font-size:13px;font-weight:600">Praktikumswoche</div><div style="font-size:11.5px;color:#8b857d;margin-top:2px;font-family:'IBM Plex Mono',monospace">05.10. – 09.10.</div></div>
+                <div style="font-size:12px;color:oklch(0.52 0.13 45);font-weight:600">− 18 h</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;align-items:center">
+                <div><div style="font-size:13px;font-weight:600">Feiertage NRW</div><div style="font-size:11.5px;color:#8b857d;margin-top:2px">automatisch, 4 Tage</div></div>
+                <div style="font-size:12px;color:#6b6660;font-weight:600">− 12 h</div>
+              </div>
+            </div>
+            <div style="margin-top:15px;padding-top:13px;border-top:1px solid #f0ece5;font-size:12.5px;font-weight:600;color:oklch(0.45 0.09 200)">+ Abwesenheit eintragen</div>
+          </div>
+
+          <div style="background:#fff;border:1px solid rgba(0,0,0,.09);padding:18px 20px">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;margin-bottom:15px">Kapazitätscheck</div>
+            <div style="display:flex;flex-direction:column;gap:14px">
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span>Geplant pro Woche</span><span style="font-family:'IBM Plex Mono',monospace">28,8 h</span></div>
+                <div style="height:7px;background:#eae5dd"><div style="width:82%;height:100%;background:oklch(0.45 0.09 200)"></div></div>
+              </div>
+              <div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;margin-bottom:6px"><span>Verfügbar (eigene Angabe)</span><span style="font-family:'IBM Plex Mono',monospace">35,0 h</span></div>
+                <div style="height:7px;background:#eae5dd"><div style="width:100%;height:100%;background:oklch(0.72 0.03 200)"></div></div>
+              </div>
+              <div style="background:oklch(0.96 0.03 145);border:1px solid oklch(0.86 0.06 145);padding:11px 13px;font-size:12px;color:oklch(0.40 0.09 145);line-height:1.45">Plan passt in die verfügbare Zeit — 6,2 h Puffer pro Woche.</div>
+            </div>
+          </div>
+
+          <div style="background:oklch(0.97 0.025 45);border:1px solid oklch(0.86 0.06 45);padding:16px 18px">
+            <div style="font-size:12.5px;font-weight:700;color:oklch(0.42 0.09 45);margin-bottom:6px">Hinweis zur Grobplanung</div>
+            <div style="font-size:12px;color:oklch(0.44 0.06 45);line-height:1.5">Projektbericht braucht ab November 12 h/Woche, wenn der Rückstand nicht bis Oktober aufgeholt wird.</div>
+            <div style="margin-top:11px;font-size:12px;font-weight:600;color:oklch(0.42 0.09 45);text-decoration:underline">Budget jetzt umverteilen</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
