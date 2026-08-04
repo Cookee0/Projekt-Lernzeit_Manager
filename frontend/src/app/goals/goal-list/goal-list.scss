@@ -1,0 +1,18 @@
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.goal-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.goal-table th,
+.goal-table td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #dfe3e8;
+}

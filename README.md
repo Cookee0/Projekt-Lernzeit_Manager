@@ -8,13 +8,14 @@ Team: Elias (Product Owner), Assis (Developer, Schwerpunkt Coding), Julian (Deve
 Infrastruktur/Deployment/Testing).
 Abgabeziel: **31.08.2026**.
 
-> **Status: Grundgerüst steht, Feature-Entwicklung beginnt.** Das Repository-Bootstrap (MS 1) ist
-> abgeschlossen: Flask-Backend mit Health-Endpoint, Angular-Frontend, PostgreSQL via Docker
-> Compose, Flask-Migrate und eine grüne CI-Pipeline existieren. Fachliche Features aus
-> [`docs/01_Funktionale_Anforderungen.md`](docs/01_Funktionale_Anforderungen.md) sind noch nicht
-> implementiert – die Datenbank enthält bisher keine Tabellen, und das Frontend zeigt noch die
-> Angular-Startseite. Als Nächstes steht FR-1 (Lernziele festlegen) an; die zugehörigen ExecPlans
-> liegen in [`docs/ExecPlans/active/`](docs/ExecPlans/active/).
+> **Status: FR-1.1 (Lernziele anlegen) ist umgesetzt.** Das Repository-Bootstrap (MS 1) ist
+> abgeschlossen, und die Anwendung hat jetzt echte Fachlichkeit: Es gibt eine Datenbanktabelle
+> `goals`, einen API-Blueprint `POST`/`GET /api/goals` und zwei Angular-Seiten, `/ziele` (Liste,
+> nach Zieldatum sortiert) und `/ziele/neu` (Formular zum Anlegen). Wer `http://localhost:4200`
+> aufruft, landet auf `/ziele` und kann dort Lernziele über einen beliebig langen Horizont
+> anlegen; sie bleiben nach einem Neuladen der Seite erhalten. Als Nächstes stehen FR-1.2 bis
+> FR-1.4 an (Pflichtfelder Modul/Status, Bearbeiten/Löschen, Priorisierung); die zugehörigen
+> ExecPlans liegen in [`docs/ExecPlans/active/`](docs/ExecPlans/active/).
 
 > **Dieses README ist die verbindliche Beschreibung des Ist-Zustands.** Wer etwas ändert, das eine
 > Aussage hier falsch macht (neuer Befehl, neues Setup, neue Abhängigkeit, neues Feature),
@@ -106,8 +107,8 @@ Studierendenprojekt ohne Budget).
 |---|---|---|---|
 | Git | aktuell | https://git-scm.com/downloads | Versionierung |
 | Docker Desktop | aktuell | https://www.docker.com/products/docker-desktop/ | PostgreSQL lokal |
-| Node.js | **LTS 22.x** | https://nodejs.org/ | Angular-Toolchain |
-| Angular CLI | 20.x | `npm install -g @angular/cli` | `ng serve`, `ng test` |
+| Node.js | **≥ 22.22.3** (LTS 22.x) | https://nodejs.org/ | Angular-Toolchain |
+| Angular CLI | 22.x | `npm install -g @angular/cli` | `ng serve`, `ng test` |
 | Python | **3.12** | https://www.python.org/downloads/ | Flask-Backend |
 | pgAdmin 4 | aktuell | https://www.pgadmin.org/download/ | Datenbank-GUI |
 | VS Code | aktuell | https://code.visualstudio.com/ | Empfohlene IDE |
@@ -306,9 +307,11 @@ SELECT * FROM users;
 `could not connect to server: Connection refused` fehl. Erst `docker compose up -d`, dann pgAdmin.
 
 **Migrationen:** Schema-Änderungen laufen über
-[Flask-Migrate/Alembic](https://flask-migrate.readthedocs.io/). Das Setup existiert
-(`backend/migrations/`), es gibt aber noch **keine einzige Migration** – die Datenbank ist leer,
-weil noch keine Modelle definiert sind. Sobald das erste Modell existiert:
+[Flask-Migrate/Alembic](https://flask-migrate.readthedocs.io/). Die erste Migration
+(`backend/migrations/versions/36776bba1943_lernziele_tabelle_angelegt.py`) legt die Tabelle
+`goals` an (Spalten `id`, `title`, `target_date`, `created_at`). Nach jedem `git pull` unbedingt
+in `backend/` bei aktivierter venv `flask db upgrade` ausführen, sonst passen Code und lokales
+Schema nicht mehr zusammen. Für ein neues Modell:
 
 ```powershell
 flask db migrate -m "beschreibung"   # Migration erzeugen (in backend/, venv aktiv)
@@ -403,6 +406,7 @@ den Commit löschen.
 | Frontend-Requests scheitern mit CORS-Fehler | Im Flask-Backend `flask-cors` für `http://localhost:4200` konfigurieren. |
 | `relation "…" does not exist` | Migration fehlt: `flask db upgrade` in `backend/`. |
 | Node-Module kaputt nach Branch-Wechsel | `Remove-Item -Recurse -Force node_modules; npm install` |
+| `ng lint`/`ng test`/`ng serve` brechen sofort mit „The Angular CLI requires a minimum Node.js version …" ab (Exit-Code 3) | Installiertes Node.js ist älter als von `@angular/cli` (aktuell `^22.0.8`) verlangt. Mit `node --version` prüfen; nötig ist mindestens v22.22.3. Node über https://nodejs.org/ aktualisieren (LTS-Zweig), dann neue Shell öffnen. |
 
 ---
 

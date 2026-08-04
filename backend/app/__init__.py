@@ -14,7 +14,11 @@ def create_app(config_name: str = "development") -> Flask:
     db.init_app(app)
     migrate.init_app(app, db)
 
+    from .models import Goal  # noqa: F401  – Import nötig, damit Alembic die Tabelle sieht
+    from .routes.goals import goals_bp
     from .routes.health import health_bp
+
     app.register_blueprint(health_bp)
+    app.register_blueprint(goals_bp)
 
     return app
