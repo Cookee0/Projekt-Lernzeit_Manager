@@ -31,7 +31,9 @@ describe('GoalService', () => {
       {
         id: 1,
         title: 'Klausur Mathematik',
+        module: 'Mathematik I (DLBDSAM01)',
         target_date: '2027-02-28',
+        status: 'offen',
         created_at: '2026-08-04T10:00:00+00:00',
       },
     ]);
@@ -41,18 +43,29 @@ describe('GoalService', () => {
   });
 
   it('legt ein Lernziel per POST an', () => {
-    service.create({ title: 'Projektbericht', target_date: '2027-02-28' }).subscribe();
+    service
+      .create({
+        title: 'Projektbericht',
+        module: 'Projekt Software Engineering (ISEF01)',
+        target_date: '2027-02-28',
+        status: 'offen',
+      })
+      .subscribe();
 
     const request = httpMock.expectOne('http://localhost:5000/api/goals');
     expect(request.request.method).toBe('POST');
     expect(request.request.body).toEqual({
       title: 'Projektbericht',
+      module: 'Projekt Software Engineering (ISEF01)',
       target_date: '2027-02-28',
+      status: 'offen',
     });
     request.flush({
       id: 2,
       title: 'Projektbericht',
+      module: 'Projekt Software Engineering (ISEF01)',
       target_date: '2027-02-28',
+      status: 'offen',
       created_at: '2026-08-04T10:00:00+00:00',
     });
   });
