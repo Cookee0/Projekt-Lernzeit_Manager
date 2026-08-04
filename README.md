@@ -8,14 +8,20 @@ Team: Elias (Product Owner), Assis (Developer, Schwerpunkt Coding), Julian (Deve
 Infrastruktur/Deployment/Testing).
 Abgabeziel: **31.08.2026**.
 
-> **Status: FR-1.1 (Lernziele anlegen) ist umgesetzt.** Das Repository-Bootstrap (MS 1) ist
-> abgeschlossen, und die Anwendung hat jetzt echte Fachlichkeit: Es gibt eine Datenbanktabelle
-> `goals`, einen API-Blueprint `POST`/`GET /api/goals` und zwei Angular-Seiten, `/ziele` (Liste,
-> nach Zieldatum sortiert) und `/ziele/neu` (Formular zum Anlegen). Wer `http://localhost:4200`
-> aufruft, landet auf `/ziele` und kann dort Lernziele über einen beliebig langen Horizont
-> anlegen; sie bleiben nach einem Neuladen der Seite erhalten. Als Nächstes stehen FR-1.2 bis
-> FR-1.4 an (Pflichtfelder Modul/Status, Bearbeiten/Löschen, Priorisierung); die zugehörigen
-> ExecPlans liegen in [`docs/ExecPlans/active/`](docs/ExecPlans/active/).
+> **Status: FR-1.2 (Pflichtfelder Modul/Status) ist umgesetzt.** Jedes Lernziel hat jetzt vier
+> Pflichtfelder: Titel, Modul/Kurs (Freitext), Zieldatum und Status (*Offen*, *In Arbeit* oder
+> *Erreicht*, voreingestellt *Offen*). Es gibt die Datenbanktabelle `goals` (Spalten `id`, `title`,
+> `module`, `target_date`, `status`, `created_at`), den API-Blueprint `POST`/`GET /api/goals` mit
+> Validierung aller vier Felder und zwei Angular-Seiten, `/ziele` (Liste mit den Spalten Titel,
+> Modul/Kurs, Zieldatum, Status, sortiert nach Zieldatum) und `/ziele/neu` (Formular mit allen vier
+> Feldern). Wer `http://localhost:4200` aufruft, landet auf `/ziele` und kann dort Lernziele über
+> einen beliebig langen Horizont anlegen; sie bleiben nach einem Neuladen der Seite erhalten. Der
+> Status lässt sich bisher nur beim Anlegen setzen, noch nicht nachträglich ändern – das kommt mit
+> FR-1.3. **Wichtig nach einem `git pull`:** Dieser Plan hat eine zweite Migration hinzugefügt;
+> ohne `flask db upgrade` in `backend/` (venv aktiv) schlägt `/api/goals` mit einem Fehler wie
+> `column goals.module does not exist` fehl. Als Nächstes stehen FR-1.3 und FR-1.4 an (Bearbeiten/
+> Löschen, Priorisierung); die zugehörigen ExecPlans liegen in
+> [`docs/ExecPlans/active/`](docs/ExecPlans/active/).
 
 > **Dieses README ist die verbindliche Beschreibung des Ist-Zustands.** Wer etwas ändert, das eine
 > Aussage hier falsch macht (neuer Befehl, neues Setup, neue Abhängigkeit, neues Feature),
@@ -309,9 +315,13 @@ SELECT * FROM users;
 **Migrationen:** Schema-Änderungen laufen über
 [Flask-Migrate/Alembic](https://flask-migrate.readthedocs.io/). Die erste Migration
 (`backend/migrations/versions/36776bba1943_lernziele_tabelle_angelegt.py`) legt die Tabelle
-`goals` an (Spalten `id`, `title`, `target_date`, `created_at`). Nach jedem `git pull` unbedingt
-in `backend/` bei aktivierter venv `flask db upgrade` ausführen, sonst passen Code und lokales
-Schema nicht mehr zusammen. Für ein neues Modell:
+`goals` an (Spalten `id`, `title`, `target_date`, `created_at`). Eine zweite Migration
+(`backend/migrations/versions/3c4b2fb57969_modul_und_status_am_lernziel_ergaenzt.py`, FR-1.2)
+ergänzt die Pflichtfelder `module` (`character varying(100)`) und `status`
+(`character varying(20)`); bereits vorhandene Zeilen erhalten dabei automatisch die Vorgabewerte
+`Nicht zugeordnet` und `offen`. Nach jedem `git pull` unbedingt in `backend/` bei aktivierter venv
+`flask db upgrade` ausführen, sonst passen Code und lokales Schema nicht mehr zusammen. Für ein
+neues Modell:
 
 ```powershell
 flask db migrate -m "beschreibung"   # Migration erzeugen (in backend/, venv aktiv)
