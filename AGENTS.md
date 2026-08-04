@@ -44,7 +44,7 @@ state of the project; keeping it accurate is part of every task, not a follow-up
   larger change.
 - `docs/ExecPlans/active/` — plans currently being worked on; `docs/ExecPlans/completed/` — finished
   plans.
-- `docs/design-reference/` — UI mockups for all six planned screens, each as `.html` and `.png`.
+- `docs/design-reference/html` — UI mockups for all six planned screens, each as `.html`.
   Authoritative for fields, labels, and ordering. The visual layer (colors, fonts, nav bar) is
   deliberately deferred until the features work — team decision of 2026-08-04 — so do not restyle
   components to match the mockups yet. The mockups also show the finished product: progress bars,
