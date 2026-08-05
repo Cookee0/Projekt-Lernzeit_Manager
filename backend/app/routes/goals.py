@@ -90,3 +90,46 @@ def create_goal():
     db.session.add(goal)
     db.session.commit()
     return jsonify(goal.to_dict()), 201
+
+
+@goals_bp.get("/api/goals/<int:goal_id>")
+def get_goal(goal_id: int):
+    """Gibt ein einzelnes Lernziel zurück."""
+    goal = db.session.get(Goal, goal_id)
+    if goal is None:
+        return jsonify({"errors": {"id": "Lernziel nicht gefunden."}}), 404
+
+    return jsonify(goal.to_dict()), 200
+
+
+@goals_bp.put("/api/goals/<int:goal_id>")
+def update_goal(goal_id: int):
+    """Ersetzt alle Felder eines Lernziels. Ändert auch das Zieldatum (FR-1.3)."""
+    goal = db.session.get(Goal, goal_id)
+    if goal is None:
+        return jsonify({"errors": {"id": "Lernziel nicht gefunden."}}), 404
+
+    values, errors = validate_goal_payload(request.get_json(silent=True))
+    if errors:
+        return jsonify({"errors": errors}), 400
+
+    goal.title = values["title"]
+    goal.module = values["module"]
+    goal.target_date = values["target_date"]
+    goal.status = values["status"]
+    db.session.commit()
+
+    return jsonify(goal.to_dict()), 200
+
+
+@goals_bp.delete("/api/goals/<int:goal_id>")
+def delete_goal(goal_id: int):
+    """Löscht ein Lernziel endgültig."""
+    goal = db.session.get(Goal, goal_id)
+    if goal is None:
+        return jsonify({"errors": {"id": "Lernziel nicht gefunden."}}), 404
+
+    db.session.delete(goal)
+    db.session.commit()
+
+    return "", 204

@@ -65,7 +65,7 @@ describe('GoalList', () => {
     ]);
     await fixture.whenStable();
 
-    const statusZelle = fixture.nativeElement.querySelector('tbody tr td:last-child');
+    const statusZelle = fixture.nativeElement.querySelector('tbody tr td:nth-last-child(2)');
     expect(statusZelle.textContent).toContain('In Arbeit');
     expect(statusZelle.textContent).not.toContain('in_arbeit');
   });
@@ -76,6 +76,62 @@ describe('GoalList', () => {
     httpMock.expectOne('http://localhost:5000/api/goals').flush([]);
     await fixture.whenStable();
 
+    expect(fixture.nativeElement.textContent).toContain('Noch keine Lernziele vorhanden.');
+  });
+
+  it('verlinkt jede Zeile auf ihr Bearbeiten-Formular', async () => {
+    const fixture = TestBed.createComponent(GoalList);
+
+    httpMock.expectOne('http://localhost:5000/api/goals').flush([
+      {
+        id: 7,
+        title: 'Klausur Statistik',
+        module: 'Statistik (DLBDSSS01)',
+        target_date: '2027-01-15',
+        status: 'offen',
+        created_at: '2026-08-04T10:00:00+00:00',
+      },
+    ]);
+    await fixture.whenStable();
+
+    const link = fixture.nativeElement.querySelector('tbody tr .actions a');
+    expect(link.getAttribute('href')).toBe('/ziele/7/bearbeiten');
+  });
+
+  it('loescht erst nach Bestaetigung und entfernt die Zeile', async () => {
+    const fixture = TestBed.createComponent(GoalList);
+
+    httpMock.expectOne('http://localhost:5000/api/goals').flush([
+      {
+        id: 7,
+        title: 'Klausur Statistik',
+        module: 'Statistik (DLBDSSS01)',
+        target_date: '2027-01-15',
+        status: 'offen',
+        created_at: '2026-08-04T10:00:00+00:00',
+      },
+    ]);
+    await fixture.whenStable();
+
+    // Erster Klick: nur nachfragen, noch keine Anfrage ans Backend.
+    const loeschen = fixture.nativeElement.querySelector('tbody tr .actions button');
+    loeschen.click();
+    await fixture.whenStable();
+
+    httpMock.expectNone('http://localhost:5000/api/goals/7');
+    expect(fixture.nativeElement.textContent).toContain('Wirklich löschen?');
+
+    // Zweiter Klick auf "Ja, loeschen": jetzt wird geloescht.
+    const bestaetigen = fixture.nativeElement.querySelector('tbody tr .actions .danger');
+    bestaetigen.click();
+    await fixture.whenStable();
+
+    const request = httpMock.expectOne('http://localhost:5000/api/goals/7');
+    expect(request.request.method).toBe('DELETE');
+    request.flush(null, { status: 204, statusText: 'No Content' });
+    await fixture.whenStable();
+
+    expect(fixture.nativeElement.querySelectorAll('tbody tr').length).toBe(0);
     expect(fixture.nativeElement.textContent).toContain('Noch keine Lernziele vorhanden.');
   });
 });

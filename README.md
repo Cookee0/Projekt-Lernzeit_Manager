@@ -8,20 +8,19 @@ Team: Elias (Product Owner), Assis (Developer, Schwerpunkt Coding), Julian (Deve
 Infrastruktur/Deployment/Testing).
 Abgabeziel: **31.08.2026**.
 
-> **Status: FR-1.2 (Pflichtfelder Modul/Status) ist umgesetzt.** Jedes Lernziel hat jetzt vier
-> Pflichtfelder: Titel, Modul/Kurs (Freitext), Zieldatum und Status (*Offen*, *In Arbeit* oder
-> *Erreicht*, voreingestellt *Offen*). Es gibt die Datenbanktabelle `goals` (Spalten `id`, `title`,
-> `module`, `target_date`, `status`, `created_at`), den API-Blueprint `POST`/`GET /api/goals` mit
-> Validierung aller vier Felder und zwei Angular-Seiten, `/ziele` (Liste mit den Spalten Titel,
-> Modul/Kurs, Zieldatum, Status, sortiert nach Zieldatum) und `/ziele/neu` (Formular mit allen vier
-> Feldern). Wer `http://localhost:4200` aufruft, landet auf `/ziele` und kann dort Lernziele über
-> einen beliebig langen Horizont anlegen; sie bleiben nach einem Neuladen der Seite erhalten. Der
-> Status lässt sich bisher nur beim Anlegen setzen, noch nicht nachträglich ändern – das kommt mit
-> FR-1.3. **Wichtig nach einem `git pull`:** Dieser Plan hat eine zweite Migration hinzugefügt;
-> ohne `flask db upgrade` in `backend/` (venv aktiv) schlägt `/api/goals` mit einem Fehler wie
-> `column goals.module does not exist` fehl. Als Nächstes stehen FR-1.3 und FR-1.4 an (Bearbeiten/
-> Löschen, Priorisierung); die zugehörigen ExecPlans liegen in
-> [`docs/ExecPlans/active/`](docs/ExecPlans/active/).
+> **Status: FR-1.3 (Lernziele bearbeiten, verschieben, löschen) ist umgesetzt.** Jede Zeile der
+> Übersicht unter `/ziele` hat jetzt die Aktionen „Bearbeiten" und „Löschen". „Bearbeiten" öffnet
+> unter `/ziele/<id>/bearbeiten` dasselbe Formular wie das Anlegen, aber vorbefüllt mit den
+> bisherigen Werten; Titel, Modul, Zieldatum und Status lassen sich ändern und speichern.
+> „Verschieben" ist dabei kein eigener Vorgang, sondern schlicht eine Änderung des Zieldatums über
+> dasselbe Formular – das Ziel wandert danach an seine neue Position in der nach Zieldatum
+> sortierten Liste. „Löschen" fragt direkt in der Tabellenzeile nach („Wirklich löschen?") und
+> entfernt das Ziel erst nach Bestätigung endgültig aus der Datenbank; ein Fehlklick löscht also
+> nichts. Damit lässt sich der Status auch nachträglich auf *Erreicht* setzen, was mit FR-1.2 noch
+> offen war. Die API kennt dafür `GET`/`PUT`/`DELETE /api/goals/<id>`. Es ist keine neue Migration
+> hinzugekommen. Als Nächstes steht optional FR-1.4 an (Priorisierung, Priorität „Could"); die
+> zugehörigen ExecPlans liegen in [`docs/ExecPlans/active/`](docs/ExecPlans/active/) bzw. nach
+> Abschluss in [`docs/ExecPlans/completed/`](docs/ExecPlans/completed/).
 
 > **Dieses README ist die verbindliche Beschreibung des Ist-Zustands.** Wer etwas ändert, das eine
 > Aussage hier falsch macht (neuer Befehl, neues Setup, neue Abhängigkeit, neues Feature),

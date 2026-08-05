@@ -1,4 +1,8 @@
-<h2>Neues Lernziel</h2>
+<h2>{{ isEdit ? 'Lernziel bearbeiten' : 'Neues Lernziel' }}</h2>
+
+@if (loading()) {
+  <p>Lade …</p>
+}
 
 <form class="goal-form" [formGroup]="form" (ngSubmit)="submit()">
   <label for="title">Titel</label>
@@ -36,7 +40,9 @@
   }
 
   <div class="form-actions">
-    <button type="submit" [disabled]="saving()">Speichern</button>
+    <button type="submit" [disabled]="saving() || loading()">
+      {{ isEdit ? 'Änderungen speichern' : 'Speichern' }}
+    </button>
     <a routerLink="/ziele">Abbrechen</a>
   </div>
 </form>

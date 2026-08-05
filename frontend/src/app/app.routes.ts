@@ -7,4 +7,5 @@ export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'ziele' },
   { path: 'ziele', component: GoalList },
   { path: 'ziele/neu', component: GoalForm },
+  { path: 'ziele/:id/bearbeiten', component: GoalForm },
 ];

@@ -32,3 +32,23 @@
 .status--erreicht {
   background: #d8f0d8;
 }
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.actions button {
+  padding: 0.2rem 0.6rem;
+  border: 1px solid #b7bec9;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.actions .danger {
+  border-color: #b3261e;
+  color: #b3261e;
+}
