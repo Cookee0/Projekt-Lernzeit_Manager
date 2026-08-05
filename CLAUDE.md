@@ -14,5 +14,7 @@ now exists), update the README in the same change. An outdated README is a defec
 task.
 
 For every larger change (anything beyond a small, self-contained edit), write an execution plan
-first, following @docs/PLANS.md to the letter. Do not begin implementing a larger change until the
+first, following @docs/PLANS.md. Do not begin implementing a larger change until the
 plan exists and is self-contained per PLANS.md's requirements.
+The Plan should be written so that a Junior Engineer can execute the Plan. Plan the milestones granular.
+Keep yourself concise.
