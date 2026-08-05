@@ -8,13 +8,22 @@ Team: Elias (Product Owner), Assis (Developer, Schwerpunkt Coding), Julian (Deve
 Infrastruktur/Deployment/Testing).
 Abgabeziel: **31.08.2026**.
 
-> **Status: Grundgerüst steht, Feature-Entwicklung beginnt.** Das Repository-Bootstrap (MS 1) ist
-> abgeschlossen: Flask-Backend mit Health-Endpoint, Angular-Frontend, PostgreSQL via Docker
-> Compose, Flask-Migrate und eine grüne CI-Pipeline existieren. Fachliche Features aus
-> [`docs/01_Funktionale_Anforderungen.md`](docs/01_Funktionale_Anforderungen.md) sind noch nicht
-> implementiert – die Datenbank enthält bisher keine Tabellen, und das Frontend zeigt noch die
-> Angular-Startseite. Als Nächstes steht FR-1 (Lernziele festlegen) an; die zugehörigen ExecPlans
-> liegen in [`docs/ExecPlans/active/`](docs/ExecPlans/active/).
+> **Status: FR-1.4 (Lernziele priorisieren) ist umgesetzt – Anforderungsgruppe 1 „Lernziele
+> festlegen" (FR-1.1 bis FR-1.4) ist damit vollständig.** Jedes Lernziel kann beim Anlegen unter
+> `/ziele/neu` und beim Bearbeiten unter `/ziele/<id>/bearbeiten` optional eine Priorität erhalten
+> – *Hoch*, *Mittel* oder *Niedrig*, voreingestellt ist „– keine –". Die Übersicht unter `/ziele`
+> zeigt dafür eine zusätzliche Spalte „Priorität": eine gesetzte Priorität erscheint als farbig
+> hinterlegte Markierung (Hoch rot, Mittel gelb, Niedrig grau), eine fehlende als grauer
+> Gedankenstrich. Die Liste bleibt weiterhin nach Zieldatum sortiert; nach Priorität wird bewusst
+> nicht sortiert oder gefiltert. Die API akzeptiert am Feld `priority` in `POST`/`PUT /api/goals`
+> die Werte `hoch`, `mittel`, `niedrig` sowie – gleichbedeutend mit „keine Priorität" – ein
+> fehlendes Feld, `null` oder die leere Zeichenkette `""`; jeder andere Wert liefert HTTP 400. Die
+> Tabelle `goals` hat dafür eine neue, nullable Spalte `priority` (`character varying(20)`)
+> erhalten. Nach einem `git pull` ist deshalb `flask db upgrade` in `backend/` bei aktivierter
+> venv nötig – ohne das schlägt `/api/goals` mit `column goals.priority does not exist` fehl. Als
+> Nächstes steht Anforderungsgruppe 2 (FR-2, Grobplanung von Lernzeiten) aus
+> [`docs/01_Funktionale_Anforderungen.md`](docs/01_Funktionale_Anforderungen.md) an; abgeschlossene
+> ExecPlans liegen in [`docs/ExecPlans/completed/`](docs/ExecPlans/completed/).
 
 > **Dieses README ist die verbindliche Beschreibung des Ist-Zustands.** Wer etwas ändert, das eine
 > Aussage hier falsch macht (neuer Befehl, neues Setup, neue Abhängigkeit, neues Feature),
@@ -107,8 +116,8 @@ Studierendenprojekt ohne Budget).
 |---|---|---|---|
 | Git | aktuell | https://git-scm.com/downloads | Versionierung |
 | Docker Desktop | aktuell | https://www.docker.com/products/docker-desktop/ | PostgreSQL lokal |
-| Node.js | **LTS 22.x** | https://nodejs.org/ | Angular-Toolchain |
-| Angular CLI | 20.x | `npm install -g @angular/cli` | `ng serve`, `ng test` |
+| Node.js | **≥ 22.22.3** (LTS 22.x) | https://nodejs.org/ | Angular-Toolchain |
+| Angular CLI | 22.x | `npm install -g @angular/cli` | `ng serve`, `ng test` |
 | Python | **3.12** | https://www.python.org/downloads/ | Flask-Backend |
 | pgAdmin 4 | aktuell | https://www.pgadmin.org/download/ | Datenbank-GUI |
 | VS Code | aktuell | https://code.visualstudio.com/ | Empfohlene IDE |
@@ -307,9 +316,19 @@ SELECT * FROM users;
 `could not connect to server: Connection refused` fehl. Erst `docker compose up -d`, dann pgAdmin.
 
 **Migrationen:** Schema-Änderungen laufen über
-[Flask-Migrate/Alembic](https://flask-migrate.readthedocs.io/). Das Setup existiert
-(`backend/migrations/`), es gibt aber noch **keine einzige Migration** – die Datenbank ist leer,
-weil noch keine Modelle definiert sind. Sobald das erste Modell existiert:
+[Flask-Migrate/Alembic](https://flask-migrate.readthedocs.io/). Die erste Migration
+(`backend/migrations/versions/36776bba1943_lernziele_tabelle_angelegt.py`) legt die Tabelle
+`goals` an (Spalten `id`, `title`, `target_date`, `created_at`). Eine zweite Migration
+(`backend/migrations/versions/3c4b2fb57969_modul_und_status_am_lernziel_ergaenzt.py`, FR-1.2)
+ergänzt die Pflichtfelder `module` (`character varying(100)`) und `status`
+(`character varying(20)`); bereits vorhandene Zeilen erhalten dabei automatisch die Vorgabewerte
+`Nicht zugeordnet` und `offen`. Eine dritte Migration
+(`backend/migrations/versions/92b49259af45_prioritaet_am_lernziel_ergaenzt.py`, FR-1.4) ergänzt die
+optionale (nullable) Spalte `priority` (`character varying(20)`); bereits vorhandene Zeilen
+behalten dort `NULL`, eine manuelle Nachbearbeitung war deshalb nicht nötig. Nach jedem `git pull`
+unbedingt in `backend/` bei aktivierter venv `flask db upgrade` ausführen, sonst passen Code und
+lokales Schema nicht mehr zusammen – ohne das schlägt `/api/goals` zum Beispiel mit
+`column goals.priority does not exist` fehl. Für ein neues Modell:
 
 ```powershell
 flask db migrate -m "beschreibung"   # Migration erzeugen (in backend/, venv aktiv)
@@ -404,6 +423,7 @@ den Commit löschen.
 | Frontend-Requests scheitern mit CORS-Fehler | Im Flask-Backend `flask-cors` für `http://localhost:4200` konfigurieren. |
 | `relation "…" does not exist` | Migration fehlt: `flask db upgrade` in `backend/`. |
 | Node-Module kaputt nach Branch-Wechsel | `Remove-Item -Recurse -Force node_modules; npm install` |
+| `ng lint`/`ng test`/`ng serve` brechen sofort mit „The Angular CLI requires a minimum Node.js version …" ab (Exit-Code 3) | Installiertes Node.js ist älter als von `@angular/cli` (aktuell `^22.0.8`) verlangt. Mit `node --version` prüfen; nötig ist mindestens v22.22.3. Node über https://nodejs.org/ aktualisieren (LTS-Zweig), dann neue Shell öffnen. |
 
 ---
 

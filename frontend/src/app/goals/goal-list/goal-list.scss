@@ -1,0 +1,75 @@
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.goal-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.goal-table th,
+.goal-table td {
+  text-align: left;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid #dfe3e8;
+}
+
+.status {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  background: #e8eaed;
+}
+
+.status--in_arbeit {
+  background: #fff2cc;
+}
+
+.status--erreicht {
+  background: #d8f0d8;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.actions button {
+  padding: 0.2rem 0.6rem;
+  border: 1px solid #b7bec9;
+  border-radius: 4px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.actions .danger {
+  border-color: #b3261e;
+  color: #b3261e;
+}
+
+.priority {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  background: #e8eaed;
+}
+
+.priority--hoch {
+  background: #fadad7;
+  color: #8c1d18;
+}
+
+.priority--mittel {
+  background: #fff2cc;
+}
+
+.priority-none {
+  color: #8b93a1;
+}
