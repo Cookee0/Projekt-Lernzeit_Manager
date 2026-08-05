@@ -152,3 +152,119 @@ def test_status_null_wird_abgelehnt(client):
 
     assert response.status_code == 400
     assert "status" in response.get_json()["errors"]
+
+
+def _angelegtes_lernziel(client, **overrides) -> dict:
+    """Legt ein Lernziel an und gibt die Antwort als Dictionary zurueck."""
+    response = client.post("/api/goals", json=gueltiges_lernziel(**overrides))
+    assert response.status_code == 201
+    return response.get_json()
+
+
+def test_einzelnes_lernziel_abrufen(client):
+    angelegt = _angelegtes_lernziel(client, title="Klausur Statistik")
+
+    response = client.get(f"/api/goals/{angelegt['id']}")
+
+    assert response.status_code == 200
+    assert response.get_json()["title"] == "Klausur Statistik"
+
+
+def test_unbekanntes_lernziel_abrufen_liefert_404(client):
+    response = client.get("/api/goals/999")
+
+    assert response.status_code == 404
+    assert "id" in response.get_json()["errors"]
+
+
+def test_lernziel_bearbeiten_aendert_alle_felder(client):
+    angelegt = _angelegtes_lernziel(client)
+    neues_datum = (date.today() + timedelta(days=45)).isoformat()
+
+    response = client.put(
+        f"/api/goals/{angelegt['id']}",
+        json={
+            "title": "Neuer Titel",
+            "module": "Statistik (DLBDSSS01)",
+            "target_date": neues_datum,
+            "status": "erreicht",
+        },
+    )
+
+    assert response.status_code == 200
+    body = response.get_json()
+    assert body["id"] == angelegt["id"]
+    assert body["title"] == "Neuer Titel"
+    assert body["module"] == "Statistik (DLBDSSS01)"
+    assert body["target_date"] == neues_datum
+    assert body["status"] == "erreicht"
+
+
+def test_lernziel_verschieben_aendert_nur_das_zieldatum(client):
+    angelegt = _angelegtes_lernziel(client)
+    neues_datum = (date.today() + timedelta(days=400)).isoformat()
+
+    response = client.put(
+        f"/api/goals/{angelegt['id']}",
+        json=gueltiges_lernziel(target_date=neues_datum),
+    )
+
+    assert response.status_code == 200
+    body = response.get_json()
+    assert body["target_date"] == neues_datum
+    assert body["title"] == angelegt["title"]
+    assert body["module"] == angelegt["module"]
+
+
+def test_bearbeitung_ist_in_der_liste_sichtbar(client):
+    angelegt = _angelegtes_lernziel(client)
+
+    client.put(f"/api/goals/{angelegt['id']}", json=gueltiges_lernziel(title="Geaendert"))
+
+    liste = client.get("/api/goals").get_json()
+    assert len(liste) == 1
+    assert liste[0]["title"] == "Geaendert"
+
+
+def test_unbekanntes_lernziel_bearbeiten_liefert_404(client):
+    response = client.put("/api/goals/999", json=gueltiges_lernziel())
+
+    assert response.status_code == 404
+
+
+def test_bearbeiten_mit_ungueltigen_daten_liefert_400_und_aendert_nichts(client):
+    angelegt = _angelegtes_lernziel(client, title="Unveraendert")
+
+    response = client.put(f"/api/goals/{angelegt['id']}", json=gueltiges_lernziel(title="  "))
+
+    assert response.status_code == 400
+    assert "title" in response.get_json()["errors"]
+    unveraendert = client.get(f"/api/goals/{angelegt['id']}").get_json()
+    assert unveraendert["title"] == "Unveraendert"
+
+
+def test_lernziel_loeschen_liefert_204(client):
+    angelegt = _angelegtes_lernziel(client)
+
+    response = client.delete(f"/api/goals/{angelegt['id']}")
+
+    assert response.status_code == 204
+    assert response.get_data() == b""
+
+
+def test_geloeschtes_lernziel_ist_aus_der_liste_verschwunden(client):
+    bleibt = _angelegtes_lernziel(client, title="bleibt")
+    geht = _angelegtes_lernziel(client, title="geht")
+
+    client.delete(f"/api/goals/{geht['id']}")
+
+    liste = client.get("/api/goals").get_json()
+    assert [goal["title"] for goal in liste] == ["bleibt"]
+    assert client.get(f"/api/goals/{bleibt['id']}").status_code == 200
+
+
+def test_zweimal_loeschen_liefert_beim_zweiten_mal_404(client):
+    angelegt = _angelegtes_lernziel(client)
+
+    assert client.delete(f"/api/goals/{angelegt['id']}").status_code == 204
+    assert client.delete(f"/api/goals/{angelegt['id']}").status_code == 404
