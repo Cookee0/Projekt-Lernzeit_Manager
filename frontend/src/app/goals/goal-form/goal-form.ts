@@ -2,7 +2,13 @@ import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
-import { GOAL_STATUS_LABELS, GoalStatus } from '../goal.model';
+import {
+  GOAL_PRIORITY_LABELS,
+  GOAL_STATUS_LABELS,
+  GoalPriority,
+  GoalStatus,
+  NewGoal,
+} from '../goal.model';
 import { GoalService } from '../goal.service';
 
 @Component({
@@ -22,6 +28,7 @@ export class GoalForm {
   protected readonly isEdit = this.goalId !== null;
 
   protected readonly statusLabels = GOAL_STATUS_LABELS;
+  protected readonly priorityLabels = GOAL_PRIORITY_LABELS;
   protected readonly saving = signal(false);
   protected readonly loading = signal(false);
   protected readonly serverError = signal<string | null>(null);
@@ -31,6 +38,8 @@ export class GoalForm {
     module: ['', [Validators.required, Validators.maxLength(100)]],
     target_date: ['', Validators.required],
     status: this.formBuilder.nonNullable.control<GoalStatus>('offen', Validators.required),
+    // '' steht fuer "keine Prioritaet". Die Auswahlliste kann kein null liefern.
+    priority: this.formBuilder.nonNullable.control<GoalPriority | ''>(''),
   });
 
   constructor() {
@@ -46,6 +55,7 @@ export class GoalForm {
           module: goal.module,
           target_date: goal.target_date,
           status: goal.status,
+          priority: goal.priority ?? '',
         });
         this.loading.set(false);
       },
@@ -65,7 +75,12 @@ export class GoalForm {
     this.saving.set(true);
     this.serverError.set(null);
 
-    const werte = this.form.getRawValue();
+    const formular = this.form.getRawValue();
+    const werte: NewGoal = {
+      ...formular,
+      // Die Auswahlliste liefert '' fuer "keine Prioritaet", die API erwartet null.
+      priority: formular.priority === '' ? null : formular.priority,
+    };
     const anfrage =
       this.goalId === null
         ? this.goalService.create(werte)

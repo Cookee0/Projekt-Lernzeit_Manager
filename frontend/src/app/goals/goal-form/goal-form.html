@@ -35,6 +35,14 @@
     <option value="erreicht">{{ statusLabels.erreicht }}</option>
   </select>
 
+  <label for="priority">Priorität</label>
+  <select id="priority" formControlName="priority">
+    <option value="">– keine –</option>
+    <option value="hoch">{{ priorityLabels.hoch }}</option>
+    <option value="mittel">{{ priorityLabels.mittel }}</option>
+    <option value="niedrig">{{ priorityLabels.niedrig }}</option>
+  </select>
+
   @if (serverError()) {
     <p class="error">{{ serverError() }}</p>
   }

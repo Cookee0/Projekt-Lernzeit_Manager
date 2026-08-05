@@ -56,6 +56,11 @@ describe('GoalForm', () => {
     statusSelect.dispatchEvent(new Event('change'));
     await fixture.whenStable();
 
+    const prioritySelect = fixture.nativeElement.querySelector('#priority') as HTMLSelectElement;
+    prioritySelect.value = 'hoch';
+    prioritySelect.dispatchEvent(new Event('change'));
+    await fixture.whenStable();
+
     const form = fixture.nativeElement.querySelector('form') as HTMLFormElement;
     form.dispatchEvent(new Event('submit'));
     await fixture.whenStable();
@@ -67,6 +72,7 @@ describe('GoalForm', () => {
       module: 'Projekt Software Engineering (ISEF01)',
       target_date: '2027-02-28',
       status: 'in_arbeit',
+      priority: 'hoch',
     });
     request.flush({
       id: 1,
@@ -74,6 +80,41 @@ describe('GoalForm', () => {
       module: 'Projekt Software Engineering (ISEF01)',
       target_date: '2027-02-28',
       status: 'in_arbeit',
+      priority: 'hoch',
+      created_at: '2026-08-04T10:00:00+00:00',
+    });
+  });
+
+  it('schickt null, wenn keine Prioritaet gewaehlt wurde', async () => {
+    const fixture = TestBed.createComponent(GoalForm);
+    await fixture.whenStable();
+
+    const titleInput = fixture.nativeElement.querySelector('#title') as HTMLInputElement;
+    titleInput.value = 'Ohne Prioritaet';
+    titleInput.dispatchEvent(new Event('input'));
+
+    const moduleInput = fixture.nativeElement.querySelector('#module') as HTMLInputElement;
+    moduleInput.value = 'ISEF01';
+    moduleInput.dispatchEvent(new Event('input'));
+
+    const dateInput = fixture.nativeElement.querySelector('#target_date') as HTMLInputElement;
+    dateInput.value = '2027-02-28';
+    dateInput.dispatchEvent(new Event('input'));
+    await fixture.whenStable();
+
+    const form = fixture.nativeElement.querySelector('form') as HTMLFormElement;
+    form.dispatchEvent(new Event('submit'));
+    await fixture.whenStable();
+
+    const request = httpMock.expectOne('http://localhost:5000/api/goals');
+    expect(request.request.body.priority).toBeNull();
+    request.flush({
+      id: 1,
+      title: 'Ohne Prioritaet',
+      module: 'ISEF01',
+      target_date: '2027-02-28',
+      status: 'offen',
+      priority: null,
       created_at: '2026-08-04T10:00:00+00:00',
     });
   });
@@ -131,6 +172,7 @@ describe('GoalForm im Bearbeiten-Modus', () => {
       module: 'Statistik (DLBDSSS01)',
       target_date: '2027-01-15',
       status: 'in_arbeit',
+      priority: null,
       created_at: '2026-08-04T10:00:00+00:00',
     });
     await fixture.whenStable();
@@ -153,6 +195,7 @@ describe('GoalForm im Bearbeiten-Modus', () => {
       module: 'Statistik (DLBDSSS01)',
       target_date: '2027-01-15',
       status: 'offen',
+      priority: 'mittel',
       created_at: '2026-08-04T10:00:00+00:00',
     });
     await fixture.whenStable();
@@ -173,6 +216,7 @@ describe('GoalForm im Bearbeiten-Modus', () => {
       module: 'Statistik (DLBDSSS01)',
       target_date: '2027-06-30',
       status: 'offen',
+      priority: 'mittel',
     });
     request.flush({
       id: 7,
@@ -180,6 +224,7 @@ describe('GoalForm im Bearbeiten-Modus', () => {
       module: 'Statistik (DLBDSSS01)',
       target_date: '2027-06-30',
       status: 'offen',
+      priority: 'mittel',
       created_at: '2026-08-04T10:00:00+00:00',
     });
   });

@@ -34,6 +34,7 @@ describe('GoalService', () => {
         module: 'Mathematik I (DLBDSAM01)',
         target_date: '2027-02-28',
         status: 'offen',
+        priority: null,
         created_at: '2026-08-04T10:00:00+00:00',
       },
     ]);
@@ -49,6 +50,7 @@ describe('GoalService', () => {
         module: 'Projekt Software Engineering (ISEF01)',
         target_date: '2027-02-28',
         status: 'offen',
+        priority: null,
       })
       .subscribe();
 
@@ -59,6 +61,7 @@ describe('GoalService', () => {
       module: 'Projekt Software Engineering (ISEF01)',
       target_date: '2027-02-28',
       status: 'offen',
+      priority: null,
     });
     request.flush({
       id: 2,
@@ -66,6 +69,7 @@ describe('GoalService', () => {
       module: 'Projekt Software Engineering (ISEF01)',
       target_date: '2027-02-28',
       status: 'offen',
+      priority: null,
       created_at: '2026-08-04T10:00:00+00:00',
     });
   });
@@ -82,6 +86,7 @@ describe('GoalService', () => {
       module: 'Statistik (DLBDSSS01)',
       target_date: '2027-01-15',
       status: 'offen',
+      priority: null,
       created_at: '2026-08-04T10:00:00+00:00',
     });
 
@@ -96,6 +101,7 @@ describe('GoalService', () => {
         module: 'Statistik (DLBDSSS01)',
         target_date: '2027-06-30',
         status: 'in_arbeit',
+        priority: 'hoch',
       })
       .subscribe();
 
@@ -106,6 +112,7 @@ describe('GoalService', () => {
       module: 'Statistik (DLBDSSS01)',
       target_date: '2027-06-30',
       status: 'in_arbeit',
+      priority: 'hoch',
     });
     request.flush({
       id: 7,
@@ -113,6 +120,7 @@ describe('GoalService', () => {
       module: 'Statistik (DLBDSSS01)',
       target_date: '2027-06-30',
       status: 'in_arbeit',
+      priority: 'hoch',
       created_at: '2026-08-04T10:00:00+00:00',
     });
   });

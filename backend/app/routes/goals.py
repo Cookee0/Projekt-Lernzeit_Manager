@@ -10,6 +10,7 @@ goals_bp = Blueprint("goals", __name__)
 MAX_TITLE_LENGTH = 200
 MAX_MODULE_LENGTH = 100
 GOAL_STATUSES = ("offen", "in_arbeit", "erreicht")
+GOAL_PRIORITIES = ("hoch", "mittel", "niedrig")
 
 
 def validate_goal_payload(payload: object) -> tuple[dict, dict]:
@@ -60,6 +61,18 @@ def validate_goal_payload(payload: object) -> tuple[dict, dict]:
     else:
         values["status"] = status
 
+    priority = payload.get("priority")
+    if priority is None or priority == "":
+        # Prioritaet ist optional. Fehlend, null und "" bedeuten alle: keine.
+        values["priority"] = None
+    elif priority in GOAL_PRIORITIES:
+        values["priority"] = priority
+    else:
+        erlaubte = ", ".join(GOAL_PRIORITIES)
+        errors["priority"] = (
+            f"Priorität muss leer sein oder einer der folgenden Werte: {erlaubte}."
+        )
+
     return values, errors
 
 
@@ -86,6 +99,7 @@ def create_goal():
         module=values["module"],
         target_date=values["target_date"],
         status=values["status"],
+        priority=values["priority"],
     )
     db.session.add(goal)
     db.session.commit()
@@ -117,6 +131,7 @@ def update_goal(goal_id: int):
     goal.module = values["module"]
     goal.target_date = values["target_date"]
     goal.status = values["status"]
+    goal.priority = values["priority"]
     db.session.commit()
 
     return jsonify(goal.to_dict()), 200

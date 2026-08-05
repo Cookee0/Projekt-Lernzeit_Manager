@@ -24,6 +24,7 @@
         <th scope="col">Modul/Kurs</th>
         <th scope="col">Zieldatum</th>
         <th scope="col">Status</th>
+        <th scope="col">Priorität</th>
         <th scope="col">Aktionen</th>
       </tr>
     </thead>
@@ -37,6 +38,15 @@
             <span class="status status--{{ goal.status }}">
               {{ statusLabels[goal.status] }}
             </span>
+          </td>
+          <td>
+            @if (goal.priority) {
+              <span class="priority priority--{{ goal.priority }}">
+                {{ priorityLabels[goal.priority] }}
+              </span>
+            } @else {
+              <span class="priority-none">–</span>
+            }
           </td>
           <td class="actions">
             @if (pendingDeleteId() === goal.id) {

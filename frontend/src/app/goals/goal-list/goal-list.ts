@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 
-import { GOAL_STATUS_LABELS, Goal } from '../goal.model';
+import { GOAL_PRIORITY_LABELS, GOAL_STATUS_LABELS, Goal } from '../goal.model';
 import { GoalService } from '../goal.service';
 
 @Component({
@@ -15,6 +15,7 @@ export class GoalList {
   private readonly goalService = inject(GoalService);
 
   protected readonly statusLabels = GOAL_STATUS_LABELS;
+  protected readonly priorityLabels = GOAL_PRIORITY_LABELS;
   protected readonly goals = signal<Goal[]>([]);
   protected readonly loading = signal(true);
   protected readonly error = signal<string | null>(null);

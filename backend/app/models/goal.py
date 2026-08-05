@@ -4,7 +4,7 @@ from ..extensions import db
 
 
 class Goal(db.Model):
-    """Ein Lernziel mit Titel, Modul, Zieldatum und Status (FR-1.1, FR-1.2)."""
+    """Ein Lernziel mit Titel, Modul, Zieldatum, Status und Prioritaet."""
 
     __tablename__ = "goals"
 
@@ -13,6 +13,7 @@ class Goal(db.Model):
     module = db.Column(db.String(100), nullable=False)
     target_date = db.Column(db.Date, nullable=False)
     status = db.Column(db.String(20), nullable=False, default="offen")
+    priority = db.Column(db.String(20), nullable=True)
     created_at = db.Column(
         db.DateTime(timezone=True),
         nullable=False,
@@ -27,5 +28,6 @@ class Goal(db.Model):
             "module": self.module,
             "target_date": self.target_date.isoformat(),
             "status": self.status,
+            "priority": self.priority,
             "created_at": self.created_at.isoformat(),
         }

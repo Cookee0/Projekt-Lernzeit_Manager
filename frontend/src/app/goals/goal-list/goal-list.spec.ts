@@ -30,6 +30,7 @@ describe('GoalList', () => {
         module: 'Mathematik I (DLBDSAM01)',
         target_date: '2027-01-15',
         status: 'offen',
+        priority: null,
         created_at: '2026-08-04T10:00:00+00:00',
       },
       {
@@ -38,6 +39,7 @@ describe('GoalList', () => {
         module: 'Projekt Software Engineering (ISEF01)',
         target_date: '2027-02-28',
         status: 'in_arbeit',
+        priority: null,
         created_at: '2026-08-04T10:00:00+00:00',
       },
     ]);
@@ -60,12 +62,13 @@ describe('GoalList', () => {
         module: 'Projekt Software Engineering (ISEF01)',
         target_date: '2027-02-28',
         status: 'in_arbeit',
+        priority: null,
         created_at: '2026-08-04T10:00:00+00:00',
       },
     ]);
     await fixture.whenStable();
 
-    const statusZelle = fixture.nativeElement.querySelector('tbody tr td:nth-last-child(2)');
+    const statusZelle = fixture.nativeElement.querySelector('tbody tr td:nth-last-child(3)');
     expect(statusZelle.textContent).toContain('In Arbeit');
     expect(statusZelle.textContent).not.toContain('in_arbeit');
   });
@@ -89,6 +92,7 @@ describe('GoalList', () => {
         module: 'Statistik (DLBDSSS01)',
         target_date: '2027-01-15',
         status: 'offen',
+        priority: null,
         created_at: '2026-08-04T10:00:00+00:00',
       },
     ]);
@@ -108,6 +112,7 @@ describe('GoalList', () => {
         module: 'Statistik (DLBDSSS01)',
         target_date: '2027-01-15',
         status: 'offen',
+        priority: null,
         created_at: '2026-08-04T10:00:00+00:00',
       },
     ]);
@@ -133,5 +138,36 @@ describe('GoalList', () => {
 
     expect(fixture.nativeElement.querySelectorAll('tbody tr').length).toBe(0);
     expect(fixture.nativeElement.textContent).toContain('Noch keine Lernziele vorhanden.');
+  });
+
+  it('zeigt eine gesetzte Prioritaet lesbar und eine fehlende als Strich', async () => {
+    const fixture = TestBed.createComponent(GoalList);
+
+    httpMock.expectOne('http://localhost:5000/api/goals').flush([
+      {
+        id: 1,
+        title: 'Klausur Statistik',
+        module: 'Statistik (DLBDSSS01)',
+        target_date: '2027-01-15',
+        status: 'offen',
+        priority: 'hoch',
+        created_at: '2026-08-04T10:00:00+00:00',
+      },
+      {
+        id: 2,
+        title: 'Kapitel 3 lesen',
+        module: 'Statistik (DLBDSSS01)',
+        target_date: '2027-02-28',
+        status: 'offen',
+        priority: null,
+        created_at: '2026-08-04T10:00:00+00:00',
+      },
+    ]);
+    await fixture.whenStable();
+
+    const zeilen = fixture.nativeElement.querySelectorAll('tbody tr');
+    expect(zeilen[0].querySelector('.priority').textContent).toContain('Hoch');
+    expect(zeilen[1].querySelector('.priority')).toBeNull();
+    expect(zeilen[1].querySelector('.priority-none').textContent).toContain('–');
   });
 });

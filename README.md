@@ -8,19 +8,22 @@ Team: Elias (Product Owner), Assis (Developer, Schwerpunkt Coding), Julian (Deve
 Infrastruktur/Deployment/Testing).
 Abgabeziel: **31.08.2026**.
 
-> **Status: FR-1.3 (Lernziele bearbeiten, verschieben, löschen) ist umgesetzt.** Jede Zeile der
-> Übersicht unter `/ziele` hat jetzt die Aktionen „Bearbeiten" und „Löschen". „Bearbeiten" öffnet
-> unter `/ziele/<id>/bearbeiten` dasselbe Formular wie das Anlegen, aber vorbefüllt mit den
-> bisherigen Werten; Titel, Modul, Zieldatum und Status lassen sich ändern und speichern.
-> „Verschieben" ist dabei kein eigener Vorgang, sondern schlicht eine Änderung des Zieldatums über
-> dasselbe Formular – das Ziel wandert danach an seine neue Position in der nach Zieldatum
-> sortierten Liste. „Löschen" fragt direkt in der Tabellenzeile nach („Wirklich löschen?") und
-> entfernt das Ziel erst nach Bestätigung endgültig aus der Datenbank; ein Fehlklick löscht also
-> nichts. Damit lässt sich der Status auch nachträglich auf *Erreicht* setzen, was mit FR-1.2 noch
-> offen war. Die API kennt dafür `GET`/`PUT`/`DELETE /api/goals/<id>`. Es ist keine neue Migration
-> hinzugekommen. Als Nächstes steht optional FR-1.4 an (Priorisierung, Priorität „Could"); die
-> zugehörigen ExecPlans liegen in [`docs/ExecPlans/active/`](docs/ExecPlans/active/) bzw. nach
-> Abschluss in [`docs/ExecPlans/completed/`](docs/ExecPlans/completed/).
+> **Status: FR-1.4 (Lernziele priorisieren) ist umgesetzt – Anforderungsgruppe 1 „Lernziele
+> festlegen" (FR-1.1 bis FR-1.4) ist damit vollständig.** Jedes Lernziel kann beim Anlegen unter
+> `/ziele/neu` und beim Bearbeiten unter `/ziele/<id>/bearbeiten` optional eine Priorität erhalten
+> – *Hoch*, *Mittel* oder *Niedrig*, voreingestellt ist „– keine –". Die Übersicht unter `/ziele`
+> zeigt dafür eine zusätzliche Spalte „Priorität": eine gesetzte Priorität erscheint als farbig
+> hinterlegte Markierung (Hoch rot, Mittel gelb, Niedrig grau), eine fehlende als grauer
+> Gedankenstrich. Die Liste bleibt weiterhin nach Zieldatum sortiert; nach Priorität wird bewusst
+> nicht sortiert oder gefiltert. Die API akzeptiert am Feld `priority` in `POST`/`PUT /api/goals`
+> die Werte `hoch`, `mittel`, `niedrig` sowie – gleichbedeutend mit „keine Priorität" – ein
+> fehlendes Feld, `null` oder die leere Zeichenkette `""`; jeder andere Wert liefert HTTP 400. Die
+> Tabelle `goals` hat dafür eine neue, nullable Spalte `priority` (`character varying(20)`)
+> erhalten. Nach einem `git pull` ist deshalb `flask db upgrade` in `backend/` bei aktivierter
+> venv nötig – ohne das schlägt `/api/goals` mit `column goals.priority does not exist` fehl. Als
+> Nächstes steht Anforderungsgruppe 2 (FR-2, Grobplanung von Lernzeiten) aus
+> [`docs/01_Funktionale_Anforderungen.md`](docs/01_Funktionale_Anforderungen.md) an; abgeschlossene
+> ExecPlans liegen in [`docs/ExecPlans/completed/`](docs/ExecPlans/completed/).
 
 > **Dieses README ist die verbindliche Beschreibung des Ist-Zustands.** Wer etwas ändert, das eine
 > Aussage hier falsch macht (neuer Befehl, neues Setup, neue Abhängigkeit, neues Feature),
@@ -318,9 +321,13 @@ SELECT * FROM users;
 (`backend/migrations/versions/3c4b2fb57969_modul_und_status_am_lernziel_ergaenzt.py`, FR-1.2)
 ergänzt die Pflichtfelder `module` (`character varying(100)`) und `status`
 (`character varying(20)`); bereits vorhandene Zeilen erhalten dabei automatisch die Vorgabewerte
-`Nicht zugeordnet` und `offen`. Nach jedem `git pull` unbedingt in `backend/` bei aktivierter venv
-`flask db upgrade` ausführen, sonst passen Code und lokales Schema nicht mehr zusammen. Für ein
-neues Modell:
+`Nicht zugeordnet` und `offen`. Eine dritte Migration
+(`backend/migrations/versions/92b49259af45_prioritaet_am_lernziel_ergaenzt.py`, FR-1.4) ergänzt die
+optionale (nullable) Spalte `priority` (`character varying(20)`); bereits vorhandene Zeilen
+behalten dort `NULL`, eine manuelle Nachbearbeitung war deshalb nicht nötig. Nach jedem `git pull`
+unbedingt in `backend/` bei aktivierter venv `flask db upgrade` ausführen, sonst passen Code und
+lokales Schema nicht mehr zusammen – ohne das schlägt `/api/goals` zum Beispiel mit
+`column goals.priority does not exist` fehl. Für ein neues Modell:
 
 ```powershell
 flask db migrate -m "beschreibung"   # Migration erzeugen (in backend/, venv aktiv)
