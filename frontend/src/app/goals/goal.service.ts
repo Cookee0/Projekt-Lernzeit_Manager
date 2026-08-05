@@ -24,4 +24,19 @@ export class GoalService {
   create(goal: NewGoal): Observable<Goal> {
     return this.http.post<Goal>(this.baseUrl, goal);
   }
+
+  /** Holt ein einzelnes Lernziel. Wird zum Vorbefuellen des Bearbeiten-Formulars gebraucht. */
+  get(id: number): Observable<Goal> {
+    return this.http.get<Goal>(`${this.baseUrl}/${id}`);
+  }
+
+  /** Ersetzt alle Felder eines Lernziels (FR-1.3). */
+  update(id: number, goal: NewGoal): Observable<Goal> {
+    return this.http.put<Goal>(`${this.baseUrl}/${id}`, goal);
+  }
+
+  /** Loescht ein Lernziel endgueltig (FR-1.3). */
+  remove(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`);
+  }
 }

@@ -69,4 +69,59 @@ describe('GoalService', () => {
       created_at: '2026-08-04T10:00:00+00:00',
     });
   });
+
+  it('holt ein einzelnes Lernziel per GET', () => {
+    let received: Goal | undefined;
+    service.get(7).subscribe((goal) => (received = goal));
+
+    const request = httpMock.expectOne('http://localhost:5000/api/goals/7');
+    expect(request.request.method).toBe('GET');
+    request.flush({
+      id: 7,
+      title: 'Klausur Statistik',
+      module: 'Statistik (DLBDSSS01)',
+      target_date: '2027-01-15',
+      status: 'offen',
+      created_at: '2026-08-04T10:00:00+00:00',
+    });
+
+    expect(received?.id).toBe(7);
+    expect(received?.title).toBe('Klausur Statistik');
+  });
+
+  it('aendert ein Lernziel per PUT', () => {
+    service
+      .update(7, {
+        title: 'Klausur Statistik',
+        module: 'Statistik (DLBDSSS01)',
+        target_date: '2027-06-30',
+        status: 'in_arbeit',
+      })
+      .subscribe();
+
+    const request = httpMock.expectOne('http://localhost:5000/api/goals/7');
+    expect(request.request.method).toBe('PUT');
+    expect(request.request.body).toEqual({
+      title: 'Klausur Statistik',
+      module: 'Statistik (DLBDSSS01)',
+      target_date: '2027-06-30',
+      status: 'in_arbeit',
+    });
+    request.flush({
+      id: 7,
+      title: 'Klausur Statistik',
+      module: 'Statistik (DLBDSSS01)',
+      target_date: '2027-06-30',
+      status: 'in_arbeit',
+      created_at: '2026-08-04T10:00:00+00:00',
+    });
+  });
+
+  it('loescht ein Lernziel per DELETE', () => {
+    service.remove(7).subscribe();
+
+    const request = httpMock.expectOne('http://localhost:5000/api/goals/7');
+    expect(request.request.method).toBe('DELETE');
+    request.flush(null, { status: 204, statusText: 'No Content' });
+  });
 });
