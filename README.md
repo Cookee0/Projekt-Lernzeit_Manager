@@ -365,7 +365,7 @@ git push -u origin feature/fr-4.1-timer
 ```
 
 Danach PR auf GitHub öffnen. **GitHub Actions** (`.github/workflows/ci.yml`) führt bei jedem Push
-auf `main`, `feature/**`, `fix/**`, `docs/**` sowie bei jedem PR gegen `main` zwei Jobs aus:
+auf `main`, `feature/**`, `fix/**`, `docs/**`, `FR-**` sowie bei jedem PR gegen `main` zwei Jobs aus:
 Backend (`ruff check .`, `pytest`) und Frontend (`npx ng lint`, `npx ng test --watch=false`).
 Merge erst bei grüner Pipeline.
 
