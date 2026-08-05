@@ -45,6 +45,7 @@ Abgabeziel: **31.08.2026**.
 | [`docs/02_Qualitaetsanforderungen.md`](docs/02_Qualitaetsanforderungen.md) | Nicht-funktionale Anforderungen (Usability, Security, Performance) |
 | [`docs/03_Randbedingungen.md`](docs/03_Randbedingungen.md) | Organisatorische & technische Rahmenbedingungen, Rollen, Termine |
 | [`docs/04_Tech-Stack_und_Tools.md`](docs/04_Tech-Stack_und_Tools.md) | Entschiedener Tech-Stack + offene Punkte |
+| [`docs/05_Datenmodell.md`](docs/05_Datenmodell.md) | Konzept der Datenbankstruktur für FR-1 bis FR-7 (Zielbild, noch nicht umgesetzt) |
 | [`docs/PLANS.md`](docs/PLANS.md) | Spezifikation für ExecPlans (Pflichtlektüre vor größeren Änderungen) |
 | [`docs/golden-principles.md`](docs/golden-principles.md) | Verhaltensregeln für Code-Änderungen (Mensch **und** KI) |
 | [`AGENTS.md`](AGENTS.md) | Gemeinsamer Kontext für alle KI-Tools |
