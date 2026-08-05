@@ -268,3 +268,57 @@ def test_zweimal_loeschen_liefert_beim_zweiten_mal_404(client):
 
     assert client.delete(f"/api/goals/{angelegt['id']}").status_code == 204
     assert client.delete(f"/api/goals/{angelegt['id']}").status_code == 404
+
+
+def test_ohne_angabe_hat_ein_lernziel_keine_prioritaet(client):
+    response = client.post("/api/goals", json=gueltiges_lernziel())
+
+    assert response.status_code == 201
+    assert response.get_json()["priority"] is None
+
+
+def test_angegebene_prioritaet_wird_uebernommen(client):
+    response = client.post("/api/goals", json=gueltiges_lernziel(priority="hoch"))
+
+    assert response.status_code == 201
+    assert response.get_json()["priority"] == "hoch"
+
+
+def test_alle_drei_prioritaeten_werden_akzeptiert(client):
+    for prioritaet in ("hoch", "mittel", "niedrig"):
+        response = client.post("/api/goals", json=gueltiges_lernziel(priority=prioritaet))
+        assert response.status_code == 201, f"Prioritaet {prioritaet} wurde abgelehnt"
+        assert response.get_json()["priority"] == prioritaet
+
+
+def test_leere_prioritaet_bedeutet_keine_prioritaet(client):
+    fuer_leerstring = client.post("/api/goals", json=gueltiges_lernziel(priority=""))
+    fuer_null = client.post("/api/goals", json=gueltiges_lernziel(priority=None))
+
+    assert fuer_leerstring.status_code == 201
+    assert fuer_leerstring.get_json()["priority"] is None
+    assert fuer_null.status_code == 201
+    assert fuer_null.get_json()["priority"] is None
+
+
+def test_unbekannte_prioritaet_wird_abgelehnt(client):
+    response = client.post("/api/goals", json=gueltiges_lernziel(priority="dringend"))
+
+    assert response.status_code == 400
+    assert "priority" in response.get_json()["errors"]
+
+
+def test_prioritaet_laesst_sich_setzen_aendern_und_wieder_entfernen(client):
+    angelegt = _angelegtes_lernziel(client, priority="niedrig")
+    pfad = f"/api/goals/{angelegt['id']}"
+
+    assert angelegt["priority"] == "niedrig"
+
+    erhoeht = client.put(pfad, json=gueltiges_lernziel(priority="hoch"))
+    assert erhoeht.status_code == 200
+    assert erhoeht.get_json()["priority"] == "hoch"
+
+    entfernt = client.put(pfad, json=gueltiges_lernziel(priority=""))
+    assert entfernt.status_code == 200
+    assert entfernt.get_json()["priority"] is None
+    assert client.get(pfad).get_json()["priority"] is None
