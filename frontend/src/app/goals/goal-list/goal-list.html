@@ -3,6 +3,10 @@
   <a class="primary-link" routerLink="/ziele/neu">Neues Lernziel</a>
 </div>
 
+@if (deleteError()) {
+  <p class="error">{{ deleteError() }}</p>
+}
+
 @if (loading()) {
   <p>Lade …</p>
 } @else if (error()) {
@@ -20,6 +24,7 @@
         <th scope="col">Modul/Kurs</th>
         <th scope="col">Zieldatum</th>
         <th scope="col">Status</th>
+        <th scope="col">Aktionen</th>
       </tr>
     </thead>
     <tbody>
@@ -32,6 +37,18 @@
             <span class="status status--{{ goal.status }}">
               {{ statusLabels[goal.status] }}
             </span>
+          </td>
+          <td class="actions">
+            @if (pendingDeleteId() === goal.id) {
+              <span>Wirklich löschen?</span>
+              <button type="button" class="danger" (click)="confirmDelete(goal.id)">
+                Ja, löschen
+              </button>
+              <button type="button" (click)="cancelDelete()">Abbrechen</button>
+            } @else {
+              <a [routerLink]="['/ziele', goal.id, 'bearbeiten']">Bearbeiten</a>
+              <button type="button" (click)="askDelete(goal.id)">Löschen</button>
+            }
           </td>
         </tr>
       }
