@@ -1,5 +1,3 @@
-from datetime import datetime, timezone
-
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from ..extensions import db
@@ -12,8 +10,6 @@ class User(db.Model):
     email = db.Column(db.String(255), unique=True, nullable=False)
     name = db.Column(db.String(255), nullable=False)
     password_hash = db.Column(db.String(255), nullable=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-
     goals = db.relationship("Goal", back_populates="user", cascade="all, delete-orphan")
     plan_slots = db.relationship("PlanSlot", back_populates="user", cascade="all, delete-orphan")
     study_sessions = db.relationship(
