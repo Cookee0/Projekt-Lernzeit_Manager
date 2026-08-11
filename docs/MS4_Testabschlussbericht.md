@@ -213,7 +213,7 @@ der App-Komponente laufen daher auch 17 Tests aus der FR-1-Entwicklungsphase mit
 
 ---
 
-## 7. Abdeckung der Must-Anforderungen
+## 7. Abdeckung der umgesetzten Anforderungen
 
 | Anforderung | Beschreibung | Abgedeckt durch |
 |---|---|---|
@@ -230,17 +230,20 @@ der App-Komponente laufen daher auch 17 Tests aus der FR-1-Entwicklungsphase mit
 | FR-6.2 | Fortschrittsbalken pro Ziel | MS-12 |
 | FR-7.1 | Inaktivitäts-Erinnerung | MS-07 |
 
-**Alle Must-Anforderungen (FR-x.1 mit Priorität M) sind vollständig implementiert und getestet.**
+**Hinweis zur Tabelle:** FR-1.3 und FR-4.3 haben laut Anforderungsdokument Priorität "Should" und wurden ebenfalls implementiert; sie sind hier aufgeführt, weil sie vollständig getestet sind. FR-3.2 (Must, Zwischenziele) ist als eigenständige Entität nicht implementiert — das Notiz-Feld von PlanSlot deckt den Anwendungsfall ab (siehe Abschnitt 8).
+
+**Alle Must-Anforderungen mit Ausnahme von FR-3.2 sind vollständig implementiert und getestet.**
 
 ---
 
-## 8. Nicht implementierte Anforderungen (Should/Could)
+## 8. Nicht implementierte Anforderungen
 
-Die folgenden Anforderungen wurden bewusst nicht umgesetzt. Sie hatten Priorität "Should"
-oder "Could" und wurden zugunsten des MS4-Zeitbudgets zurückgestellt.
+Die folgenden Anforderungen wurden nicht umgesetzt und wurden zugunsten des MS4-Zeitbudgets
+zurückgestellt oder durch eine Behelfslösung abgedeckt.
 
 | Anforderung | Priorität | Begründung |
 |---|---|---|
+| FR-3.2 Zwischenziele pro Monat | Must | Kein eigenständiges Modell; das Notiz-Feld eines PlanSlots kann als Zwischenziel genutzt werden |
 | FR-2.2 Automatische Wochenplanung | Should | Nicht im MS4-Scope |
 | FR-4.4 Manuelle Nacherfassung | Could | Nicht im MS4-Scope |
 | FR-5.2 Notizen zu erreichten Zielen | Should | Nicht im MS4-Scope |
