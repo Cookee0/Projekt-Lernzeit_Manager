@@ -149,7 +149,7 @@ Im Railway-Dashboard unter dem Projekt → **Variables**:
     DATABASE_URL    → Wird automatisch gesetzt, wenn das PostgreSQL-Add-on hinzugefügt wird
     JWT_SECRET_KEY  → Langen, zufälligen String eingeben (z. B. mit `openssl rand -hex 32` erzeugen)
     FLASK_ENV       → production
-    CORS_ORIGINS    → https://<dein-railway-app-name>.up.railway.app
+    CORS_ORIGINS    → https://projekt-lernzeitmanager-production.up.railway.app
 
 ---
 
@@ -207,7 +207,7 @@ ausschließlich fiktive Daten ohne Bezug zu realen Personen.
 
 | Feld | Wert |
 |---|---|
-| URL | https://[RAILWAY-URL-HIER-EINTRAGEN].up.railway.app |
+| URL | https://projekt-lernzeitmanager-production.up.railway.app |
 | E-Mail | tutor@test.lernzeit.de |
 | Passwort | Tutor2026! |
 | Name | Tutor Testaccount |
