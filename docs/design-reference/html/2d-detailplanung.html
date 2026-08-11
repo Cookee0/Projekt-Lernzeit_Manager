@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lernzeit-Manager – Detailplanung Monat</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&family=Manrope:wght@400;500;600;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#fff}</style>
+</head>
+<body>
+
+  <div style="min-height:900px;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#211f1c">
+
+    <div style="background:oklch(0.30 0.045 200);color:#fff;padding:0 30px;display:flex;align-items:center;gap:30px;height:60px">
+      <div style="display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.01em"><span style="width:9px;height:18px;background:oklch(0.68 0.13 45)"></span>Lernzeit-Manager</div>
+      <div style="display:flex;gap:4px;margin-left:12px">
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Übersicht</div>
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Lernziele</div>
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Grobplanung</div>
+        <div style="padding:7px 13px;border-radius:6px;background:rgba(255,255,255,.14);font-size:13px;font-weight:600">Detailplanung</div>
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Auswertung</div>
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Erinnerungen</div>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+        <div style="padding:7px 14px;border:1px solid rgba(255,255,255,.28);border-radius:6px;font-size:12.5px">Semester WS 26/27</div>
+        <div style="width:30px;height:30px;border-radius:50%;background:oklch(0.68 0.13 45);display:grid;place-items:center;font-size:11.5px;font-weight:600">LM</div>
+      </div>
+    </div>
+
+    <div style="padding:28px 30px 34px;display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,.1);padding-bottom:16px">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;letter-spacing:-0.02em">Detailplanung · August 2026</div>
+          <div style="font-size:13px;color:#6b6660;margin-top:5px">Lernzeit-Slots für den laufenden Monat · orientiert an der Grobplanung</div>
+        </div>
+        <div style="display:flex;gap:9px;align-items:center">
+          <div style="display:flex;border:1px solid rgba(0,0,0,.16);background:#fff">
+            <div style="padding:8px 12px;font-size:13px;color:#6b6660;border-right:1px solid rgba(0,0,0,.1)">‹</div>
+            <div style="padding:8px 14px;font-size:13px;font-weight:600">August</div>
+            <div style="padding:8px 12px;font-size:13px;color:#6b6660;border-left:1px solid rgba(0,0,0,.1)">›</div>
+          </div>
+          <div style="padding:9px 15px;border:1px solid rgba(0,0,0,.16);background:#fff;font-size:13px">Aus Grobplanung füllen</div>
+          <div style="padding:9px 16px;background:oklch(0.68 0.13 45);color:#fff;font-size:13px;font-weight:600">+ Slot</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 336px;gap:18px;align-items:start">
+
+        <div style="background:#fff;border:1px solid rgba(0,0,0,.09)">
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);background:#fbf9f5;border-bottom:1px solid rgba(0,0,0,.08)">
+            <div style="padding:10px 0;text-align:center;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d">Mo</div>
+            <div style="padding:10px 0;text-align:center;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d">Di</div>
+            <div style="padding:10px 0;text-align:center;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d">Mi</div>
+            <div style="padding:10px 0;text-align:center;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d">Do</div>
+            <div style="padding:10px 0;text-align:center;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d">Fr</div>
+            <div style="padding:10px 0;text-align:center;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d">Sa</div>
+            <div style="padding:10px 0;text-align:center;font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d">So</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(7,1fr);grid-auto-rows:132px">
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;background:#faf8f4"><div style="font-size:11.5px;color:#b5aea4;font-family:'IBM Plex Mono',monospace">27</div></div>
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;background:#faf8f4"><div style="font-size:11.5px;color:#b5aea4;font-family:'IBM Plex Mono',monospace">28</div></div>
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;background:#faf8f4"><div style="font-size:11.5px;color:#b5aea4;font-family:'IBM Plex Mono',monospace">29</div></div>
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;background:#faf8f4"><div style="font-size:11.5px;color:#b5aea4;font-family:'IBM Plex Mono',monospace">30</div></div>
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;background:#faf8f4"><div style="font-size:11.5px;color:#b5aea4;font-family:'IBM Plex Mono',monospace">31</div></div>
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">01</div>
+              <div style="background:oklch(0.95 0.02 200);border-left:3px solid oklch(0.45 0.09 200);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.45 0.05 200)">09:00 · 2,0 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Statistik II</div></div>
+            </div>
+            <div style="border-bottom:1px solid #f0ece5;padding:8px"><div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:#8b857d">02</div></div>
+
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">03</div>
+              <div style="background:oklch(0.95 0.02 200);border-left:3px solid oklch(0.45 0.09 200);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.45 0.05 200)">08:00 · 2,0 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Statistik II</div></div>
+              <div style="background:oklch(0.95 0.02 165);border-left:3px solid oklch(0.55 0.09 165);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.48 0.05 165)">14:00 · 1,5 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Datenbanken</div></div>
+            </div>
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">04</div>
+              <div style="background:oklch(0.96 0.03 45);border-left:3px solid oklch(0.68 0.13 45);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.50 0.07 45)">09:00 · 2,0 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Projektbericht</div></div>
+            </div>
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">05</div>
+              <div style="background:oklch(0.95 0.02 200);border-left:3px solid oklch(0.45 0.09 200);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.45 0.05 200)">16:00 · 2,0 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Statistik II</div></div>
+              <div style="background:oklch(0.96 0.03 95);border-left:3px solid oklch(0.60 0.10 95);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.48 0.06 95)">19:00 · 1,0 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Englisch B2</div></div>
+            </div>
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">06</div>
+              <div style="background:oklch(0.95 0.02 165);border-left:3px solid oklch(0.55 0.09 165);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.48 0.05 165)">08:30 · 1,5 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Datenbanken</div></div>
+            </div>
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;background:#faf8f4"><div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:#8b857d">07</div></div>
+            <div style="border-bottom:1px solid #f0ece5;padding:8px;background:#faf8f4"><div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:#8b857d">08</div></div>
+
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">09</div>
+              <div style="background:oklch(0.95 0.02 200);border-left:3px solid oklch(0.45 0.09 200);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.45 0.05 200)">08:00 · 2,0 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Statistik II</div></div>
+              <div style="background:oklch(0.96 0.03 45);border-left:3px solid oklch(0.68 0.13 45);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.50 0.07 45)">14:00 · 2,5 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Projektbericht</div></div>
+            </div>
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">10</div>
+              <div style="background:oklch(0.96 0.02 300);border-left:3px solid oklch(0.50 0.10 300);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.48 0.06 300)">10:00 · 2,0 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Wirtschaftsinf.</div></div>
+            </div>
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">11</div>
+              <div style="background:oklch(0.95 0.02 165);border-left:3px solid oklch(0.55 0.09 165);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.48 0.05 165)">09:00 · 2,0 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Datenbanken</div></div>
+              <div style="background:oklch(0.95 0.02 200);border-left:3px solid oklch(0.45 0.09 200);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.45 0.05 200)">17:00 · 1,5 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Statistik II</div></div>
+            </div>
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">12</div>
+              <div style="background:oklch(0.96 0.03 45);border-left:3px solid oklch(0.68 0.13 45);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.50 0.07 45)">09:00 · 3,0 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Projektbericht</div></div>
+            </div>
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">13</div>
+              <div style="background:oklch(0.96 0.03 95);border-left:3px solid oklch(0.60 0.10 95);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.48 0.06 95)">16:00 · 1,5 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Englisch B2</div></div>
+            </div>
+            <div style="border-right:1px solid #f0ece5;border-bottom:1px solid #f0ece5;padding:8px;background:#faf8f4"><div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:#8b857d">14</div></div>
+            <div style="border-bottom:1px solid #f0ece5;padding:8px;background:repeating-linear-gradient(45deg,#f2efe8 0 4px,#f8f6f1 4px 8px)"><div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:#8b857d">15</div><div style="font-size:10px;color:#8b857d;margin-top:5px">Feiertag</div></div>
+
+            <div style="border-right:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">16</div>
+              <div style="background:oklch(0.95 0.02 200);border-left:3px solid oklch(0.45 0.09 200);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.45 0.05 200)">08:00 · 2,0 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Statistik II</div></div>
+            </div>
+            <div style="border-right:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">17</div>
+              <div style="background:oklch(0.96 0.03 45);border-left:3px solid oklch(0.68 0.13 45);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.50 0.07 45)">10:00 · 2,5 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Projektbericht</div></div>
+            </div>
+            <div style="border-right:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">18</div>
+              <div style="background:oklch(0.95 0.02 165);border-left:3px solid oklch(0.55 0.09 165);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.48 0.05 165)">09:00 · 2,0 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Datenbanken</div></div>
+            </div>
+            <div style="border-right:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">19</div>
+              <div style="border:1px dashed #c9c2b8;padding:5px 6px;font-size:10.5px;color:#8b857d;text-align:center">Slot offen</div>
+            </div>
+            <div style="border-right:1px solid #f0ece5;padding:8px;display:flex;flex-direction:column;gap:5px">
+              <div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace">20</div>
+              <div style="background:oklch(0.96 0.02 300);border-left:3px solid oklch(0.50 0.10 300);padding:5px 6px;font-size:10.5px;line-height:1.3"><div style="font-family:'IBM Plex Mono',monospace;color:oklch(0.48 0.06 300)">10:00 · 2,0 h</div><div style="font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">Wirtschaftsinf.</div></div>
+            </div>
+            <div style="border-right:1px solid #f0ece5;padding:8px;background:#faf8f4"><div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:#8b857d">21</div></div>
+            <div style="padding:8px;background:#faf8f4"><div style="font-size:11.5px;font-weight:600;font-family:'IBM Plex Mono',monospace;color:#8b857d">22</div></div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div style="background:#fff;border:1px solid rgba(0,0,0,.09);padding:18px 20px">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;margin-bottom:4px">Abweichung zur Grobplanung</div>
+            <div style="font-size:12px;color:#6b6660;margin-bottom:15px">Geplantes vs. verbleibendes Wochenbudget</div>
+            <div style="display:flex;flex-direction:column;gap:13px">
+              <div style="display:grid;grid-template-columns:52px 1fr 86px;gap:10px;align-items:center">
+                <div style="font-size:11.5px;color:#8b857d;font-family:'IBM Plex Mono',monospace">KW 31</div>
+                <div style="height:7px;background:#eae5dd"><div style="width:96%;height:100%;background:oklch(0.45 0.09 200)"></div></div>
+                <div style="font-size:11.5px;text-align:right;font-family:'IBM Plex Mono',monospace">23,0 / 24,0</div>
+              </div>
+              <div style="display:grid;grid-template-columns:52px 1fr 86px;gap:10px;align-items:center">
+                <div style="font-size:11.5px;color:#8b857d;font-family:'IBM Plex Mono',monospace">KW 32</div>
+                <div style="height:7px;background:#eae5dd"><div style="width:73%;height:100%;background:oklch(0.45 0.09 200)"></div></div>
+                <div style="font-size:11.5px;text-align:right;font-family:'IBM Plex Mono',monospace">17,5 / 24,0</div>
+              </div>
+              <div style="display:grid;grid-template-columns:52px 1fr 86px;gap:10px;align-items:center">
+                <div style="font-size:11.5px;color:#8b857d;font-family:'IBM Plex Mono',monospace">KW 33</div>
+                <div style="height:7px;background:#eae5dd"><div style="width:44%;height:100%;background:oklch(0.68 0.13 45)"></div></div>
+                <div style="font-size:11.5px;text-align:right;font-family:'IBM Plex Mono',monospace;color:oklch(0.52 0.13 45)">10,5 / 24,0</div>
+              </div>
+              <div style="display:grid;grid-template-columns:52px 1fr 86px;gap:10px;align-items:center">
+                <div style="font-size:11.5px;color:#8b857d;font-family:'IBM Plex Mono',monospace">KW 34</div>
+                <div style="height:7px;background:#eae5dd"><div style="width:18%;height:100%;background:#c9c2b8"></div></div>
+                <div style="font-size:11.5px;text-align:right;font-family:'IBM Plex Mono',monospace;color:#8b857d">4,5 / 24,0</div>
+              </div>
+            </div>
+            <div style="margin-top:15px;padding-top:13px;border-top:1px solid #f0ece5;background:oklch(0.97 0.025 45);border:1px solid oklch(0.88 0.05 45);padding:11px 12px;font-size:12px;color:oklch(0.44 0.08 45);line-height:1.45">13,5 h fehlen in KW 33 — Vorschlag: 3 Slots à 2 h für Projektbericht einplanen.</div>
+          </div>
+
+          <div style="background:#fff;border:1px solid rgba(0,0,0,.09);padding:18px 20px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px">
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700">Zwischenziele August</div>
+              <div style="font-size:11.5px;color:#8b857d">1 / 4</div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div style="display:flex;gap:11px;align-items:center"><div style="width:17px;height:17px;background:oklch(0.45 0.09 200);color:#fff;display:grid;place-items:center;font-size:11px;flex:none">✓</div><div style="font-size:13px;color:#8b857d;text-decoration:line-through">Kapitel 1–3 Statistik</div></div>
+              <div style="display:flex;gap:11px;align-items:center"><div style="width:17px;height:17px;border:1.5px solid #c9c2b8;flex:none;box-sizing:border-box"></div><div style="font-size:13px;flex:1">Datenmodell Projekt fertig</div><div style="font-size:11px;color:#8b857d;font-family:'IBM Plex Mono',monospace">15.08.</div></div>
+              <div style="display:flex;gap:11px;align-items:center"><div style="width:17px;height:17px;border:1.5px solid #c9c2b8;flex:none;box-sizing:border-box"></div><div style="font-size:13px;flex:1">SQL-Übungsblätter 1–4</div><div style="font-size:11px;color:#8b857d;font-family:'IBM Plex Mono',monospace">22.08.</div></div>
+              <div style="display:flex;gap:11px;align-items:center"><div style="width:17px;height:17px;border:1.5px solid #c9c2b8;flex:none;box-sizing:border-box"></div><div style="font-size:13px;flex:1">Literaturliste Hausarbeit</div><div style="font-size:11px;color:#8b857d;font-family:'IBM Plex Mono',monospace">29.08.</div></div>
+            </div>
+            <div style="margin-top:15px;padding-top:13px;border-top:1px solid #f0ece5;font-size:12.5px;font-weight:600;color:oklch(0.45 0.09 200)">+ Zwischenziel</div>
+          </div>
+
+          <div style="background:#fff;border:1px solid rgba(0,0,0,.09)">
+            <div style="padding:15px 20px;border-bottom:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between">
+              <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700">Neuer Lernzeit-Slot</div>
+              <div style="font-size:16px;color:#a09a92">×</div>
+            </div>
+            <div style="padding:18px 20px;display:flex;flex-direction:column;gap:14px">
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div><div style="font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d;margin-bottom:6px">Tag</div><div style="border:1px solid rgba(0,0,0,.18);padding:9px 11px;font-size:12.5px;font-family:'IBM Plex Mono',monospace">19.08.2026</div></div>
+                <div><div style="font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d;margin-bottom:6px">Uhrzeit</div><div style="border:1px solid rgba(0,0,0,.18);padding:9px 11px;font-size:12.5px;font-family:'IBM Plex Mono',monospace">14:00</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                <div><div style="font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d;margin-bottom:6px">Dauer</div><div style="border:1px solid rgba(0,0,0,.18);padding:9px 11px;font-size:12.5px">2,0 h</div></div>
+                <div><div style="font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d;margin-bottom:6px">Modul</div><div style="border:1px solid rgba(0,0,0,.18);padding:9px 11px;font-size:12.5px;display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;background:oklch(0.68 0.13 45)"></span>Projektbericht</div></div>
+              </div>
+              <div><div style="font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d;margin-bottom:6px">Zwischenziel (optional)</div><div style="border:1px solid rgba(0,0,0,.18);padding:9px 11px;font-size:12.5px;color:#8b857d">Datenmodell Projekt fertig</div></div>
+              <div style="display:flex;gap:9px"><div style="flex:1;padding:10px 0;text-align:center;background:oklch(0.30 0.045 200);color:#fff;font-size:13px;font-weight:600">Slot anlegen</div><div style="padding:10px 15px;border:1px solid rgba(0,0,0,.18);font-size:13px">Abbrechen</div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>

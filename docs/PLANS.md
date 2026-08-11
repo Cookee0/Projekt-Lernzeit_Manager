@@ -8,6 +8,8 @@ When authoring an executable specification (ExecPlan), follow PLANS.md _to the l
 
 When implementing an executable specification (ExecPlan), do not prompt the user for "next steps"; simply proceed to the next milestone. Keep all sections up to date, add or split entries in the list at every stopping point to affirmatively state the progress made and next steps. Resolve ambiguities autonomously, and commit frequently.
 
+An agent implementing an ExecPlan must never create its own git branch or git worktree ("worktree" means a second, separate checkout of the same repository at another path, allowing two branches to be checked out and edited at once). Work directly on whatever branch and in whatever directory the user has already checked out, even across multiple milestones and multiple sessions. Only create a branch or a worktree if the user explicitly instructs it in that conversation. This rule exists because an agent previously created an isolated worktree under `.claude/worktrees/` on its own initiative to implement a plan; the user did not know it existed, could not find it (it sits under a hidden dot-folder), and the finished work was invisible in the checkout they were actually running. If isolation seems genuinely useful for a task, ask the user first and wait for a yes rather than creating one and explaining it afterward.
+
 When discussing an executable specification (ExecPlan), record decisions in a log in the spec for posterity; it should be unambiguously clear why any change to the specification was made. ExecPlans are living documents, and it should always be possible to restart from _only_ the ExecPlan and no other work.
 
 When researching a design with challenging requirements or significant unknowns, use milestones to implement proof of concepts, "toy implementations", etc., that allow validating whether the user's proposal is feasible. Read the source code of libraries by finding or acquiring them, research deeply, and include prototypes to guide a fuller implementation.
@@ -49,6 +51,20 @@ Be idempotent and safe. Write the steps so they can be run multiple times withou
 Validation is not optional. Include instructions to run tests, to start the system if applicable, and to observe it doing something useful. Describe comprehensive testing for any new features or capabilities. Include expected outputs and error messages so a novice can tell success from failure. Where possible, show how to prove that the change is effective beyond compilation (for example, through a small end-to-end scenario, a CLI invocation, or an HTTP request/response transcript). State the exact test commands appropriate to the project’s toolchain and how to interpret their results.
 
 Capture evidence. When your steps produce terminal output, short diffs, or logs, include them inside the single fenced block as indented examples. Keep them concise and focused on what proves success. If you need to include a patch, prefer file-scoped diffs or small excerpts that a reader can recreate by following your instructions rather than pasting large blobs.
+
+## Granularity: write for a junior engineer or a small model
+
+Assume your reader is either a junior engineer on their first week in this codebase, or a smaller language model with a limited ability to infer. Both fail in the same way: they can follow an instruction faithfully but cannot fill a gap you left open. Write so that no gap needs filling. If a step requires a judgement call the reader is not equipped to make, make that judgement in the plan and state the outcome.
+
+Be concrete about every file you touch. For a new file, give its full repository-relative path and the complete intended content, not a sketch. For an existing file, quote the surrounding lines as they currently exist, then show what the region must look like afterwards, so the reader can locate the spot without guessing. Never write "add the usual imports", "wire it up as needed", "handle errors appropriately", or "adjust the config accordingly" — name the import, name the call site, name the error and its status code, name the config key and its value.
+
+Break the work into steps small enough that each one is a single, mechanical action with a single, checkable result: create this file, run this command, add this test, observe this output. A step that says "implement the API" is too coarse; "create `backend/app/routes/goals.py` with the blueprint shown below, then register it in `create_app` after the health blueprint" is the right size. Prefer many small steps over few large ones, and put them in an order where nothing depends on something that has not been written yet.
+
+State the expected result after every command. Show the output a reader should see when it works, and name the most likely failure with its fix, so that a reader who sees something different knows immediately whether to continue or stop. Where a command depends on the environment being in a particular state (the database container running, the virtual environment activated, dependencies installed), say so at that step rather than assuming it was remembered from earlier.
+
+Spell out anything the reader cannot see from the code alone: version-specific behaviour of a framework, a convention this repository follows, a setting that exists for a non-obvious reason. If a change in one place will break something in another place, say which file breaks and how to fix it in the same step — a reader who discovers a red test three steps later will not connect it back.
+
+Length is not the enemy; ambiguity is. Do not shorten a plan by dropping detail a reader would need. Do keep prose tight and avoid repeating the same explanation twice in the same document.
 
 ## Milestones
 
@@ -113,11 +129,11 @@ Prefer additive code changes followed by subtractions that keep tests passing. P
 
     ## Context and Orientation
 
-    Describe the current state relevant to this task as if the reader knows nothing. Name the key files and modules by full path. Define any non-obvious term you will use. Do not refer to prior plans.
+    Describe the current state relevant to this task. Name the key files and modules by full path. Define any non-obvious term you will use. Do not refer to prior plans.
 
     ## Plan of Work
 
-    Describe, in prose, the sequence of edits and additions. For each edit, name the file and location (function, module) and what to insert or change. Keep it concrete and minimal.
+    Describe, in prose, the sequence of edits and additions. For each edit, name the file and location (function, module) and what to insert or change in concept. Keep it concrete and minimal.
 
     ## Concrete Steps
 

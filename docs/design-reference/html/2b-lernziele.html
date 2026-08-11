@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lernzeit-Manager – Lernziele</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,700&family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Sans:wght@400;500;600&family=Manrope:wght@400;500;600;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#fff}</style>
+</head>
+<body>
+
+  <div style="min-height:900px;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#211f1c">
+
+    <div style="background:oklch(0.30 0.045 200);color:#fff;padding:0 30px;display:flex;align-items:center;gap:30px;height:60px">
+      <div style="display:flex;align-items:center;gap:10px;font-family:'Space Grotesk',sans-serif;font-size:16px;font-weight:700;letter-spacing:-0.01em"><span style="width:9px;height:18px;background:oklch(0.68 0.13 45)"></span>Lernzeit-Manager</div>
+      <div style="display:flex;gap:4px;margin-left:12px">
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Übersicht</div>
+        <div style="padding:7px 13px;border-radius:6px;background:rgba(255,255,255,.14);font-size:13px;font-weight:600">Lernziele</div>
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Grobplanung</div>
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Detailplanung</div>
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Auswertung</div>
+        <div style="padding:7px 13px;border-radius:6px;font-size:13px;color:oklch(0.80 0.02 200)">Erinnerungen</div>
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:14px">
+        <div style="padding:7px 14px;border:1px solid rgba(255,255,255,.28);border-radius:6px;font-size:12.5px">Semester WS 26/27</div>
+        <div style="width:30px;height:30px;border-radius:50%;background:oklch(0.68 0.13 45);display:grid;place-items:center;font-size:11.5px;font-weight:600">LM</div>
+      </div>
+    </div>
+
+    <div style="padding:28px 30px 34px;display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;border-bottom:1px solid rgba(0,0,0,.1);padding-bottom:16px">
+        <div>
+          <div style="font-family:'Space Grotesk',sans-serif;font-size:28px;font-weight:700;letter-spacing:-0.02em">Lernziele</div>
+          <div style="font-size:13px;color:#6b6660;margin-top:5px">7 Ziele im 6-Monats-Horizont · Titel, Zieldatum, Modul, Status, Priorität</div>
+        </div>
+        <div style="display:flex;gap:9px">
+          <div style="padding:9px 15px;border:1px solid rgba(0,0,0,.16);background:#fff;font-size:13px">Historie</div>
+          <div style="padding:9px 16px;background:oklch(0.68 0.13 45);color:#fff;font-size:13px;font-weight:600">+ Neues Lernziel</div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 356px;gap:18px;align-items:start">
+
+        <div style="display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="padding:7px 13px;background:oklch(0.30 0.045 200);color:#fff;font-size:12.5px;font-weight:600">Alle 7</div>
+            <div style="padding:7px 13px;background:#fff;border:1px solid rgba(0,0,0,.14);font-size:12.5px">Offen 2</div>
+            <div style="padding:7px 13px;background:#fff;border:1px solid rgba(0,0,0,.14);font-size:12.5px">In Arbeit 3</div>
+            <div style="padding:7px 13px;background:#fff;border:1px solid rgba(0,0,0,.14);font-size:12.5px">Erreicht 2</div>
+            <div style="margin-left:auto;font-size:12.5px;color:#6b6660">Sortiert nach Zieldatum ↑</div>
+          </div>
+
+          <div style="background:#fff;border:1px solid rgba(0,0,0,.09)">
+            <div style="display:grid;grid-template-columns:24px 1fr 116px 104px 92px 116px 34px;gap:14px;padding:11px 18px;background:#fbf9f5;border-bottom:1px solid rgba(0,0,0,.08);font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d">
+              <div></div><div>Lernziel</div><div>Modul</div><div>Zieldatum</div><div>Priorität</div><div>Fortschritt</div><div></div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:24px 1fr 116px 104px 92px 116px 34px;gap:14px;padding:15px 18px;border-bottom:1px solid #f0ece5;align-items:center">
+              <div style="width:17px;height:17px;border:1.5px solid #c9c2b8;box-sizing:border-box"></div>
+              <div><div style="font-size:13.5px;font-weight:600">Klausur Datenbanken bestehen</div><div style="font-size:11.5px;color:#8b857d;margin-top:3px">In Arbeit · 55 / 125 h</div></div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:12px"><span style="width:9px;height:9px;background:oklch(0.55 0.09 165);flex:none"></span>Datenbanken</div>
+              <div style="font-size:12.5px;font-family:'IBM Plex Mono',monospace">20.11.2026</div>
+              <div><span style="padding:3px 8px;background:oklch(0.96 0.03 45);color:oklch(0.44 0.10 45);font-size:11px;font-weight:600">hoch</span></div>
+              <div><div style="height:6px;background:#eae5dd"><div style="width:44%;height:100%;background:oklch(0.55 0.09 165)"></div></div><div style="font-size:11px;color:#8b857d;margin-top:4px">44 %</div></div>
+              <div style="text-align:right;color:#a09a92;font-size:15px">⋯</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:24px 1fr 116px 104px 92px 116px 34px;gap:14px;padding:15px 18px;border-bottom:1px solid #f0ece5;align-items:center;background:oklch(0.98 0.012 200)">
+              <div style="width:17px;height:17px;border:1.5px solid #c9c2b8;box-sizing:border-box"></div>
+              <div><div style="font-size:13.5px;font-weight:600">Klausur Statistik II bestehen</div><div style="font-size:11.5px;color:#8b857d;margin-top:3px">In Arbeit · 108 / 150 h</div></div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:12px"><span style="width:9px;height:9px;background:oklch(0.45 0.09 200);flex:none"></span>Statistik II</div>
+              <div style="font-size:12.5px;font-family:'IBM Plex Mono',monospace">12.12.2026</div>
+              <div><span style="padding:3px 8px;background:oklch(0.96 0.03 45);color:oklch(0.44 0.10 45);font-size:11px;font-weight:600">hoch</span></div>
+              <div><div style="height:6px;background:#eae5dd"><div style="width:72%;height:100%;background:oklch(0.45 0.09 200)"></div></div><div style="font-size:11px;color:#8b857d;margin-top:4px">72 %</div></div>
+              <div style="text-align:right;color:#a09a92;font-size:15px">⋯</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:24px 1fr 116px 104px 92px 116px 34px;gap:14px;padding:15px 18px;border-bottom:1px solid #f0ece5;align-items:center">
+              <div style="width:17px;height:17px;border:1.5px solid #c9c2b8;box-sizing:border-box"></div>
+              <div><div style="font-size:13.5px;font-weight:600">Mündliche Prüfung Englisch B2</div><div style="font-size:11.5px;color:#8b857d;margin-top:3px">In Arbeit · 61 / 100 h</div></div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:12px"><span style="width:9px;height:9px;background:oklch(0.60 0.10 95);flex:none"></span>Englisch B2</div>
+              <div style="font-size:12.5px;font-family:'IBM Plex Mono',monospace">08.01.2027</div>
+              <div><span style="padding:3px 8px;background:#f2efe8;color:#6b6660;font-size:11px;font-weight:600">mittel</span></div>
+              <div><div style="height:6px;background:#eae5dd"><div style="width:61%;height:100%;background:oklch(0.60 0.10 95)"></div></div><div style="font-size:11px;color:#8b857d;margin-top:4px">61 %</div></div>
+              <div style="text-align:right;color:#a09a92;font-size:15px">⋯</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:24px 1fr 116px 104px 92px 116px 34px;gap:14px;padding:15px 18px;border-bottom:1px solid #f0ece5;align-items:center">
+              <div style="width:17px;height:17px;border:1.5px solid #c9c2b8;box-sizing:border-box"></div>
+              <div><div style="font-size:13.5px;font-weight:600">Projektbericht einreichen</div><div style="font-size:11.5px;color:oklch(0.52 0.13 45);margin-top:3px">In Arbeit · 45 / 250 h · im Rückstand</div></div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:12px"><span style="width:9px;height:9px;background:oklch(0.68 0.13 45);flex:none"></span>Projektbericht</div>
+              <div style="font-size:12.5px;font-family:'IBM Plex Mono',monospace">15.01.2027</div>
+              <div><span style="padding:3px 8px;background:oklch(0.96 0.03 45);color:oklch(0.44 0.10 45);font-size:11px;font-weight:600">hoch</span></div>
+              <div><div style="height:6px;background:#eae5dd"><div style="width:18%;height:100%;background:oklch(0.60 0.15 25)"></div></div><div style="font-size:11px;color:oklch(0.52 0.13 45);margin-top:4px">18 %</div></div>
+              <div style="text-align:right;color:#a09a92;font-size:15px">⋯</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:24px 1fr 116px 104px 92px 116px 34px;gap:14px;padding:15px 18px;border-bottom:1px solid #f0ece5;align-items:center">
+              <div style="width:17px;height:17px;border:1.5px solid #c9c2b8;box-sizing:border-box"></div>
+              <div><div style="font-size:13.5px;font-weight:600">Hausarbeit Wirtschaftsinformatik</div><div style="font-size:11.5px;color:#8b857d;margin-top:3px">Offen · 0 / 125 h</div></div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:12px"><span style="width:9px;height:9px;background:oklch(0.50 0.10 300);flex:none"></span>Wirtschaftsinf.</div>
+              <div style="font-size:12.5px;font-family:'IBM Plex Mono',monospace">31.01.2027</div>
+              <div><span style="padding:3px 8px;background:#f2efe8;color:#6b6660;font-size:11px;font-weight:600">niedrig</span></div>
+              <div><div style="height:6px;background:#eae5dd"><div style="width:2%;height:100%;background:oklch(0.50 0.10 300)"></div></div><div style="font-size:11px;color:#8b857d;margin-top:4px">0 %</div></div>
+              <div style="text-align:right;color:#a09a92;font-size:15px">⋯</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:24px 1fr 116px 104px 92px 116px 34px;gap:14px;padding:15px 18px;border-bottom:1px solid #f0ece5;align-items:center;opacity:.62">
+              <div style="width:17px;height:17px;background:oklch(0.55 0.12 145);color:#fff;display:grid;place-items:center;font-size:11px">✓</div>
+              <div><div style="font-size:13.5px;font-weight:600;text-decoration:line-through">Klausur Mathematik III</div><div style="font-size:11.5px;color:#8b857d;margin-top:3px">Erreicht · Note 1,7 · 18.07.2026</div></div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:12px"><span style="width:9px;height:9px;background:#b9b2a7;flex:none"></span>Mathe III</div>
+              <div style="font-size:12.5px;font-family:'IBM Plex Mono',monospace">20.07.2026</div>
+              <div><span style="padding:3px 8px;background:#f2efe8;color:#6b6660;font-size:11px;font-weight:600">hoch</span></div>
+              <div><div style="height:6px;background:#eae5dd"><div style="width:100%;height:100%;background:oklch(0.55 0.12 145)"></div></div><div style="font-size:11px;color:#8b857d;margin-top:4px">100 %</div></div>
+              <div style="text-align:right;color:#a09a92;font-size:15px">⋯</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:24px 1fr 116px 104px 92px 116px 34px;gap:14px;padding:15px 18px;align-items:center;opacity:.62">
+              <div style="width:17px;height:17px;background:oklch(0.55 0.12 145);color:#fff;display:grid;place-items:center;font-size:11px">✓</div>
+              <div><div style="font-size:13.5px;font-weight:600;text-decoration:line-through">Seminararbeit Marketing</div><div style="font-size:11.5px;color:#8b857d;margin-top:3px">Erreicht · Note 2,0 · 02.07.2026</div></div>
+              <div style="display:flex;align-items:center;gap:7px;font-size:12px"><span style="width:9px;height:9px;background:#b9b2a7;flex:none"></span>Marketing</div>
+              <div style="font-size:12.5px;font-family:'IBM Plex Mono',monospace">05.07.2026</div>
+              <div><span style="padding:3px 8px;background:#f2efe8;color:#6b6660;font-size:11px;font-weight:600">mittel</span></div>
+              <div><div style="height:6px;background:#eae5dd"><div style="width:100%;height:100%;background:oklch(0.55 0.12 145)"></div></div><div style="font-size:11px;color:#8b857d;margin-top:4px">100 %</div></div>
+              <div style="text-align:right;color:#a09a92;font-size:15px">⋯</div>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid rgba(0,0,0,.09);padding:18px 20px">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700;margin-bottom:14px">Erreichte Ziele</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px 24px">
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="width:34px;height:34px;background:oklch(0.94 0.04 145);color:oklch(0.45 0.11 145);display:grid;place-items:center;font-size:13px;font-weight:600;flex:none">1,7</div>
+                <div><div style="font-size:13px;font-weight:600">Mathematik III</div><div style="font-size:11.5px;color:#8b857d;margin-top:2px">Klausur bestanden · 18.07.2026</div><div style="font-size:11.5px;color:#6b6660;margin-top:5px">Notiz: Altklausuren waren entscheidend.</div></div>
+              </div>
+              <div style="display:flex;gap:12px;align-items:flex-start">
+                <div style="width:34px;height:34px;background:oklch(0.94 0.04 145);color:oklch(0.45 0.11 145);display:grid;place-items:center;font-size:13px;font-weight:600;flex:none">2,0</div>
+                <div><div style="font-size:13px;font-weight:600">Seminararbeit Marketing</div><div style="font-size:11.5px;color:#8b857d;margin-top:2px">Eingereicht · 02.07.2026</div><div style="font-size:11.5px;color:#6b6660;margin-top:5px">Notiz: Zeitpuffer war zu knapp.</div></div>
+              </div>
+            </div>
+            <div style="margin-top:16px;padding-top:13px;border-top:1px solid #f0ece5;font-size:12.5px;font-weight:600;color:oklch(0.45 0.09 200)">Vollständige Historie über das gesamte Studium ansehen</div>
+          </div>
+        </div>
+
+        <div style="background:#fff;border:1px solid rgba(0,0,0,.09)">
+          <div style="padding:16px 20px;border-bottom:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:space-between">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:15px;font-weight:700">Lernziel bearbeiten</div>
+            <div style="font-size:16px;color:#a09a92">×</div>
+          </div>
+          <div style="padding:20px;display:flex;flex-direction:column;gap:16px">
+            <div>
+              <div style="font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d;margin-bottom:6px">Titel</div>
+              <div style="border:1px solid rgba(0,0,0,.18);padding:10px 12px;font-size:13px">Klausur Statistik II bestehen</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div>
+                <div style="font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d;margin-bottom:6px">Modul</div>
+                <div style="border:1px solid rgba(0,0,0,.18);padding:10px 12px;font-size:13px;display:flex;align-items:center;justify-content:space-between"><span style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;background:oklch(0.45 0.09 200)"></span>Statistik II</span><span style="color:#8b857d;font-size:11px">▾</span></div>
+              </div>
+              <div>
+                <div style="font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d;margin-bottom:6px">Zieldatum</div>
+                <div style="border:1px solid rgba(0,0,0,.18);padding:10px 12px;font-size:13px;font-family:'IBM Plex Mono',monospace">12.12.2026</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d;margin-bottom:6px">Status</div>
+              <div style="display:flex;border:1px solid rgba(0,0,0,.18)">
+                <div style="flex:1;padding:9px 0;text-align:center;font-size:12.5px;color:#6b6660">offen</div>
+                <div style="flex:1;padding:9px 0;text-align:center;font-size:12.5px;font-weight:600;background:oklch(0.30 0.045 200);color:#fff">in Arbeit</div>
+                <div style="flex:1;padding:9px 0;text-align:center;font-size:12.5px;color:#6b6660">erreicht</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d;margin-bottom:6px">Priorität</div>
+              <div style="display:flex;gap:8px">
+                <div style="flex:1;padding:8px 0;text-align:center;font-size:12.5px;font-weight:600;background:oklch(0.68 0.13 45);color:#fff">hoch</div>
+                <div style="flex:1;padding:8px 0;text-align:center;font-size:12.5px;border:1px solid rgba(0,0,0,.18);color:#6b6660">mittel</div>
+                <div style="flex:1;padding:8px 0;text-align:center;font-size:12.5px;border:1px solid rgba(0,0,0,.18);color:#6b6660">niedrig</div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d;margin-bottom:6px">Workload aus ECTS</div>
+              <div style="background:#fbf9f5;border:1px solid rgba(0,0,0,.08);padding:12px;display:flex;flex-direction:column;gap:7px">
+                <div style="display:flex;justify-content:space-between;font-size:12.5px"><span>6 ECTS × 25 h</span><span style="font-family:'IBM Plex Mono',monospace">150 h</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px"><span>Verbleibend bis Zieldatum</span><span style="font-family:'IBM Plex Mono',monospace">42 h · 19 Wochen</span></div>
+                <div style="display:flex;justify-content:space-between;font-size:12.5px;color:oklch(0.45 0.09 200);font-weight:600"><span>Vorschlag Wochenbudget</span><span style="font-family:'IBM Plex Mono',monospace">2,2 h</span></div>
+              </div>
+            </div>
+            <div>
+              <div style="font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:#8b857d;margin-bottom:6px">Notiz / Ergebnis</div>
+              <div style="border:1px solid rgba(0,0,0,.18);padding:10px 12px;font-size:13px;color:#a09a92;min-height:56px">z. B. Note, Feedback, Lessons Learned …</div>
+            </div>
+            <div style="display:flex;gap:9px;padding-top:4px">
+              <div style="flex:1;padding:10px 0;text-align:center;background:oklch(0.30 0.045 200);color:#fff;font-size:13px;font-weight:600">Speichern</div>
+              <div style="padding:10px 15px;border:1px solid rgba(0,0,0,.18);font-size:13px">Verschieben</div>
+              <div style="padding:10px 15px;border:1px solid oklch(0.75 0.10 25);color:oklch(0.52 0.15 25);font-size:13px">Löschen</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</body>
+</html>
