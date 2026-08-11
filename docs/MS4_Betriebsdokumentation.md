@@ -45,10 +45,20 @@ Ein Railway-Account und Zugriff auf das GitHub-Repository sind ausreichend.
 
 ### 3.2 Lokale Datenbank starten
 
+Die `docker-compose.yml` liest ihre Werte aus einer `.env`-Datei im Projekt-Wurzelverzeichnis.
+Erstelle diese Datei einmalig mit folgendem Inhalt:
+
+    POSTGRES_USER=lernzeit
+    POSTGRES_PASSWORD=lernzeit_dev
+    POSTGRES_DB=lernzeit
+    POSTGRES_PORT=5432
+
+Danach Datenbank starten:
+
     docker compose up -d
 
-Die Datei `docker-compose.yml` startet eine PostgreSQL-16-Instanz auf Port 5432 mit
-folgenden Standardwerten:
+PostgreSQL ist jetzt auf `localhost:5432` erreichbar. Die Standard-`DATABASE_URL` im Backend
+(`postgresql://lernzeit:lernzeit_dev@localhost:5432/lernzeit`) passt zu diesen Werten.
 
 | Einstellung | Wert |
 |---|---|

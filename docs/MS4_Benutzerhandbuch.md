@@ -32,7 +32,7 @@ sicher auf einem Server gespeichert und sind nach dem Login von überall abrufba
 ### 2.1 Konto erstellen
 
 Beim ersten Besuch der App wirst du automatisch zur Anmeldeseite weitergeleitet.
-Klicke auf den Link **"Noch kein Konto? Jetzt registrieren"**, um ein neues Konto anzulegen.
+Klicke unten auf den Link **"Noch kein Konto? Registrieren"**, um ein neues Konto anzulegen.
 
 Fülle das Formular aus:
 
@@ -42,7 +42,7 @@ Fülle das Formular aus:
 | E-Mail-Adresse | Deine E-Mail-Adresse — wird zum Einloggen verwendet |
 | Passwort | Mindestens 6 Zeichen |
 
-Klicke auf **"Registrieren"**. Du wirst direkt zum Dashboard weitergeleitet.
+Klicke auf **"Konto erstellen"**. Du wirst direkt zum Dashboard weitergeleitet.
 
 ### 2.2 Einloggen
 
