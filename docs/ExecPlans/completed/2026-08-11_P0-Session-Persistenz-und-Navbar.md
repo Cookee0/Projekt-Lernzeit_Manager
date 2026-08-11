@@ -42,18 +42,17 @@ und der darin konfigurierte Railway-Deploy-Schritt gar nicht erst startet.
       dieser Plan nicht anfasst (`register.ts`, `goals.ts`, `planning.ts`, `timer.ts`) — siehe
       Surprises & Discoveries. Zusätzlich `npx ng build --configuration production` als
       Bausteinprobe erfolgreich ausgeführt.
-- [ ] Schritt 7: Anwendung lokal starten und den manuellen F5-Test durchführen. — 2026-08-11:
+- [x] Schritt 7: Anwendung lokal starten und den manuellen F5-Test durchführen. — 2026-08-11:
       Docker, Backend (`flask run --debug`) und Frontend (`ng serve`) wurden gestartet, ein
-      API-Rauchtest von `/api/auth/register` und `/api/auth/me` bestätigt den Vertrag, auf den sich
-      das Frontend verlässt (siehe Surprises & Discoveries). Der eigentliche Browser-Durchlauf
-      (F5-Test, Sichtprüfung der Navigationsleiste, Konsole auf `NG0200` prüfen) konnte in dieser
-      Sitzung **nicht** automatisiert durchgeführt werden, da kein Browser-Werkzeug zur Verfügung
-      stand. **Offen: Ein Teammitglied muss Schritt 7 gemäß Abschnitt „Manueller Nachweis im
-      Browser" von Hand nachholen, bevor dieser Plan als abgeschlossen gilt.**
+      API-Rauchtest von `/api/auth/register` und `/api/auth/me` bestätigte vorab den Vertrag, auf
+      den sich das Frontend verlässt (siehe Surprises & Discoveries). Der Browser-Durchlauf selbst
+      (Registrieren, F5 auf Dashboard und auf `/goals`, Konsole auf `NG0200` prüfen, Abmelden, F5
+      auf der Anmeldeseite) wurde anschließend von Julian von Hand nachgeholt, da kein
+      Browser-Werkzeug für Claude zur Verfügung stand. Ergebnis: alle Tests erfolgreich.
 - [x] Schritt 8: `README.md` im Abschnitt „Status" um den korrigierten Anmelde-Ablauf ergänzt. —
       2026-08-11.
-- [ ] Schritt 9: Änderungen committen und diesen Plan nach
-      `docs/ExecPlans/completed/` verschieben. Verschieben erst nach bestätigtem Schritt 7.
+- [x] Schritt 9: Änderungen committen und diesen Plan nach
+      `docs/ExecPlans/completed/` verschieben. — 2026-08-11.
 
 ## Surprises & Discoveries
 
@@ -157,8 +156,38 @@ und der darin konfigurierte Railway-Deploy-Schritt gar nicht erst startet.
 
 ## Outcomes & Retrospective
 
-(Wird bei Abschluss dieses Plans ausgefüllt: Was wurde erreicht, was blieb offen, was war die
-Lehre? Vor dem Verschieben nach `docs/ExecPlans/completed/` muss hier ein Eintrag stehen.)
+Erreicht wurde genau das im Purpose beschriebene Ziel: Eine angemeldete Person bleibt nach F5
+angemeldet, auf dem Dashboard ebenso wie auf `/goals`, und die Navigationsleiste erscheint
+unmittelbar nach dem Anmelden und nach jedem Reload. Der zuvor rote Test `app.spec.ts` ist grün,
+alle 21 Frontend-Tests bestehen (18 vorherige plus 3 neue in `auth.service.spec.ts`), die
+Produktionsbuild-Probe (`npx ng build --configuration production`) läuft fehlerfrei durch, und der
+manuelle Browser-Durchlauf gemäß Schritt 7 wurde von Julian erfolgreich nachvollzogen: kein
+`NG0200` in der Konsole, sofortiges Verschwinden der Navigationslinks nach „Abmelden", kein
+ungewolltes Zurückspringen auf das Dashboard nach Reload auf der Anmeldeseite. Die vier geplanten
+Dateien (`token-storage.ts` neu, `auth.service.ts`, `auth.interceptor.ts` geändert,
+`auth.service.spec.ts` neu) plus README wurden wie im Plan vorgesehen committet, ohne dass die
+tatsächliche Umsetzung vom vorab geschriebenen Plan abweichen musste.
+
+Offen blieb die Akzeptanzbedingung „`npx ng lint` meldet `All files pass linting.`": Sie war bereits
+vor diesem Plan auf `main` nicht erfüllt (17 Fehler in vier unveränderten Dateien) und wird durch
+diesen Plan weder verursacht noch behoben, siehe Surprises & Discoveries. Wer das beheben will,
+sollte einen eigenen, kleinen Plan dafür schreiben, weil es keinen inhaltlichen Bezug zur
+Session-Persistenz hat.
+
+Die Lehre für künftige Pläne dieser Art: Der als sicher angenommene Rückschluss „irgendein
+abgelehnter Token liefert 401" hielt nur teilweise; Flask-JWT-Extended liefert für einen
+strukturell ungültigen Token (falsche Signatur, kaputtes Format) standardmäßig 422 statt 401. Ein
+Plan, der Backend-Fehlercodes als Entscheidungsgrundlage im Frontend nutzt, sollte diese Codes vor
+der Umsetzung tatsächlich mit `curl` gegen den laufenden Server prüfen statt sie nur aus der
+Dokumentation der Bibliothek anzunehmen — genau das hat dieser Plan in der Umsetzung nachgeholt und
+dabei die Lücke gefunden, die ein Folge-Plan schließen sollte (siehe Empfehlung in Surprises &
+Discoveries).
+
+Zweite Lehre: Wenn kein Browser-Werkzeug zur Verfügung steht, sollte der automatisierte Teil (Tests,
+Build, API-Rauchtest per `curl`) den manuellen Durchlauf so weit wie möglich vorwegnehmen und der
+verbleibende Sichtprüfungs-Schritt klar als offen markiert werden, statt den Plan stillschweigend
+als fertig zu melden. Das hat sich hier bewährt: Julian musste nur noch den kurzen, klar
+beschriebenen Rest nachvollziehen.
 
 ## Context and Orientation
 
