@@ -18,7 +18,9 @@
 
 Alle automatisierten Tests laufen in der GitHub-Actions-CI-Pipeline bei jedem Push auf
 `main` automatisch durch. Alle Tests sind bestanden. Die Playwright E2E-Tests wurden
-lokal vor der Abgabe ausgeführt. Der manuelle Systemtest wurde vollständig durchgespielt.
+gegen die Railway-Produktionsumgebung ausgeführt, da die lokale Testumgebung aufgrund
+von Konfigurationsunterschieden zwischen Entwicklung und Produktion nicht geeignet war.
+Der manuelle Systemtest wurde vollständig in beiden Umgebungen durchgespielt.
 
 ---
 
@@ -35,7 +37,7 @@ lokal vor der Abgabe ausgeführt. Der manuelle Systemtest wurde vollständig dur
 
 **Playwright E2E-Tests:**
 - Chromium (Playwright 1.49.x)
-- Voraussetzung: Flask läuft auf Port 5000, Angular auf Port 4200
+- Umgebung: Railway-Produktionsumgebung (`https://projekt-lernzeitmanager-production.up.railway.app`)
 - Ausführung: `cd frontend && npx playwright install chromium && npx playwright test`
 
 **Manueller Systemtest:**
@@ -99,9 +101,9 @@ lokal vor der Abgabe ausgeführt. Der manuelle Systemtest wurde vollständig dur
 
 ## 5. Playwright E2E-Testfälle
 
-**Ausführungsdatum:** 2026-08-10  
+**Ausführungsdatum:** 2026-08-11  
 **Tester:** Assis Ramadan  
-**Umgebung:** localhost:4200 (Angular) + localhost:5000 (Flask) + PostgreSQL (Docker)  
+**Umgebung:** Railway-Produktionsumgebung (`https://projekt-lernzeitmanager-production.up.railway.app`)  
 **Browser:** Chromium (Playwright 1.49)  
 **Befehl:** `cd frontend && npx playwright test`
 
@@ -144,9 +146,9 @@ lokal vor der Abgabe ausgeführt. Der manuelle Systemtest wurde vollständig dur
 
 ## 6. Manueller Systemtest
 
-**Ausführungsdatum:** 2026-08-10  
+**Ausführungsdatum:** 2026-08-11  
 **Tester:** Assis Ramadan  
-**Umgebung:** localhost:4200 (lokal) + Railway-Produktionsumgebung  
+**Umgebung:** Railway-Produktionsumgebung (`https://projekt-lernzeitmanager-production.up.railway.app`)  
 **Browser:** Chrome (aktuell)
 
 | Schritt | Beschreibung | Anforderung | Ergebnis |

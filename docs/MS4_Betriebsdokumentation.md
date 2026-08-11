@@ -220,9 +220,9 @@ ausschließlich fiktive Daten ohne Bezug zu realen Personen.
 | Passwort | Demo2026! |
 | Name | Demo Account |
 
-> **Hinweis:** Diese Accounts müssen nach dem Railway-Deployment über die Registrierungsseite
-> der App angelegt werden. Danach können im primären Account Beispiel-Lernziele, Planungen und
-> Sessions manuell erstellt werden, damit der Tutor die Funktionen direkt sehen kann.
+> **Hinweis:** Beide Accounts sind eingerichtet. Im primären Account (tutor@test.lernzeit.de)
+> sind Beispiel-Lernziele, Planungseinträge und Lernsessions vorhanden, damit der Tutor alle
+> Funktionen direkt im Browser ausprobieren kann.
 
 > **Datenschutz:** Die Passwörter werden serverseitig gehasht gespeichert. Im Repository
 > sind sie in diesem Dokument als Plaintext nur für das Tutor-Review aufgeführt, da es sich

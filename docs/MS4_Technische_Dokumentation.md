@@ -93,9 +93,8 @@ automatisch mitgelöscht (Cascade Delete).
 |---|---|---|
 | id | INTEGER PK | Primärschlüssel |
 | email | VARCHAR(255) UNIQUE | E-Mail-Adresse (Login) |
-| name | VARCHAR(100) | Anzeigename |
-| password_hash | VARCHAR(256) | bcrypt-Hash des Passworts |
-| created_at | DATETIME | Zeitpunkt der Registrierung |
+| name | VARCHAR(255) | Anzeigename |
+| password_hash | VARCHAR(255) | bcrypt-Hash des Passworts |
 
 **goals**
 
@@ -103,10 +102,10 @@ automatisch mitgelöscht (Cascade Delete).
 |---|---|---|
 | id | INTEGER PK | Primärschlüssel |
 | user_id | INTEGER FK→users | Besitzer |
-| title | VARCHAR(200) | Titel des Lernziels |
-| module_name | VARCHAR(100) | Modulkürzel oder -name |
+| title | VARCHAR(255) | Titel des Lernziels |
+| module_name | VARCHAR(255) | Modulkürzel oder -name |
 | ects | INTEGER | ECTS-Punkte (1–30) |
-| status | VARCHAR(20) | open / in_progress / achieved |
+| status | VARCHAR(50) | open / in_progress / achieved |
 | target_date | DATE | Angestrebter Abschlusstermin |
 | created_at | DATETIME | Anlage-Zeitpunkt |
 
@@ -201,7 +200,7 @@ Fehler: 400 (Pflichtfelder fehlen)
 
 ---
 
-**PATCH /api/goals/<id>** — Ziel aktualisieren (Status, Titel, usw.)
+**PUT /api/goals/<id>** — Ziel aktualisieren (Status, Titel, usw.)
 
 Request: `{ "status": "in_progress" }` (nur zu ändernde Felder)  
 Response (200): Das aktualisierte Goal-Objekt  
@@ -374,11 +373,11 @@ Railway ist eine Plattform-as-a-Service, die Docker-Container in der Cloud betre
 **Build-Prozess (Nixpacks):**
 
 1. Nixpacks liest `nixpacks.toml` aus dem Repository-Root
-2. Python 3.12 und Node.js 22 werden installiert
-3. `npm --prefix frontend ci` installiert Angular-Abhängigkeiten
-4. `npm --prefix frontend run build` erstellt den Angular-Produktions-Build
+2. Python 3 und Hilfspakete werden über `apt` installiert; Node.js 22 wird über das NodeSource-Setup-Skript (`curl | bash` + `apt-get install nodejs`) bereitgestellt
+3. Ein Python-Virtualenv (`/app/.venv`) wird angelegt und `pip install -r backend/requirements.txt` ausgeführt
+4. `npm --prefix frontend ci` installiert Angular-Abhängigkeiten
+5. `npm --prefix frontend run build` erstellt den Angular-Produktions-Build
    (Output: `frontend/dist/frontend/browser/`)
-5. `pip install -r backend/requirements.txt` installiert Python-Abhängigkeiten
 
 **Start-Prozess (`start.sh`):**
 

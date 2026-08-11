@@ -149,8 +149,8 @@ wie lange der Browser-Tab geschlossen war.
 | Regel | Beschreibung |
 |---|---|
 | GR-1 | Es kann immer nur eine aktive oder pausierte Session gleichzeitig existieren. Ein erneuter Start-Versuch wird mit einem Fehler abgelehnt (HTTP 409). |
-| GR-2 | Ein Lernziel kann nur gelöscht werden, solange keine aktive Session auf dieses Ziel läuft. Alle zugehörigen Sessions und Planungseinträge werden beim Löschen automatisch entfernt (Cascade Delete). |
-| GR-3 | Das Zieldatum eines Lernziels muss in der Zukunft liegen (Validierung im Frontend). |
+| GR-2 | Beim Löschen eines Lernziels werden alle zugehörigen Planungseinträge und Lernsessions automatisch mitgelöscht (Cascade Delete). Eine laufende Session blockiert das Löschen nicht. |
+| GR-3 | Das Zieldatum eines Lernziels sollte in der Zukunft liegen. Beim Anlegen schlägt das Frontend sechs Monate voraus; eine technische Erzwingung findet nicht statt. |
 | GR-4 | Passwörter werden serverseitig mit bcrypt gehasht und nie im Klartext gespeichert. |
 | GR-5 | Alle Endpunkte außer Registrierung und Login erfordern einen gültigen JWT-Token. Abgelaufene oder fehlende Token werden mit HTTP 401 abgelehnt. Token haben eine Laufzeit von 8 Stunden. |
 | GR-6 | Nutzer sehen ausschließlich ihre eigenen Daten. Zugriffe auf fremde Ressourcen werden mit HTTP 404 abgelehnt (Existenz wird nicht verraten). |
