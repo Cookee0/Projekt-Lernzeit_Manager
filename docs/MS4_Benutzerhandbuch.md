@@ -198,7 +198,9 @@ Drei Kacheln zeigen dir:
 
 Der Fortschrittsbalken im Bereich **"Dein Fortschritt im [Monat]"** zeigt, wie viel du von
 deinem Monatsziel bereits erreicht hast. Darunter steht zum Beispiel:
-> "2h 30min gelernt von 5h geplant (50%)"
+> "2h 30min gelernt von 5h geplant"
+
+Der prozentuale Anteil ist als separate Kachel **"Geschafft"** im Statistikbereich darüber sichtbar.
 
 Wenn du noch keine Lernzeiten für diesen Monat geplant hast, erscheint ein Link zur
 Planungsseite.

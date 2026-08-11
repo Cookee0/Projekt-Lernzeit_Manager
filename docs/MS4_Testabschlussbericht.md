@@ -12,15 +12,18 @@
 | Testkategorie | Gesamt | Bestanden | Fehlgeschlagen |
 |---|---|---|---|
 | Backend Unit-Tests (pytest) | 13 | 13 | 0 |
-| Frontend Unit-Tests (Vitest) | 1 | 1 | 0 |
+| Frontend Unit-Tests (Vitest) | 18 | 18 | 0 |
 | Playwright E2E-Tests | 13 | 13 | 0 |
 | Manueller Systemtest | 14 | 14 | 0 |
 
 Alle automatisierten Tests laufen in der GitHub-Actions-CI-Pipeline bei jedem Push auf
-`main` automatisch durch. Alle Tests sind bestanden. Die Playwright E2E-Tests wurden
-gegen die Railway-Produktionsumgebung ausgeführt, da die lokale Testumgebung aufgrund
-von Konfigurationsunterschieden zwischen Entwicklung und Produktion nicht geeignet war.
-Der manuelle Systemtest wurde vollständig in beiden Umgebungen durchgespielt.
+`main` automatisch durch. Alle Tests sind bestanden. Die 18 Frontend-Unit-Tests umfassen
+1 Test für die App-Hauptkomponente sowie 17 Tests aus der früheren FR-1-Entwicklungsphase
+(GoalForm, GoalList, GoalService), die weiterhin im Repository vorhanden und vollständig grün
+sind. Die Playwright E2E-Tests wurden gegen die Railway-Produktionsumgebung ausgeführt, da
+die lokale Testumgebung aufgrund von Konfigurationsunterschieden zwischen Entwicklung und
+Produktion nicht geeignet war. Der manuelle Systemtest wurde vollständig in beiden Umgebungen
+durchgespielt.
 
 ---
 
@@ -91,11 +94,49 @@ Der manuelle Systemtest wurde vollständig in beiden Umgebungen durchgespielt.
 **Tester:** CI/CD Pipeline (GitHub Actions)  
 **Befehl:** `cd frontend && ng test --watch=false`
 
+Die `tsconfig.spec.json` inkludiert `src/**/*.spec.ts` vollständig. Neben dem MS4-Test
+der App-Komponente laufen daher auch 17 Tests aus der FR-1-Entwicklungsphase mit
+(GoalForm, GoalList, GoalService aus `src/app/goals/`). Alle bestehen.
+
+### 4.1 App-Komponente (app.spec.ts)
+
 | Test-ID | Datei | Beschreibung | Erwartetes Ergebnis | Status |
 |---|---|---|---|---|
 | T-FE-01 | app.spec.ts | App-Komponente rendert ohne Fehler | Komponente wird erstellt, kein Fehler | ✅ Bestanden |
 
-**Gesamtergebnis Frontend:** 1 von 1 Tests bestanden ✅
+### 4.2 GoalForm-Komponente (goal-form.spec.ts)
+
+| Test-ID | Beschreibung | Status |
+|---|---|---|
+| T-FE-02 | Kein POST, solange Formular unvollständig | ✅ Bestanden |
+| T-FE-03 | Ausgefüllte Werte werden als POST ans Backend geschickt | ✅ Bestanden |
+| T-FE-04 | Kein Priorität-Feld → null im Request-Body | ✅ Bestanden |
+| T-FE-05 | Titel + Datum ohne Modul → nicht absendbar | ✅ Bestanden |
+| T-FE-06 | Bearbeiten-Modus: lädt Lernziel und füllt Formular vor (GET) | ✅ Bestanden |
+| T-FE-07 | Bearbeiten-Modus: speichert Änderungen per PUT | ✅ Bestanden |
+
+### 4.3 GoalList-Komponente (goal-list.spec.ts)
+
+| Test-ID | Beschreibung | Status |
+|---|---|---|
+| T-FE-08 | Geladene Lernziele erscheinen als Tabellenzeilen | ✅ Bestanden |
+| T-FE-09 | Status wird lesbar angezeigt, nicht als technischer Wert | ✅ Bestanden |
+| T-FE-10 | Leere Liste zeigt Hinweis „Noch keine Lernziele vorhanden." | ✅ Bestanden |
+| T-FE-11 | Jede Zeile verlinkt auf das Bearbeiten-Formular | ✅ Bestanden |
+| T-FE-12 | Löschen erst nach Bestätigung; Zeile verschwindet danach | ✅ Bestanden |
+| T-FE-13 | Gesetzte Priorität lesbar, fehlende als Gedankenstrich | ✅ Bestanden |
+
+### 4.4 GoalService (goal.service.spec.ts)
+
+| Test-ID | Beschreibung | Status |
+|---|---|---|
+| T-FE-14 | list() schickt GET an /api/goals | ✅ Bestanden |
+| T-FE-15 | create() schickt POST mit korrektem Body | ✅ Bestanden |
+| T-FE-16 | get(id) schickt GET an /api/goals/:id | ✅ Bestanden |
+| T-FE-17 | update(id) schickt PUT mit aktualisierten Feldern | ✅ Bestanden |
+| T-FE-18 | remove(id) schickt DELETE an /api/goals/:id | ✅ Bestanden |
+
+**Gesamtergebnis Frontend:** 18 von 18 Tests bestanden ✅
 
 ---
 

@@ -396,6 +396,6 @@ Railway Environment Variables konfiguriert — nie im Repository gespeichert.
 Bei jedem Push auf `main` oder Feature-Branches:
 
 1. Backend-Job: `ruff check` (Linting) + `pytest` (13 Tests)
-2. Frontend-Job: `ng lint` (ESLint) + `ng test` (Vitest)
+2. Frontend-Job: `ng lint` (ESLint) + `ng test` (Vitest, 18 Tests)
 
 Bei grüner CI und Merge auf `main`: automatischer Deploy auf Railway.
