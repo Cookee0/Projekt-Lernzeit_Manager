@@ -25,21 +25,35 @@ und der darin konfigurierte Railway-Deploy-Schritt gar nicht erst startet.
 
 ## Progress
 
-- [ ] Schritt 1: Umgebung starten und den Ist-Zustand mit `npx ng test --watch=false` reproduzieren
-      (erwartet: 17 von 18 Tests bestanden, `app.spec.ts` rot).
-- [ ] Schritt 2: Neue Testdatei `frontend/src/app/core/services/auth.service.spec.ts` anlegen und
-      beobachten, dass zwei der drei neuen Tests fehlschlagen (Reproduktion des Fehlers).
-- [ ] Schritt 3: Neue Datei `frontend/src/app/core/token-storage.ts` anlegen.
-- [ ] Schritt 4: `frontend/src/app/core/interceptors/auth.interceptor.ts` auf `token-storage`
-      umstellen (beseitigt den Ringschluss in der Abhängigkeitsauflösung).
-- [ ] Schritt 5: `frontend/src/app/core/services/auth.service.ts` auf Signale und
-      `token-storage` umstellen.
-- [ ] Schritt 6: `frontend/src/app/layout/navbar/navbar.ts` unverändert prüfen (die Reaktivität
-      kommt aus dem Service) und die Tests erneut ausführen (erwartet: 21 von 21 bestanden).
-- [ ] Schritt 7: Anwendung lokal starten und den manuellen F5-Test durchführen.
-- [ ] Schritt 8: `README.md` im Abschnitt „Status" um den korrigierten Anmelde-Ablauf ergänzen.
+- [x] Schritt 1: Umgebung starten und den Ist-Zustand mit `npx ng test --watch=false` reproduzieren
+      (erwartet: 17 von 18 Tests bestanden, `app.spec.ts` rot). — 2026-08-11, bestätigt: 1 failed,
+      17 passed (18).
+- [x] Schritt 2: Neue Testdatei `frontend/src/app/core/services/auth.service.spec.ts` anlegen und
+      beobachten, dass zwei der drei neuen Tests fehlschlagen (Reproduktion des Fehlers). —
+      2026-08-11, bestätigt: 3 failed (2 neue + `app.spec.ts`), 18 passed (21).
+- [x] Schritt 3: Neue Datei `frontend/src/app/core/token-storage.ts` anlegen. — 2026-08-11.
+- [x] Schritt 4: `frontend/src/app/core/interceptors/auth.interceptor.ts` auf `token-storage`
+      umstellen (beseitigt den Ringschluss in der Abhängigkeitsauflösung). — 2026-08-11.
+- [x] Schritt 5: `frontend/src/app/core/services/auth.service.ts` auf Signale und
+      `token-storage` umstellen. — 2026-08-11.
+- [x] Schritt 6: `frontend/src/app/layout/navbar/navbar.ts` unverändert geprüft (keine Änderung
+      nötig) und Tests erneut ausgeführt. — 2026-08-11, bestätigt: `Tests 21 passed (21)`,
+      `Test Files 5 passed (5)`. `npx ng lint` zeigt 17 vorbestehende Fehler in vier Dateien, die
+      dieser Plan nicht anfasst (`register.ts`, `goals.ts`, `planning.ts`, `timer.ts`) — siehe
+      Surprises & Discoveries. Zusätzlich `npx ng build --configuration production` als
+      Bausteinprobe erfolgreich ausgeführt.
+- [ ] Schritt 7: Anwendung lokal starten und den manuellen F5-Test durchführen. — 2026-08-11:
+      Docker, Backend (`flask run --debug`) und Frontend (`ng serve`) wurden gestartet, ein
+      API-Rauchtest von `/api/auth/register` und `/api/auth/me` bestätigt den Vertrag, auf den sich
+      das Frontend verlässt (siehe Surprises & Discoveries). Der eigentliche Browser-Durchlauf
+      (F5-Test, Sichtprüfung der Navigationsleiste, Konsole auf `NG0200` prüfen) konnte in dieser
+      Sitzung **nicht** automatisiert durchgeführt werden, da kein Browser-Werkzeug zur Verfügung
+      stand. **Offen: Ein Teammitglied muss Schritt 7 gemäß Abschnitt „Manueller Nachweis im
+      Browser" von Hand nachholen, bevor dieser Plan als abgeschlossen gilt.**
+- [x] Schritt 8: `README.md` im Abschnitt „Status" um den korrigierten Anmelde-Ablauf ergänzt. —
+      2026-08-11.
 - [ ] Schritt 9: Änderungen committen und diesen Plan nach
-      `docs/ExecPlans/completed/` verschieben.
+      `docs/ExecPlans/completed/` verschieben. Verschieben erst nach bestätigtem Schritt 7.
 
 ## Surprises & Discoveries
 
@@ -79,6 +93,38 @@ und der darin konfigurierte Railway-Deploy-Schritt gar nicht erst startet.
   wie das heutige `isLoggedIn()` in `frontend/src/app/layout/navbar/navbar.ts` löst keine
   Neuberechnung aus. Deshalb ist die Navigationsleiste unzuverlässig — sie erscheint nur, wenn
   zufällig aus anderem Grund neu gezeichnet wird.
+
+- Beobachtung: `npx ng lint` meldet 17 Fehler, alle in Dateien, die dieser Plan nicht ändert
+  (`frontend/src/app/features/auth/register/register.ts`,
+  `frontend/src/app/features/goals/goals.ts`, `frontend/src/app/features/planning/planning.ts`,
+  `frontend/src/app/features/timer/timer.ts`). Per `git stash` gegen den unveränderten Stand von
+  `main` (Commit `e8bfe7b`) geprüft: dieselben 17 Fehler treten dort ebenfalls auf. Die
+  Akzeptanzbedingung „`npx ng lint` meldet `All files pass linting.`" aus diesem Plan war also schon
+  vor dieser Änderung nicht erfüllt und wird durch diesen Plan weder verursacht noch behoben. Keine
+  der vier vom Plan geänderten Dateien (`token-storage.ts`, `auth.service.ts`,
+  `auth.interceptor.ts`, `auth.service.spec.ts`) taucht in der Fehlerliste auf.
+  Date/Author: 2026-08-11, Claude (im Rahmen der Umsetzung dieses Plans)
+
+- Beobachtung: Ein Rauchtest mit `curl` gegen den lokal laufenden Backend-Server
+  (`POST /api/auth/register`, danach `GET /api/auth/me`) zeigt, dass die im Decision Log
+  behauptete Aussage „Ein abgelaufener oder gefälschter Token liefert vom Backend zuverlässig 401"
+  für den Fall eines fehlenden Tokens zutrifft (401, `{"msg": "Missing Authorization Header"}`),
+  für einen strukturell ungültigen oder mit falscher Signatur versehenen Token aber nicht: der
+  Server (Flask-JWT-Extended in Standardkonfiguration, keine eigenen Error-Handler in
+  `backend/app/extensions.py`) antwortet dort mit HTTP 422 (`{"msg": "Invalid crypto padding"}`
+  bzw. vergleichbar), nicht mit 401. Das bedeutet: Würde der im `localStorage` gespeicherte Token
+  von Hand verändert oder korrumpiert, würde `AuthService.loadCurrentUser` diesen Fehler aktuell
+  nicht als Anlass zum Abmelden werten (es wird nur bei Status 401/403 abgemeldet), und die
+  betroffene Person bliebe dauerhaft in einem Zustand hängen, in dem `isLoggedIn()` wahr ist, aber
+  `currentUser()` nie gesetzt wird. Ein echt abgelaufener Token (der Normalfall, für den dieser
+  Plan geschrieben wurde) wurde in dieser Sitzung nicht real getestet, da die Gültigkeit acht
+  Stunden beträgt; Flask-JWT-Extended liefert dafür standardmäßig 401. Diese Lücke betrifft nur den
+  Sonderfall eines manipulierten Tokens, nicht den in diesem Plan behandelten Reload-Fall, und wird
+  bewusst nicht im Rahmen dieses Plans behoben (Scope-Grenze: der Plan ändert laut Interfaces and
+  Dependencies nur Frontend-Dateien und behandelt ausdrücklich den Reload-Fall). Empfehlung für
+  einen künftigen, eigenen Plan: `AuthService.loadCurrentUser` auch bei Status 422 abmelden, oder
+  im Backend eigene Error-Handler für Flask-JWT-Extended registrieren, die durchgängig 401 liefern.
+  Date/Author: 2026-08-11, Claude (im Rahmen der Umsetzung dieses Plans)
 
 ## Decision Log
 

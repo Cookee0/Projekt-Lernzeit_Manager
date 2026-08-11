@@ -23,7 +23,10 @@ Abgabeziel: **31.08.2026**.
 > venv nötig – ohne das schlägt `/api/goals` mit `column goals.priority does not exist` fehl. Als
 > Nächstes steht Anforderungsgruppe 2 (FR-2, Grobplanung von Lernzeiten) aus
 > [`docs/01_Funktionale_Anforderungen.md`](docs/01_Funktionale_Anforderungen.md) an; abgeschlossene
-> ExecPlans liegen in [`docs/ExecPlans/completed/`](docs/ExecPlans/completed/).
+> ExecPlans liegen in [`docs/ExecPlans/completed/`](docs/ExecPlans/completed/). Die Anmeldung
+> übersteht außerdem einen Seiten-Reload: Der Ausweis (Token) liegt im `localStorage` des Browsers
+> unter dem Schlüssel `lm_token` und wird beim Start der Anwendung über `GET /api/auth/me` geprüft;
+> abgemeldet wird nur, wenn der Server den Ausweis ausdrücklich mit HTTP 401 oder 403 ablehnt.
 
 > **Dieses README ist die verbindliche Beschreibung des Ist-Zustands.** Wer etwas ändert, das eine
 > Aussage hier falsch macht (neuer Befehl, neues Setup, neue Abhängigkeit, neues Feature),
