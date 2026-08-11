@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python -m ruff check app/__init__.py --fix)",
+      "Bash(python -m ruff check . --fix)",
+      "Bash(python -m ruff check .)"
+    ]
+  }
+}

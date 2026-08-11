@@ -1,0 +1,14 @@
+[phases.setup]
+nixPkgs = ["python312", "nodejs_22"]
+
+[phases.install]
+cmds = [
+  "pip install -r backend/requirements.txt",
+  "npm --prefix frontend ci"
+]
+
+[phases.build]
+cmds = ["npm --prefix frontend run build"]
+
+[start]
+cmd = "sh start.sh"

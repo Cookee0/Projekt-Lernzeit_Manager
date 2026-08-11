@@ -2,11 +2,17 @@ import pytest
 from flask.testing import FlaskClient
 
 from app import create_app
+from app.extensions import db as _db
 
 
 @pytest.fixture
 def app():
-    return create_app("testing")
+    application = create_app("testing")
+    with application.app_context():
+        _db.create_all()
+        yield application
+        _db.session.remove()
+        _db.drop_all()
 
 
 @pytest.fixture
