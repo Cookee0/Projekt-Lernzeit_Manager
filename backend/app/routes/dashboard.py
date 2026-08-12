@@ -1,4 +1,4 @@
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 from flask import Blueprint, jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -13,6 +13,11 @@ from ..time_utils import iso_utc
 dashboard_bp = Blueprint("dashboard", __name__)
 
 MINUTES_PER_ECTS = 30 * 60  # 30 hours per ECTS credit, expressed in minutes
+
+# Ab wie vielen Tagen ohne abgeschlossene Lernsitzung erinnert wird (FR-7.1).
+# Ein einzelner freier Tag ist normal; drei Tage Stillstand bei laufender
+# Planung sind der Fall, den die Anforderung meint.
+INACTIVITY_DAYS = 3
 
 
 def _current_user_id() -> int:
@@ -76,7 +81,39 @@ def dashboard():
         StudySession.started_at >= today_start,
         StudySession.started_at <= today_end,
     ).count()
-    inactivity_warning = today_slots > 0 and today_sessions == 0
+
+    last_session_start = (
+        db.session.query(func.max(StudySession.started_at))
+        .filter(StudySession.user_id == uid, StudySession.status == "completed")
+        .scalar()
+    )
+    days_since_last_session = None
+    if last_session_start is not None:
+        # StudySession.started_at ist naiv-UTC (siehe _now in
+        # backend/app/routes/sessions.py). Ein Vergleich gegen date.today()
+        # (lokale Zeit) wuerde nahe Mitternacht je nach Zeitzone einen Tag
+        # daneben liegen; deshalb wird konsequent in UTC gerechnet.
+        now_utc = datetime.now(timezone.utc).replace(tzinfo=None)
+        days_since_last_session = (now_utc - last_session_start).days
+
+    reminder_text = None
+    if today_slots > 0 and today_sessions == 0:
+        reminder_text = (
+            "Du hast heute Lernzeit geplant, aber noch keine Session gestartet. Jetzt loslegen?"
+        )
+    elif planned_minutes > 0:
+        if days_since_last_session is None:
+            reminder_text = (
+                "Für diesen Monat ist Lernzeit geplant, aber du hast noch keine Session "
+                "aufgezeichnet. Starte den Timer, damit dein Fortschritt sichtbar wird."
+            )
+        elif days_since_last_session >= INACTIVITY_DAYS:
+            reminder_text = (
+                f"Seit {days_since_last_session} Tagen hast du keine Lernzeit erfasst, "
+                "obwohl für diesen Monat Lernzeit geplant ist."
+            )
+
+    inactivity_warning = reminder_text is not None
 
     active = StudySession.query.filter(
         StudySession.user_id == uid,
@@ -102,6 +139,7 @@ def dashboard():
             },
             "goals": goals_data,
             "inactivity_warning": inactivity_warning,
+            "reminder_text": reminder_text,
             "active_session": active_data,
         }
     ), 200

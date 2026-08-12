@@ -128,13 +128,21 @@ Testbericht öffnen:
 |---|---|---|---|
 | `DATABASE_URL` | PostgreSQL-Verbindungs-URL | `postgresql://user:pw@host:5432/db` | Ja (Produktion) |
 | `JWT_SECRET_KEY` | Geheimschlüssel für JWT-Token-Signierung | Zufälliger String ≥ 32 Zeichen | Ja (Produktion) |
-| `SECRET_KEY` | Flask-Secret-Key | Zufälliger String | Nein (Fallback) |
+| `SECRET_KEY` | Flask-Secret-Key, signiert die Anmelde-Ausweise | Zufälliger String | Ja (Produktion) |
 | `FLASK_ENV` | Umgebungsmodus | `production` | Ja (Produktion) |
 | `CORS_ORIGINS` | Erlaubte Ursprünge für Cross-Origin-Requests | `https://xyz.railway.app` | Nein |
 
 **Sicherheitshinweis:** Diese Variablen dürfen niemals in das Repository committet werden.
 Für die lokale Entwicklung können sie in einer `.env`-Datei im `backend/`-Ordner gespeichert
 werden — diese Datei ist in `.gitignore` eingetragen.
+
+Die Variable `SECRET_KEY` muss im Railway-Dienst mit einem eigenen, zufälligen Wert gesetzt sein;
+sie signiert die Anmelde-Ausweise. Seit Plan P3 verweigert die Anwendung in der
+Produktivumgebung den Start, wenn die Variable fehlt, statt still auf einen im Quelltext
+stehenden Vorgabewert zurückzufallen. Ein neuer Wert lässt sich mit
+`python -c "import secrets; print(secrets.token_urlsafe(48))"` erzeugen. Wird der Wert
+gewechselt, werden alle bestehenden Anmeldungen ungültig und alle Nutzenden müssen sich neu
+anmelden.
 
 Beispiel `backend/.env` (nur für lokale Entwicklung):
 

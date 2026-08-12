@@ -1,3 +1,4 @@
+import os
 from pathlib import Path
 
 from flask import Flask, jsonify, send_from_directory
@@ -52,6 +53,12 @@ def create_app(config_name: str = "development") -> Flask:
     app.register_blueprint(dashboard_bp)
 
     if config_name == "production":
+        if not os.environ.get("SECRET_KEY"):
+            raise RuntimeError(
+                "SECRET_KEY ist in der Produktivumgebung nicht gesetzt. Ohne eigenen "
+                "geheimen Schluessel liessen sich Anmelde-Ausweise faelschen. Bitte die "
+                "Variable SECRET_KEY im Railway-Dienst setzen."
+            )
         _register_spa_fallback(app)
 
     return app
