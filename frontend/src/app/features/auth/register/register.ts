@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { validateEmail, validatePassword, validateRequiredText } from '../../../core/validation';
 
 @Component({
   selector: 'app-register',
@@ -18,16 +19,30 @@ import { AuthService } from '../../../core/services/auth.service';
         <form (ngSubmit)="submit()">
           <div class="form-group">
             <label for="name">Name</label>
-            <input id="name" type="text" [(ngModel)]="name" name="name" required placeholder="Dein Name" />
+            <input id="name" type="text" [(ngModel)]="name" name="name"
+              (ngModelChange)="clearFieldError('name')"
+              [class.input-error]="fieldErrors()['name']" placeholder="Dein Name" />
+            @if (fieldErrors()['name']) {
+              <p class="field-error">{{ fieldErrors()['name'] }}</p>
+            }
           </div>
           <div class="form-group">
             <label for="email">E-Mail</label>
-            <input id="email" type="email" [(ngModel)]="email" name="email" required placeholder="name@beispiel.de" />
+            <input id="email" type="email" [(ngModel)]="email" name="email"
+              (ngModelChange)="clearFieldError('email')"
+              [class.input-error]="fieldErrors()['email']" placeholder="name@beispiel.de" />
+            @if (fieldErrors()['email']) {
+              <p class="field-error">{{ fieldErrors()['email'] }}</p>
+            }
           </div>
           <div class="form-group">
             <label for="password">Passwort</label>
-            <input id="password" type="password" [(ngModel)]="password" name="password" required
-              placeholder="Mindestens 6 Zeichen" minlength="6" />
+            <input id="password" type="password" [(ngModel)]="password" name="password"
+              (ngModelChange)="clearFieldError('password')"
+              [class.input-error]="fieldErrors()['password']" placeholder="Mindestens 6 Zeichen" />
+            @if (fieldErrors()['password']) {
+              <p class="field-error">{{ fieldErrors()['password'] }}</p>
+            }
           </div>
           <button type="submit" class="btn btn-primary" [disabled]="loading()">
             {{ loading() ? 'Registrieren…' : 'Konto erstellen' }}
@@ -47,9 +62,31 @@ export class RegisterComponent {
   password = '';
   error = signal('');
   loading = signal(false);
+  fieldErrors = signal<Record<string, string>>({});
+
+  /** Loescht die Fehlermeldung eines Feldes, sobald der Wert geaendert wird. */
+  clearFieldError(field: string): void {
+    this.fieldErrors.update((errors) => {
+      if (!errors[field]) return errors;
+      const rest = { ...errors };
+      delete rest[field];
+      return rest;
+    });
+  }
 
   async submit(): Promise<void> {
     this.error.set('');
+
+    const errors: Record<string, string> = {};
+    const nameError = validateRequiredText(this.name, 'Name');
+    const emailError = validateEmail(this.email);
+    const passwordError = validatePassword(this.password);
+    if (nameError) errors['name'] = nameError;
+    if (emailError) errors['email'] = emailError;
+    if (passwordError) errors['password'] = passwordError;
+    this.fieldErrors.set(errors);
+    if (Object.keys(errors).length > 0) return;
+
     this.loading.set(true);
     try {
       await this.auth.register(this.email, this.name, this.password);

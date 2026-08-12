@@ -24,21 +24,32 @@ Browser, der unten Schritt für Schritt beschrieben ist.
 
 ## Progress
 
-- [ ] Schritt 1: Ist-Zustand mit dem Prüfskript aus dem Abschnitt `Artifacts and Notes`
-      reproduzieren (erwartet: lauter HTTP 201, wo 400 stehen müsste).
-- [ ] Schritt 2: Neue Datei `backend/app/validation.py` anlegen.
-- [ ] Schritt 3: Fehlerbehandlung für `ValidationError` in `backend/app/__init__.py` registrieren.
-- [ ] Schritt 4: `backend/app/routes/auth.py` auf die Prüfungen umstellen.
-- [ ] Schritt 5: `backend/app/routes/goals.py` auf die Prüfungen umstellen.
-- [ ] Schritt 6: `backend/app/routes/plans.py` auf die Prüfungen umstellen.
-- [ ] Schritt 7: Neue Testdatei `backend/tests/test_validation.py` anlegen und `pytest` ausführen
-      (erwartet: 13 alte plus 35 neue Testfälle bestanden, zusammen 48).
-- [ ] Schritt 8: Neue Datei `frontend/src/app/core/validation.ts` samt Testdatei anlegen.
-- [ ] Schritt 9: Fehleranzeige in `register.ts`, `goals.ts` und `planning.ts` einbauen.
-- [ ] Schritt 10: Zwei CSS-Regeln in `frontend/src/styles.scss` ergänzen.
-- [ ] Schritt 11: Frontend-Tests und Linting ausführen, manuellen Browser-Durchgang machen.
-- [ ] Schritt 12: `README.md` um die geltenden Wertebereiche ergänzen.
-- [ ] Schritt 13: Committen und diesen Plan nach `docs/ExecPlans/completed/` verschieben.
+- [x] Schritt 1: Ist-Zustand reproduziert (2026-08-11) — direkt gegen die laufende Test-API
+      geprüft statt über das Hilfsskript, da dieser Durchlauf mit den nachfolgenden Plänen P2/P3
+      auf demselben Branch gestapelt wird; die Befunde aus `Surprises & Discoveries` deckten sich
+      mit denen des Testprotokolls.
+- [x] Schritt 2: `backend/app/validation.py` angelegt (2026-08-11).
+- [x] Schritt 3: Fehlerbehandlung für `ValidationError` in `backend/app/__init__.py` registriert
+      (2026-08-11).
+- [x] Schritt 4: `backend/app/routes/auth.py` umgestellt (2026-08-11).
+- [x] Schritt 5: `backend/app/routes/goals.py` umgestellt (2026-08-11).
+- [x] Schritt 6: `backend/app/routes/plans.py` umgestellt (2026-08-11).
+- [x] Schritt 7: `backend/tests/test_validation.py` angelegt, `pytest` ausgeführt (2026-08-11):
+      48 passed (13 alte + 35 neue), wie erwartet.
+- [x] Schritt 8: `frontend/src/app/core/validation.ts` samt `validation.spec.ts` angelegt
+      (2026-08-11).
+- [x] Schritt 9: Fehleranzeige in `register.ts`, `goals.ts` und `planning.ts` eingebaut
+      (2026-08-11).
+- [x] Schritt 10: Zwei CSS-Regeln in `frontend/src/styles.scss` ergänzt (2026-08-11).
+- [x] Schritt 11: Frontend-Tests und Linting ausgeführt (2026-08-11): `npx ng test --watch=false`
+      meldet 29 von 29 bestanden (eins mehr als die im Plan geschätzten 28 — kein Fehlschlag,
+      siehe `Surprises & Discoveries`). Statt eines manuellen Browser-Durchgangs (kein
+      Chrome-Werkzeug in dieser Sitzung verfügbar) wurden alle sechs Fälle aus Schritt 11
+      funktional per HTTP gegen das laufende Backend nachvollzogen — siehe
+      `Surprises & Discoveries`.
+- [x] Schritt 12: `README.md` um den Abschnitt „Geltende Wertebereiche der API" ergänzt
+      (2026-08-11).
+- [x] Schritt 13: Committet und Plan nach `docs/ExecPlans/completed/` verschoben (2026-08-11).
 
 ## Surprises & Discoveries
 
@@ -67,6 +78,30 @@ Browser, der unten Schritt für Schritt beschrieben ist.
 
 - Beobachtung: Die API akzeptiert `planned_time: "abc"`, obwohl die Spalte `planned_time` in
   `backend/app/models/plan_slot.py` als `String(5)` deklariert ist und ein Format „HH:MM" erwartet.
+
+- Beobachtung (2026-08-11, bei der Umsetzung): `ruff check .` meldet einen vorbestehenden Fehler
+  `E501 Line too long` in `backend/app/config.py:24`, unabhängig von diesem Plan — bereits auf
+  `main` vorhanden, durch `git diff` und einen Vergleich mit `main` bestätigt. Nicht behoben, weil
+  außerhalb des Umfangs von P1 (Grundsatz „Surgical Changes"). Ebenso meldet `npx ng lint` 17
+  vorbestehende Fehler (`no-explicit-any`, `label-has-associated-control`) in `register.ts`,
+  `goals.ts`, `planning.ts` und `timer.ts` — per `git stash`-Vergleich exakt dieselbe Anzahl vor
+  und nach den P1-Änderungen, also ebenfalls nicht durch diesen Plan verursacht und bewusst nicht
+  mitbehoben.
+
+- Beobachtung (2026-08-11): In dieser Sitzung stand kein Chrome-Browser-Werkzeug zur Verfügung
+  (`/chrome`-Befehl ohne sichtbare Werkzeug-Registrierung). Der in Schritt 11 vorgesehene manuelle
+  Browser-Durchgang wurde deshalb durch direkte HTTP-Aufrufe gegen das laufende Backend
+  (`flask run --debug`, Auto-Reload bestätigt) ersetzt; alle sechs im Plan genannten Fälle
+  (ungültige E-Mail, ECTS -5/0, Zieldatum in der Vergangenheit, Tag 45, Dauer -120, Uhrzeit „abc",
+  gültiger Eintrag) lieferten das erwartete Ergebnis. Die Anzeige der Fehlermeldung im Browser
+  (roter Rahmen, verschwindet beim Tippen) ist damit nicht visuell verifiziert, sondern nur über
+  Code-Review der Vorlagen und die bestehenden 29 grünen Frontend-Tests abgesichert. Empfehlung:
+  Team sollte vor der Abgabe einen kurzen manuellen Durchgang im Browser nachholen.
+
+- Beobachtung (2026-08-11): `npx ng test --watch=false` meldet 29 statt der im Plan geschätzten 28
+  Tests. Die Differenz liegt vermutlich an einer zusätzlichen, im Plan nicht mitgezählten
+  Testdatei aus zwischenzeitlichen Änderungen; da alle 29 Tests grün sind, ist das keine
+  Abweichung von der Akzeptanz.
 
 ## Decision Log
 
@@ -103,7 +138,23 @@ Browser, der unten Schritt für Schritt beschrieben ist.
 
 ## Outcomes & Retrospective
 
-(Wird bei Abschluss ausgefüllt.)
+Umgesetzt wie geplant, auf dem Branch `fix/P1-Eingabevalidierung` (gestapelt auf
+`fix/P0-Session-Persistenz-und-Navbar`, da P0 zum Zeitpunkt der Umsetzung noch nicht in `main`
+gemerged war). Backend: `python -m pytest -q` → 48 passed. `ruff check .` zeigt einen
+vorbestehenden, nicht mit diesem Plan zusammenhängenden Fehler in `config.py` (siehe
+`Surprises & Discoveries`); alle von P1 selbst hinzugefügten/geänderten Dateien sind sauber.
+Frontend: `npx ng test --watch=false` → 29 passed, 0 failed. `npx ng lint` zeigt 17 vorbestehende
+Fehler, unverändert gegenüber dem Stand vor diesem Plan.
+
+Die funktionale Prüfung gegen das laufende Backend (HTTP-Aufrufe für alle im Plan genannten
+Grenzfälle) bestätigte jede erwartete 400-Antwort mit der jeweils passenden deutschen Meldung
+sowie die erfolgreiche Anlage eines gültigen Planungseintrags (HTTP 201). Ein visueller
+Browser-Durchgang (roter Rahmen, Meldung unter dem Feld, Verschwinden beim Tippen) konnte in
+dieser Sitzung mangels verfügbaren Browser-Werkzeugs nicht durchgeführt werden; das Team sollte
+das vor der Abgabe kurz nachholen.
+
+Der Plan war ohne Abweichungen vom vorgegebenen Code umsetzbar — alle im Plan angegebenen
+Quelltextblöcke passten exakt auf den vorgefundenen Code.
 
 ## Context and Orientation
 

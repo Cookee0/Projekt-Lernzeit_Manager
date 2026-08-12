@@ -1,10 +1,9 @@
-from datetime import date
-
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from ..extensions import db
 from ..models.goal import VALID_STATUSES, Goal
+from ..validation import require_future_date, require_int_in_range, require_text
 
 goals_bp = Blueprint("goals", __name__)
 
@@ -24,21 +23,14 @@ def list_goals():
 @jwt_required()
 def create_goal():
     data = request.get_json(silent=True) or {}
-    title = (data.get("title") or "").strip()
-    module_name = (data.get("module_name") or "").strip()
-    target_date_str = data.get("target_date") or ""
-    ects = int(data.get("ects") or 5)
+    title = require_text(data.get("title"), "Titel", 255)
+    module_name = require_text(data.get("module_name"), "Modul/Kurs", 255)
+    target_date = require_future_date(data.get("target_date"), "Zieldatum")
+    ects = require_int_in_range(data.get("ects"), "ECTS-Punkte", 1, 30, default=5)
     status = data.get("status") or "open"
 
-    if not title or not module_name or not target_date_str:
-        return jsonify({"error": "title, module_name und target_date sind Pflichtfelder"}), 400
     if status not in VALID_STATUSES:
         return jsonify({"error": f"status muss einer von {VALID_STATUSES} sein"}), 400
-
-    try:
-        target_date = date.fromisoformat(target_date_str)
-    except ValueError:
-        return jsonify({"error": "target_date muss ISO-Format YYYY-MM-DD haben"}), 400
 
     goal = Goal(
         user_id=_current_user_id(),
@@ -67,16 +59,13 @@ def update_goal(goal_id: int):
     data = request.get_json(silent=True) or {}
 
     if "title" in data:
-        goal.title = (data["title"] or "").strip() or goal.title
+        goal.title = require_text(data["title"], "Titel", 255)
     if "module_name" in data:
-        goal.module_name = (data["module_name"] or "").strip() or goal.module_name
+        goal.module_name = require_text(data["module_name"], "Modul/Kurs", 255)
     if "target_date" in data:
-        try:
-            goal.target_date = date.fromisoformat(data["target_date"])
-        except ValueError:
-            return jsonify({"error": "target_date muss ISO-Format YYYY-MM-DD haben"}), 400
+        goal.target_date = require_future_date(data["target_date"], "Zieldatum")
     if "ects" in data:
-        goal.ects = int(data["ects"])
+        goal.ects = require_int_in_range(data["ects"], "ECTS-Punkte", 1, 30)
     if "status" in data:
         if data["status"] not in VALID_STATUSES:
             return jsonify({"error": f"status muss einer von {VALID_STATUSES} sein"}), 400

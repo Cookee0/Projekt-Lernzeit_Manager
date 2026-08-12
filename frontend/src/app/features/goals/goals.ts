@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Goal } from '../../core/models';
 import { GoalService } from '../../core/services/goal.service';
+import { validateEcts, validateRequiredText, validateTargetDate } from '../../core/validation';
 
 const MONTHS_AHEAD = 6;
 
@@ -28,21 +29,41 @@ function defaultTargetDate(): string {
           <div class="form-row">
             <div class="form-group">
               <label for="goal-title">Titel</label>
-              <input id="goal-title" [(ngModel)]="form.title" name="title" required placeholder="z.B. Programmierung 1" />
+              <input id="goal-title" [(ngModel)]="form.title" name="title"
+                (ngModelChange)="clearFieldError('title')"
+                [class.input-error]="fieldErrors()['title']" placeholder="z.B. Programmierung 1" />
+              @if (fieldErrors()['title']) {
+                <p class="field-error">{{ fieldErrors()['title'] }}</p>
+              }
             </div>
             <div class="form-group">
               <label for="goal-module">Modul / Kurs</label>
-              <input id="goal-module" [(ngModel)]="form.module_name" name="module_name" required placeholder="z.B. DLBIPPR01" />
+              <input id="goal-module" [(ngModel)]="form.module_name" name="module_name"
+                (ngModelChange)="clearFieldError('module_name')"
+                [class.input-error]="fieldErrors()['module_name']" placeholder="z.B. DLBIPPR01" />
+              @if (fieldErrors()['module_name']) {
+                <p class="field-error">{{ fieldErrors()['module_name'] }}</p>
+              }
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label for="goal-ects" title="1 ECTS = ca. 30 Stunden Lernaufwand">ECTS-Punkte des Moduls</label>
-              <input id="goal-ects" type="number" [(ngModel)]="form.ects" name="ects" min="1" max="30" />
+              <input id="goal-ects" type="number" [(ngModel)]="form.ects" name="ects" min="1" max="30"
+                (ngModelChange)="clearFieldError('ects')"
+                [class.input-error]="fieldErrors()['ects']" />
+              @if (fieldErrors()['ects']) {
+                <p class="field-error">{{ fieldErrors()['ects'] }}</p>
+              }
             </div>
             <div class="form-group">
               <label for="goal-target-date">Wann willst du fertig sein?</label>
-              <input id="goal-target-date" type="date" [(ngModel)]="form.target_date" name="target_date" required />
+              <input id="goal-target-date" type="date" [(ngModel)]="form.target_date" name="target_date"
+                (ngModelChange)="clearFieldError('target_date')"
+                [class.input-error]="fieldErrors()['target_date']" />
+              @if (fieldErrors()['target_date']) {
+                <p class="field-error">{{ fieldErrors()['target_date'] }}</p>
+              }
             </div>
           </div>
           <button type="submit" class="btn btn-primary" [disabled]="saving()">
@@ -93,6 +114,17 @@ export class GoalsComponent implements OnInit {
   loading = signal(true);
   saving = signal(false);
   createError = signal('');
+  fieldErrors = signal<Record<string, string>>({});
+
+  /** Loescht die Fehlermeldung eines Feldes, sobald der Wert geaendert wird. */
+  clearFieldError(field: string): void {
+    this.fieldErrors.update((errors) => {
+      if (!errors[field]) return errors;
+      const rest = { ...errors };
+      delete rest[field];
+      return rest;
+    });
+  }
 
   form = {
     title: '',
@@ -116,6 +148,19 @@ export class GoalsComponent implements OnInit {
 
   async create(): Promise<void> {
     this.createError.set('');
+
+    const errors: Record<string, string> = {};
+    const titleError = validateRequiredText(this.form.title, 'Titel');
+    const moduleError = validateRequiredText(this.form.module_name, 'Modul/Kurs');
+    const ectsError = validateEcts(this.form.ects);
+    const dateError = validateTargetDate(this.form.target_date);
+    if (titleError) errors['title'] = titleError;
+    if (moduleError) errors['module_name'] = moduleError;
+    if (ectsError) errors['ects'] = ectsError;
+    if (dateError) errors['target_date'] = dateError;
+    this.fieldErrors.set(errors);
+    if (Object.keys(errors).length > 0) return;
+
     this.saving.set(true);
     try {
       const goal = await this.goalService.create({ ...this.form, status: 'open' });

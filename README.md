@@ -75,6 +75,18 @@ Noten gehören zu FR-2, FR-5 und FR-6, nicht zu FR-1.
 geliefert, wenn das Redmine-Ticket steht – nicht, weil hier etwas gemerged wurde. GitHub Projects
 ist nur das ergänzende technische Board.
 
+### Geltende Wertebereiche der API
+
+Seit Plan P1 prüft das Backend jede eingehende Eingabe und lehnt Verstöße mit HTTP 400 und
+`{"error": "..."}` ab. Es gelten folgende Grenzen: Die E-Mail-Adresse muss der Form
+`name@domain.de` entsprechen; das Passwort ist 6 bis 128 Zeichen lang; Titel und Modul/Kurs eines
+Lernziels sind 1 bis 255 Zeichen lang; ECTS-Punkte liegen zwischen 1 und 30; das Zieldatum liegt
+heute oder in der Zukunft, höchstens zehn Jahre voraus; das Jahr einer Planung liegt zwischen 2020
+und 2100, der Monat zwischen 1 und 12, der Tag muss zur Länge des gewählten Monats passen; die
+Dauer liegt zwischen 5 und 480 Minuten; die Uhrzeit folgt dem Format `HH:MM`; eine Notiz ist
+höchstens 500 Zeichen lang. Das Frontend spiegelt dieselben Regeln in
+`frontend/src/app/core/validation.ts` und zeigt Verstöße direkt unter dem betroffenen Feld an.
+
 ---
 
 ## Tech-Stack
