@@ -27,21 +27,30 @@ dem Dashboard führt ein Knopf „Neues Lernziel erstellen" direkt zur Lernziel-
 
 ## Progress
 
-- [ ] Schritt 1: Zeitzonenfehler reproduzieren (Timer starten, Anzeige beobachten).
-- [ ] Schritt 2: Neue Datei `backend/app/time_utils.py` anlegen.
-- [ ] Schritt 3: `backend/app/models/study_session.py` und `backend/app/models/goal.py` auf
-      `iso_utc` umstellen.
-- [ ] Schritt 4: `backend/app/routes/dashboard.py` auf `iso_utc` umstellen.
-- [ ] Schritt 5: Neue Testdatei `backend/tests/test_time_format.py` anlegen, `pytest` ausführen.
-- [ ] Schritt 6: Filter und Anlegeformular in
-      `frontend/src/app/features/planning/planning.ts` entkoppeln.
-- [ ] Schritt 7: Testdatei `frontend/src/app/core/services/plan.service.spec.ts` anlegen.
-- [ ] Schritt 8: Knopf „Neues Lernziel erstellen" in
-      `frontend/src/app/features/dashboard/dashboard.ts` ergänzen.
-- [ ] Schritt 9: Umbruch der Liste „Zuletzt gelernt" in `frontend/src/styles.scss` korrigieren.
-- [ ] Schritt 10: Tests, Linting und manueller Browser-Durchgang.
-- [ ] Schritt 11: `README.md` um die Zeitzonen-Regel ergänzen.
-- [ ] Schritt 12: Committen und diesen Plan nach `docs/ExecPlans/completed/` verschieben.
+- [x] Schritt 1: Zeitzonenfehler funktional bestätigt (2026-08-11) — vor der Änderung lieferte
+      `started_at` keine Zeitzonen-Kennzeichnung (siehe `Surprises & Discoveries` im
+      Originalplan); ein manueller Browser-Durchgang war mangels Chrome-Werkzeug in dieser
+      Sitzung nicht möglich, siehe Anmerkung unten bei Schritt 10.
+- [x] Schritt 2: `backend/app/time_utils.py` angelegt (2026-08-11).
+- [x] Schritt 3: `backend/app/models/study_session.py` und `backend/app/models/goal.py` auf
+      `iso_utc` umgestellt (2026-08-11).
+- [x] Schritt 4: `backend/app/routes/dashboard.py` auf `iso_utc` umgestellt (2026-08-11).
+- [x] Schritt 5: `backend/tests/test_time_format.py` angelegt, `pytest` ausgeführt (2026-08-11):
+      52 passed (48 aus P1 + 4 neue), wie erwartet.
+- [x] Schritt 6: Filter und Anlegeformular in `planning.ts` entkoppelt (2026-08-11) — inklusive
+      der bereits aus P1 vorhandenen Fehleranzeige, die dabei erhalten blieb.
+- [x] Schritt 7: `frontend/src/app/core/services/plan.service.spec.ts` angelegt (2026-08-11).
+- [x] Schritt 8: Knopf „+ Neues Lernziel erstellen" in `dashboard.ts` ergänzt (2026-08-11).
+- [x] Schritt 9: Umbruch der Liste „Zuletzt gelernt" in `styles.scss` korrigiert (2026-08-11).
+- [x] Schritt 10: Tests und Linting ausgeführt (2026-08-11): Backend 52 passed, `ruff check .`
+      zeigt nur den vorbestehenden, plan-unabhängigen Fehler aus `config.py` (siehe P1). Frontend
+      `npx ng test --watch=false` → 32 von 32 bestanden (29 aus P1 + 3 neue). `npx ng lint` zeigt
+      unverändert 17 vorbestehende Fehler. Statt eines manuellen Browser-Durchgangs (kein
+      Chrome-Werkzeug in dieser Sitzung verfügbar) wurden Timer-Start, Zeitstempel-Format,
+      Planungsfilter (nur Lernziel, ohne Monat) und der fehlende `.isoformat()`-Aufruf funktional
+      per HTTP bzw. Quelltextsuche nachgewiesen — siehe `Surprises & Discoveries`.
+- [x] Schritt 11: `README.md` um die Zeitzonen-Regel ergänzt (2026-08-11).
+- [x] Schritt 12: Committet und Plan nach `docs/ExecPlans/completed/` verschoben (2026-08-11).
 
 ## Surprises & Discoveries
 
@@ -111,7 +120,32 @@ dem Dashboard führt ein Knopf „Neues Lernziel erstellen" direkt zur Lernziel-
 
 ## Outcomes & Retrospective
 
-(Wird bei Abschluss ausgefüllt.)
+Umgesetzt wie geplant, auf dem Branch `fix/P2-Zeitzonen-Filter-und-Darstellung`, gestapelt auf
+`fix/P1-Eingabevalidierung` (der wiederum auf `fix/P0-Session-Persistenz-und-Navbar` aufsetzt) —
+so bleibt die von der P1-Fehleranzeige benutzte Feldstruktur in `planning.ts` erhalten, während P2
+die Filter-/Speicherlogik daneben umbaut.
+
+Backend: `python -m pytest -q` → 52 passed (48 aus P1 + 4 neue), `ruff check .` unverändert nur
+der vorbestehende Fehler in `config.py`. Funktional bestätigt gegen das laufende Backend: ein neu
+gestarteter Timer liefert `started_at` mit angehängtem `Z` (z. B.
+`2026-08-11T22:16:34.908220Z`), ebenso `created_at` eines Lernziels und `active_session.started_at`
+im Dashboard. Eine Quelltextsuche bestätigt, dass außer `target_date.isoformat()` kein direkter
+`.isoformat()`-Aufruf mehr in `app/models/*.py` oder `app/routes/*.py` vorkommt. Der Filter
+`GET /api/plans?goal_id=<id>` (ohne `year`/`month`) lieferte wie erwartet eine Liste ohne Fehler.
+
+Frontend: `npx ng test --watch=false` → 32 passed, 0 failed (29 aus P1 + 3 neue aus
+`plan.service.spec.ts`). `npx ng lint` zeigt weiterhin genau 17 vorbestehende Fehler, keine neuen
+— die zusätzliche `<label>` für die neue Monatsauswahl im Anlegeformular folgt demselben bereits
+vorhandenen Muster fehlender `for`/`id`-Zuordnung wie die übrigen Formularfelder.
+
+Ein visueller Browser-Durchgang (Timer-Anzeige bei 00:00:00 statt 02:00:00, alle vier
+Filterkombinationen, Dashboard-Knopf, Zeilenumbruch bei langem Titel) konnte mangels
+Chrome-Werkzeugs in dieser Sitzung nicht durchgeführt werden. Empfehlung: Team sollte das vor der
+Abgabe kurz nachholen, gemeinsam mit dem in P1 offen gelassenen Durchgang.
+
+Der Plan war ohne Abweichungen vom vorgegebenen Code umsetzbar; einzige Anpassung war, die aus P1
+bereits vorhandene Fehleranzeige (`fieldErrors`, `clearFieldError`) in `planning.ts` bei den
+Logikänderungen unangetastet zu lassen, da P1 auf demselben Branch bereits vorausgegangen war.
 
 ## Context and Orientation
 

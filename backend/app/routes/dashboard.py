@@ -8,6 +8,7 @@ from ..extensions import db
 from ..models.goal import Goal
 from ..models.plan_slot import PlanSlot
 from ..models.study_session import StudySession
+from ..time_utils import iso_utc
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
@@ -87,7 +88,7 @@ def dashboard():
             "id": active.id,
             "goal_id": active.goal_id,
             "goal_title": active.goal.title,
-            "started_at": active.started_at.isoformat(),
+            "started_at": iso_utc(active.started_at),
             "status": active.status,
         }
 

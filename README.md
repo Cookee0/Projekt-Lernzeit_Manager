@@ -356,6 +356,11 @@ Für beide Befehle muss der Docker-Container laufen, sonst bricht Alembic mit
 Migrationsdateien werden **immer committet**. Nach `git pull` immer `flask db upgrade` laufen
 lassen, sonst passen Code und lokales Schema nicht mehr zusammen.
 
+**Zeitzonen:** Alle Zeitpunkte werden in der Datenbank in koordinierter Weltzeit (UTC) gespeichert
+und von der API mit angehängtem `Z` ausgeliefert (Beispiel `2026-08-11T21:08:09Z`); die Umrechnung
+in die Ortszeit übernimmt der Browser. Wer eine neue Zeitspalte ausliefert, benutzt dafür `iso_utc`
+aus `backend/app/time_utils.py` und **nicht** `datetime.isoformat()`.
+
 ---
 
 ## Git-Workflow & CI
