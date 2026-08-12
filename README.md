@@ -379,20 +379,27 @@ Merge erst bei grüner Pipeline.
 
 ## Deployment auf Railway
 
-Railway baut aus dem GitHub-Repo und hostet Backend, Frontend und PostgreSQL. Dokumentation:
-https://docs.railway.app/
+Railway baut aus dem GitHub-Repo und hostet die Anwendung als **einen einzigen Dienst** plus eine
+PostgreSQL-Datenbank – es gibt keinen separaten Frontend-Dienst. `nixpacks.toml` im Repo-Root
+beschreibt den Build: Python-venv und Backend-Abhängigkeiten installieren, das Angular-Frontend mit
+`npm --prefix frontend run build` bauen, danach per `start.sh` zuerst `flask db upgrade` und dann
+Gunicorn starten. Flask liefert die gebauten Angular-Dateien selbst aus
+(`_register_spa_fallback` in `backend/app/__init__.py`) – daher reicht ein Dienst. Der Build läuft
+über den **Nixpacks-Builder**, gepinnt in `railway.json`; der neuere Railpack-Builder ignoriert
+`nixpacks.toml` und lässt den Container ohne venv/Angular-Build starten (abgesichert am
+12.08.2026: Container-Crashloop mit `cannot open /app/.venv/bin/activate`, behoben durch
+`railway.json` mit `"builder": "NIXPACKS"`). Dokumentation: https://docs.railway.app/
 
 **Einmalige Einrichtung (macht Julian, Infrastruktur-Rolle):**
 
 1. Auf https://railway.app/ mit GitHub-Account anmelden.
-2. *New Project* → *Deploy from GitHub repo* → dieses Repo wählen.
-3. *New* → *Database* → *Add PostgreSQL*. Railway legt automatisch die Variable `DATABASE_URL` an.
-4. Für den Backend-Service unter *Variables* referenzieren:
-   `DATABASE_URL=${{Postgres.DATABASE_URL}}`, dazu `SECRET_KEY` (neuer, zufälliger Wert – **nicht**
-   der aus der lokalen `.env`) und `FLASK_ENV=production`.
-5. Frontend als zweiten Service anlegen (Root-Verzeichnis `frontend/`), Backend-URL als
-   Environment-Variable eintragen.
-6. Unter *Settings → Networking* → *Generate Domain* für die öffentliche URL.
+2. *New Project* → *Deploy from GitHub repo* → dieses Repo wählen (Root-Verzeichnis bleibt der
+   Repo-Root, **nicht** `backend/` oder `frontend/`).
+3. *New* → *Database* → *Add PostgreSQL*.
+4. Für den einen Dienst unter *Variables* setzen: `DATABASE_URL=${{Postgres.DATABASE_URL}}`,
+   `SECRET_KEY` (neuer, zufälliger Wert – **nicht** der aus der lokalen `.env`) und
+   `FLASK_ENV=production`. Optional `JWT_SECRET_KEY` und `CORS_ORIGINS`, siehe `.env.example`.
+5. Unter *Settings → Networking* → *Generate Domain* für die öffentliche URL.
 
 **Wichtig für MS4:** Die Anwendung muss vom Tutor **ohne Installation im Browser** nutzbar sein.
 Die Railway-URL plus die Liste der Testzugänge gehört in die Redmine-Abgabe. Testzugänge dürfen
