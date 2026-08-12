@@ -1,4 +1,5 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Goal } from '../../core/models';
 import { GoalService } from '../../core/services/goal.service';
@@ -26,22 +27,22 @@ function defaultTargetDate(): string {
         <form (ngSubmit)="create()" class="goal-form">
           <div class="form-row">
             <div class="form-group">
-              <label>Titel</label>
-              <input [(ngModel)]="form.title" name="title" required placeholder="z.B. Programmierung 1" />
+              <label for="goal-title">Titel</label>
+              <input id="goal-title" [(ngModel)]="form.title" name="title" required placeholder="z.B. Programmierung 1" />
             </div>
             <div class="form-group">
-              <label>Modul / Kurs</label>
-              <input [(ngModel)]="form.module_name" name="module_name" required placeholder="z.B. DLBIPPR01" />
+              <label for="goal-module">Modul / Kurs</label>
+              <input id="goal-module" [(ngModel)]="form.module_name" name="module_name" required placeholder="z.B. DLBIPPR01" />
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label title="1 ECTS = ca. 30 Stunden Lernaufwand">ECTS-Punkte des Moduls</label>
-              <input type="number" [(ngModel)]="form.ects" name="ects" min="1" max="30" />
+              <label for="goal-ects" title="1 ECTS = ca. 30 Stunden Lernaufwand">ECTS-Punkte des Moduls</label>
+              <input id="goal-ects" type="number" [(ngModel)]="form.ects" name="ects" min="1" max="30" />
             </div>
             <div class="form-group">
-              <label>Wann willst du fertig sein?</label>
-              <input type="date" [(ngModel)]="form.target_date" name="target_date" required />
+              <label for="goal-target-date">Wann willst du fertig sein?</label>
+              <input id="goal-target-date" type="date" [(ngModel)]="form.target_date" name="target_date" required />
             </div>
           </div>
           <button type="submit" class="btn btn-primary" [disabled]="saving()">
@@ -120,8 +121,9 @@ export class GoalsComponent implements OnInit {
       const goal = await this.goalService.create({ ...this.form, status: 'open' });
       this.goals.update(gs => [...gs, goal]);
       this.form = { title: '', module_name: '', ects: 5, target_date: defaultTargetDate() };
-    } catch (err: any) {
-      this.createError.set(err?.error?.error ?? 'Fehler beim Speichern.');
+    } catch (err) {
+      const msg = err instanceof HttpErrorResponse ? err.error?.error : undefined;
+      this.createError.set(msg ?? 'Fehler beim Speichern.');
     } finally {
       this.saving.set(false);
     }

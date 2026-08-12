@@ -1,4 +1,5 @@
 import { Component, signal, inject } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
@@ -53,8 +54,11 @@ export class RegisterComponent {
     try {
       await this.auth.register(this.email, this.name, this.password);
       this.router.navigate(['/']);
-    } catch (err: any) {
-      const msg = err?.error?.error ?? 'Registrierung fehlgeschlagen.';
+    } catch (err) {
+      const msg =
+        err instanceof HttpErrorResponse
+          ? (err.error?.error ?? 'Registrierung fehlgeschlagen.')
+          : 'Registrierung fehlgeschlagen.';
       this.error.set(msg);
     } finally {
       this.loading.set(false);

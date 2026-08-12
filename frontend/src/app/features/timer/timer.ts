@@ -1,4 +1,5 @@
 import { Component, OnDestroy, OnInit, signal, inject } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ActiveSession, Goal, StudySession } from '../../core/models';
 import { GoalService } from '../../core/services/goal.service';
@@ -19,8 +20,8 @@ import { SessionService } from '../../core/services/session.service';
         @if (!activeSession()) {
           <div class="timer-setup">
             <div class="form-group">
-              <label>Lernziel auswählen</label>
-              <select [(ngModel)]="selectedGoalId" name="goal">
+              <label for="timer-goal">Lernziel auswählen</label>
+              <select id="timer-goal" [(ngModel)]="selectedGoalId" name="goal">
                 <option [value]="0" disabled>Ziel wählen…</option>
                 @for (goal of goals(); track goal.id) {
                   <option [value]="goal.id">{{ goal.title }}</option>
@@ -140,8 +141,9 @@ export class TimerComponent implements OnInit, OnDestroy {
       };
       this.activeSession.set(active);
       this.startClientTimer(session.started_at);
-    } catch (err: any) {
-      this.error.set(err?.error?.error ?? 'Fehler beim Starten.');
+    } catch (err) {
+      const msg = err instanceof HttpErrorResponse ? err.error?.error : undefined;
+      this.error.set(msg ?? 'Fehler beim Starten.');
     } finally {
       this.loading.set(false);
     }
