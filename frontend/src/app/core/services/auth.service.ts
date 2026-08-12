@@ -1,55 +1,73 @@
 import { HttpClient } from '@angular/common/http';
-import { Injectable, signal, inject } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
 import { User } from '../models';
+import { clearToken, readToken, writeToken } from '../token-storage';
 
 const API = '/api';
-const TOKEN_KEY = 'lm_token';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private http = inject(HttpClient);
 
+  /** Der Ausweis als Signal, damit Vorlagen auf Aenderungen reagieren. */
+  private token = signal<string | null>(readToken());
+
   currentUser = signal<User | null>(null);
 
+  /** Wird von der Navigationsleiste und vom Router-Waechter gelesen. */
+  isLoggedIn = computed(() => this.token() !== null);
+
   constructor() {
-    const token = this.getToken();
-    if (token) {
-      this.loadCurrentUser().catch(() => this.logout());
+    if (this.token()) {
+      void this.loadCurrentUser();
     }
   }
 
-  isLoggedIn(): boolean {
-    return !!this.getToken();
-  }
-
   getToken(): string | null {
-    return localStorage.getItem(TOKEN_KEY);
+    return this.token();
   }
 
   async register(email: string, name: string, password: string): Promise<void> {
     const res = await firstValueFrom(
       this.http.post<{ access_token: string; user: User }>(`${API}/auth/register`, { email, name, password })
     );
-    localStorage.setItem(TOKEN_KEY, res.access_token);
-    this.currentUser.set(res.user);
+    this.setSession(res.access_token, res.user);
   }
 
   async login(email: string, password: string): Promise<void> {
     const res = await firstValueFrom(
       this.http.post<{ access_token: string; user: User }>(`${API}/auth/login`, { email, password })
     );
-    localStorage.setItem(TOKEN_KEY, res.access_token);
-    this.currentUser.set(res.user);
+    this.setSession(res.access_token, res.user);
   }
 
   logout(): void {
-    localStorage.removeItem(TOKEN_KEY);
+    clearToken();
+    this.token.set(null);
     this.currentUser.set(null);
   }
 
-  private async loadCurrentUser(): Promise<void> {
-    const user = await firstValueFrom(this.http.get<User>(`${API}/auth/me`));
+  private setSession(token: string, user: User): void {
+    writeToken(token);
+    this.token.set(token);
     this.currentUser.set(user);
+  }
+
+  /**
+   * Laedt beim Start das Konto zum gespeicherten Token nach.
+   * Abgemeldet wird nur bei 401/403 - also wenn der Server den Token
+   * ausdruecklich ablehnt. Ein Netzwerkfehler darf die Sitzung nicht zerstoeren.
+   */
+  private async loadCurrentUser(): Promise<void> {
+    try {
+      const user = await firstValueFrom(this.http.get<User>(`${API}/auth/me`));
+      this.currentUser.set(user);
+    } catch (err: unknown) {
+      const status = (err as { status?: number }).status;
+      if (status === 401 || status === 403) {
+        this.logout();
+      }
+    }
   }
 }

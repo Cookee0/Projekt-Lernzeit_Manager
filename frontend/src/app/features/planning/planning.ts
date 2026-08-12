@@ -1,4 +1,5 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { Goal, PlanSlot } from '../../core/models';
 import { GoalService } from '../../core/services/goal.service';
@@ -17,8 +18,8 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
         <h3>Filter</h3>
         <div class="form-row">
           <div class="form-group">
-            <label>Lernziel</label>
-            <select [(ngModel)]="selectedGoalId" name="goal" (change)="loadSlots()">
+            <label for="filter-goal">Lernziel</label>
+            <select id="filter-goal" [(ngModel)]="selectedGoalId" name="goal" (change)="loadSlots()">
               <option [value]="0">Alle Ziele</option>
               @for (goal of goals(); track goal.id) {
                 <option [value]="goal.id">{{ goal.title }}</option>
@@ -26,8 +27,8 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
             </select>
           </div>
           <div class="form-group">
-            <label>Monat</label>
-            <select [(ngModel)]="selectedMonth" name="month" (change)="loadSlots()">
+            <label for="filter-month">Monat</label>
+            <select id="filter-month" [(ngModel)]="selectedMonth" name="month" (change)="loadSlots()">
               @for (m of availableMonths(); track m.key) {
                 <option [value]="m.key">{{ m.label }}</option>
               }
@@ -44,8 +45,8 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
         <form (ngSubmit)="createSlot()" class="goal-form">
           <div class="form-row">
             <div class="form-group">
-              <label>Lernziel *</label>
-              <select [(ngModel)]="newSlot.goal_id" name="slot_goal" required>
+              <label for="slot-goal">Lernziel *</label>
+              <select id="slot-goal" [(ngModel)]="newSlot.goal_id" name="slot_goal" required>
                 <option [value]="0" disabled>Ziel wählen</option>
                 @for (goal of goals(); track goal.id) {
                   <option [value]="goal.id">{{ goal.title }}</option>
@@ -53,23 +54,23 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
               </select>
             </div>
             <div class="form-group">
-              <label>Tag des Monats (optional)</label>
-              <input type="number" [(ngModel)]="newSlot.day" name="day" min="1" max="31" placeholder="z.B. 15" />
+              <label for="slot-day">Tag des Monats (optional)</label>
+              <input id="slot-day" type="number" [(ngModel)]="newSlot.day" name="day" min="1" max="31" placeholder="z.B. 15" />
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>Uhrzeit (optional)</label>
-              <input type="time" [(ngModel)]="newSlot.planned_time" name="time" />
+              <label for="slot-time">Uhrzeit (optional)</label>
+              <input id="slot-time" type="time" [(ngModel)]="newSlot.planned_time" name="time" />
             </div>
             <div class="form-group">
-              <label>Wie lange? (Minuten)</label>
-              <input type="number" [(ngModel)]="newSlot.duration_minutes" name="duration" min="5" max="480" />
+              <label for="slot-duration">Wie lange? (Minuten)</label>
+              <input id="slot-duration" type="number" [(ngModel)]="newSlot.duration_minutes" name="duration" min="5" max="480" />
             </div>
           </div>
           <div class="form-group">
-            <label>Notiz (optional)</label>
-            <input [(ngModel)]="newSlot.note" name="note" placeholder="z.B. Kapitel 3 lesen" />
+            <label for="slot-note">Notiz (optional)</label>
+            <input id="slot-note" [(ngModel)]="newSlot.note" name="note" placeholder="z.B. Kapitel 3 lesen" />
           </div>
           <button type="submit" class="btn btn-primary" [disabled]="saving()">
             {{ saving() ? 'Speichern…' : 'Lernzeit speichern' }}
@@ -149,7 +150,7 @@ export class PlanningComponent implements OnInit {
     this.loading.set(true);
     try {
       const [year, month] = this.selectedMonth.split('-').map(Number);
-      const filters: any = { year, month };
+      const filters: { goal_id?: number; year?: number; month?: number } = { year, month };
       if (this.selectedGoalId) filters.goal_id = this.selectedGoalId;
       this.slots.set(await this.planService.list(filters));
     } finally {
@@ -177,8 +178,9 @@ export class PlanningComponent implements OnInit {
       });
       this.slots.update(ss => [...ss, slot]);
       this.newSlot = { goal_id: 0, day: null, planned_time: '', duration_minutes: 60, note: '' };
-    } catch (err: any) {
-      this.createError.set(err?.error?.error ?? 'Fehler beim Speichern.');
+    } catch (err) {
+      const msg = err instanceof HttpErrorResponse ? err.error?.error : undefined;
+      this.createError.set(msg ?? 'Fehler beim Speichern.');
     } finally {
       this.saving.set(false);
     }
