@@ -30,6 +30,7 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
           <div class="form-group">
             <label for="filter-month">Monat</label>
             <select id="filter-month" [(ngModel)]="selectedMonth" name="month" (change)="loadSlots()">
+              <option [value]="''">Alle Monate</option>
               @for (m of availableMonths(); track m.key) {
                 <option [value]="m.key">{{ m.label }}</option>
               }
@@ -51,6 +52,14 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
                 <option [value]="0" disabled>Ziel wählen</option>
                 @for (goal of goals(); track goal.id) {
                   <option [value]="goal.id">{{ goal.title }}</option>
+                }
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="slot-month">Monat *</label>
+              <select id="slot-month" [(ngModel)]="newSlotMonth" name="slot_month" required>
+                @for (m of availableMonths(); track m.key) {
+                  <option [value]="m.key">{{ m.label }}</option>
                 }
               </select>
             </div>
@@ -99,7 +108,7 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
         @if (loading()) {
           <p class="loading">Lädt…</p>
         } @else if (slots().length === 0) {
-          <p class="empty">Für diesen Monat noch nichts geplant.</p>
+          <p class="empty">Für diese Auswahl ist noch nichts geplant.</p>
         } @else {
           @for (slot of slots(); track slot.id) {
             <div class="card slot-card">
@@ -108,7 +117,7 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
                 <span class="slot-duration">{{ slot.duration_minutes }} min</span>
               </div>
               <div class="slot-meta">
-                @if (slot.day) { <span>📆 Am {{ slot.day }}.</span> }
+                <span>📆 {{ slotDate(slot) }}</span>
                 @if (slot.planned_time) { <span>🕐 {{ slot.planned_time }}</span> }
                 @if (slot.note) { <span>📝 {{ slot.note }}</span> }
               </div>
@@ -142,7 +151,10 @@ export class PlanningComponent implements OnInit {
   }
 
   selectedGoalId = 0;
-  selectedMonth: string;
+  /** Leerer Text bedeutet: Filter "Alle Monate". */
+  selectedMonth = '';
+  /** Monat, in den ein neuer Eintrag gespeichert wird - unabhaengig vom Filter. */
+  newSlotMonth: string;
 
   newSlot = {
     goal_id: 0,
@@ -154,7 +166,8 @@ export class PlanningComponent implements OnInit {
 
   constructor() {
     const now = new Date();
-    this.selectedMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    this.newSlotMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+    this.selectedMonth = this.newSlotMonth;
   }
 
   availableMonths() {
@@ -176,9 +189,15 @@ export class PlanningComponent implements OnInit {
   async loadSlots(): Promise<void> {
     this.loading.set(true);
     try {
-      const [year, month] = this.selectedMonth.split('-').map(Number);
-      const filters: { goal_id?: number; year?: number; month?: number } = { year, month };
-      if (this.selectedGoalId) filters.goal_id = this.selectedGoalId;
+      const filters: { goal_id?: number; year?: number; month?: number } = {};
+      if (this.selectedGoalId) {
+        filters.goal_id = Number(this.selectedGoalId);
+      }
+      if (this.selectedMonth) {
+        const [year, month] = this.selectedMonth.split('-').map(Number);
+        filters.year = year;
+        filters.month = month;
+      }
       this.slots.set(await this.planService.list(filters));
     } finally {
       this.loading.set(false);
@@ -192,7 +211,7 @@ export class PlanningComponent implements OnInit {
       return;
     }
 
-    const [jahr, monat] = this.selectedMonth.split('-').map(Number);
+    const [jahr, monat] = this.newSlotMonth.split('-').map(Number);
     const errors: Record<string, string> = {};
     const dayError = validateDayOfMonth(this.newSlot.day, jahr, monat);
     const durationError = validateDuration(this.newSlot.duration_minutes);
@@ -205,9 +224,9 @@ export class PlanningComponent implements OnInit {
 
     this.saving.set(true);
     try {
-      const [year, month] = this.selectedMonth.split('-').map(Number);
-      const slot = await this.planService.create({
-        goal_id: this.newSlot.goal_id,
+      const [year, month] = this.newSlotMonth.split('-').map(Number);
+      await this.planService.create({
+        goal_id: Number(this.newSlot.goal_id),
         year,
         month,
         day: this.newSlot.day || undefined,
@@ -215,8 +234,8 @@ export class PlanningComponent implements OnInit {
         duration_minutes: this.newSlot.duration_minutes,
         note: this.newSlot.note || undefined,
       });
-      this.slots.update(ss => [...ss, slot]);
       this.newSlot = { goal_id: 0, day: null, planned_time: '', duration_minutes: 60, note: '' };
+      await this.loadSlots();
     } catch (err) {
       const msg = err instanceof HttpErrorResponse ? err.error?.error : undefined;
       this.createError.set(msg ?? 'Fehler beim Speichern.');
@@ -232,5 +251,11 @@ export class PlanningComponent implements OnInit {
 
   goalName(id: number): string {
     return this.goals().find(g => g.id === id)?.title ?? `Ziel ${id}`;
+  }
+
+  /** Beschriftung fuer eine geplante Lernzeit, z. B. "15. Aug 2026" oder "Aug 2026". */
+  slotDate(slot: PlanSlot): string {
+    const monat = MONTH_NAMES[slot.month - 1] ?? String(slot.month);
+    return slot.day ? `${slot.day}. ${monat} ${slot.year}` : `${monat} ${slot.year}`;
   }
 }

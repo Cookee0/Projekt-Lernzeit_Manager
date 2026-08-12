@@ -1,5 +1,6 @@
 
 from ..extensions import db
+from ..time_utils import iso_utc
 
 
 class StudySession(db.Model):
@@ -24,10 +25,10 @@ class StudySession(db.Model):
             "id": self.id,
             "user_id": self.user_id,
             "goal_id": self.goal_id,
-            "started_at": self.started_at.isoformat(),
-            "paused_at": self.paused_at.isoformat() if self.paused_at else None,
+            "started_at": iso_utc(self.started_at),
+            "paused_at": iso_utc(self.paused_at),
             "total_paused_seconds": self.total_paused_seconds,
-            "ended_at": self.ended_at.isoformat() if self.ended_at else None,
+            "ended_at": iso_utc(self.ended_at),
             "duration_seconds": self.duration_seconds,
             "status": self.status,
             "note": self.note,

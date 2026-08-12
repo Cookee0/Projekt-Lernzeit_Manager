@@ -1,6 +1,7 @@
 from datetime import datetime, timezone
 
 from ..extensions import db
+from ..time_utils import iso_utc
 
 VALID_STATUSES = ("open", "in_progress", "achieved")
 
@@ -32,5 +33,5 @@ class Goal(db.Model):
             "module_name": self.module_name,
             "ects": self.ects,
             "status": self.status,
-            "created_at": self.created_at.isoformat(),
+            "created_at": iso_utc(self.created_at),
         }

@@ -61,7 +61,10 @@ const MONTH_NAMES = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
         </div>
 
         <div class="goals-section">
-          <h3>Lernziele</h3>
+          <div class="section-header">
+            <h3>Lernziele</h3>
+            <a routerLink="/goals" class="btn btn-sm btn-primary">+ Neues Lernziel erstellen</a>
+          </div>
           @if (data()!.goals.length === 0) {
             <p class="empty">Noch keine Lernziele. <a routerLink="/goals">Erstelle dein erstes Ziel.</a></p>
           }
