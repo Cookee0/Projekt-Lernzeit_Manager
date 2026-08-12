@@ -215,14 +215,25 @@ Der Balken wechselt die Farbe je nach Fortschritt:
 - Orange: 50–99 %
 - Grün: 100 % oder mehr
 
-### 6.4 Inaktivitäts-Erinnerung
+### 6.4 Erinnerungen
 
-Wenn du für heute Lernzeiten geplant hast, aber noch keine Session gestartet hast, erscheint
-oben auf dem Dashboard ein gelber Hinweis:
+Der Lernzeit-Manager erinnert dich oben auf dem Dashboard, wenn Lernzeit geplant ist, aber nicht
+gelernt wurde. Das geschieht in zwei Fällen:
 
-> "⚠️ Du hast heute Lernzeit geplant, aber noch keine Session gestartet. Jetzt loslegen?"
+1. **Für heute ist Lernzeit eingeplant, aber noch keine Session gestartet:**
 
-Ein Klick auf **"Timer starten"** bringt dich direkt zur Timer-Seite.
+   > "⚠️ Du hast heute Lernzeit geplant, aber noch keine Session gestartet. Jetzt loslegen?"
+
+2. **Für den laufenden Monat ist Lernzeit geplant, aber seit mindestens drei Tagen wurde keine
+   Session abgeschlossen:**
+
+   > "⚠️ Seit 4 Tagen hast du keine Lernzeit erfasst, obwohl für diesen Monat Lernzeit geplant
+   > ist."
+
+Ein Klick auf **"Timer starten"** bringt dich in beiden Fällen direkt zur Timer-Seite. Die
+Erinnerung erscheint ausschließlich in der Anwendung selbst – es wird **keine E-Mail** verschickt.
+Eine E-Mail-Benachrichtigung ist als eigene Anforderung (FR-7.4, Priorität „Could") vorgesehen,
+aber bewusst noch nicht umgesetzt.
 
 ### 6.5 Aktive Session im Dashboard
 

@@ -16,9 +16,9 @@ const MONTH_NAMES = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
       @if (loading()) {
         <p class="loading">Lädt…</p>
       } @else if (data()) {
-        @if (data()!.inactivity_warning) {
+        @if (data()!.reminder_text) {
           <div class="alert alert-warning">
-            ⚠️ Du hast heute Lernzeit geplant, aber noch keine Session gestartet. Jetzt loslegen?
+            ⚠️ {{ data()!.reminder_text }}
             <a routerLink="/timer" class="btn btn-sm btn-primary" style="margin-left:1rem">Timer starten</a>
           </div>
         }

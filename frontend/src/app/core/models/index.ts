@@ -63,5 +63,6 @@ export interface DashboardData {
   current_month: CurrentMonth;
   goals: GoalStats[];
   inactivity_warning: boolean;
+  reminder_text: string | null;
   active_session: ActiveSession | null;
 }

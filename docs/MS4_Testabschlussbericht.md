@@ -11,19 +11,28 @@
 
 | Testkategorie | Gesamt | Bestanden | Fehlgeschlagen |
 |---|---|---|---|
-| Backend Unit-Tests (pytest) | 13 | 13 | 0 |
-| Frontend Unit-Tests (Vitest) | 18 | 18 | 0 |
+| Backend Unit-Tests (pytest) | 57 | 57 | 0 |
+| Frontend Unit-Tests (Vitest) | 32 | 32 | 0 |
 | Playwright E2E-Tests | 13 | 13 | 0 |
 | Manueller Systemtest | 14 | 14 | 0 |
 
-Alle automatisierten Tests laufen in der GitHub-Actions-CI-Pipeline bei jedem Push auf
-`main` automatisch durch. Alle Tests sind bestanden. Die 18 Frontend-Unit-Tests umfassen
-1 Test für die App-Hauptkomponente sowie 17 Tests aus der früheren FR-1-Entwicklungsphase
-(GoalForm, GoalList, GoalService), die weiterhin im Repository vorhanden und vollständig grün
-sind. Die Playwright E2E-Tests wurden gegen die Railway-Produktionsumgebung ausgeführt, da
-die lokale Testumgebung aufgrund von Konfigurationsunterschieden zwischen Entwicklung und
-Produktion nicht geeignet war. Der manuelle Systemtest wurde vollständig in beiden Umgebungen
-durchgespielt.
+Stand 2026-08-11, ermittelt durch `pytest -q` (Backend) und `ng test --watch=false` (Frontend) auf
+dem aktuellen Stand nach den Plänen P1 (Eingabevalidierung), P2 (Zeitzonen/Filter) und P3
+(Erinnerungen). Die Backend- und Frontend-Zahlen sind gegenüber dem ursprünglichen MS4-Stand (13
+bzw. 18) gestiegen, weil P1, P2 und P3 zusammen 44 neue Backend-Tests und 14 neue Frontend-Tests
+hinzugefügt haben; die Detailtabellen in Abschnitt 3 und 4 unten beschreiben noch den
+ursprünglichen MS4-Stand und wurden im Rahmen dieses Plans nicht im Detail nacherfasst — maßgeblich
+sind die hier genannten Gesamtzahlen. Von den 32 Frontend-Tests entfallen 15 auf Komponenten in
+`frontend/src/app/goals/`, die von der laufenden Anwendung nicht mehr eingebunden sind (siehe
+Abschnitt 4). Die Playwright-Zahl ist die letzte tatsächliche Ausführung vom 2026-08-11 gegen die
+Railway-Produktionsumgebung; sie wurde im Rahmen dieses Plans nicht erneut ausgeführt.
+
+In der CI-Pipeline (`.github/workflows/ci.yml`) laufen bei jedem Push auf `main` sowie bei jedem
+Pull Request die Backend-Prüfungen (`ruff check .`, `pytest`) und die Frontend-Prüfungen
+(`npx ng lint`, `npx ng test --watch=false`). Die Playwright-E2E-Tests sind **nicht** Teil der
+Pipeline; sie werden manuell gegen eine laufende Umgebung ausgeführt, zuletzt am 2026-08-11. Der
+Deploy-Schritt hängt an beiden Prüf-Jobs (`needs: [backend, frontend]`) und wird nur bei grüner
+Pipeline ausgeführt.
 
 ---
 
@@ -136,7 +145,14 @@ der App-Komponente laufen daher auch 17 Tests aus der FR-1-Entwicklungsphase mit
 | T-FE-17 | update(id) schickt PUT mit aktualisierten Feldern | ✅ Bestanden |
 | T-FE-18 | remove(id) schickt DELETE an /api/goals/:id | ✅ Bestanden |
 
-**Gesamtergebnis Frontend:** 18 von 18 Tests bestanden ✅
+**Gesamtergebnis Frontend (Stand MS4-Auslieferung):** 18 von 18 Tests bestanden ✅. Nach den
+Plänen P1–P3 sind 14 weitere Tests hinzugekommen, siehe die Gesamtzahl in Abschnitt 1.
+
+Ein Teil dieser Tests stammt aus der FR-1-Entwicklungsphase und prüft die Komponenten in
+`frontend/src/app/goals/`, die seit der MS4-Umsetzung nicht mehr in die Anwendung eingebunden sind
+(die Wegeliste `frontend/src/app/app.routes.ts` verweist ausschließlich auf
+`frontend/src/app/features/`). Über die Frage, ob dieser Code entfernt wird, entscheidet das Team;
+bis dahin bleiben die Tests bestehen.
 
 ---
 
@@ -183,6 +199,9 @@ der App-Komponente laufen daher auch 17 Tests aus der FR-1-Entwicklungsphase mit
 
 **Gesamtergebnis Playwright:** 13 von 13 Tests bestanden ✅
 
+Diese Tests werden manuell gegen eine laufende Umgebung ausgeführt und sind **nicht** Bestandteil
+der GitHub-Actions-CI-Pipeline (siehe `.github/workflows/ci.yml` sowie den Hinweis in Abschnitt 1).
+
 ---
 
 ## 6. Manueller Systemtest
@@ -210,6 +229,13 @@ der App-Komponente laufen daher auch 17 Tests aus der FR-1-Entwicklungsphase mit
 | MS-14 | Abmelden und erneut einloggen | FR-0 | Session korrekt beendet und wiederhergestellt ✅ |
 
 **Gesamtergebnis Manueller Test:** 14 von 14 Schritten erfolgreich ✅
+
+Dieser Durchlauf war der erste manuelle Systemtest der Anwendung. Ein zweiter, ausführlicherer
+manueller Testdurchlauf mit weiteren Befunden ist in
+[`docs/testing-protokoll-lernzeit-manager.md`](testing-protokoll-lernzeit-manager.md)
+festgehalten; die dort gefundenen Probleme (Eingabevalidierung, Zeitzonenanzeige des Timers,
+eingeschränkte Planungsfilter, kaum auslösbare Erinnerung) wurden durch die Pläne P1, P2 und P3
+behoben.
 
 ---
 

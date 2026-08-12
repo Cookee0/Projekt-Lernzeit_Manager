@@ -34,23 +34,49 @@ ließen.
 
 ## Progress
 
-- [ ] Schritt 1: Erinnerungslogik in `backend/app/routes/dashboard.py` erweitern.
-- [ ] Schritt 2: Anzeige in `frontend/src/app/features/dashboard/dashboard.ts` und Typ in
-      `frontend/src/app/core/models/index.ts` anpassen.
-- [ ] Schritt 3: Neue Testdatei `backend/tests/test_reminders.py` anlegen und `pytest` ausführen.
-- [ ] Schritt 4: Schutz gegen fehlenden `SECRET_KEY` in `backend/app/__init__.py` einbauen —
-      **vorher** in Railway prüfen, dass die Variable gesetzt ist.
-- [ ] Schritt 5: Alle Testbefehle ausführen und die echten Zahlen notieren.
-- [ ] Schritt 6: `docs/MS4_Testabschlussbericht.md` mit den echten Zahlen und einer
-      wahrheitsgemäßen Aussage zur CI korrigieren.
-- [ ] Schritt 7: Erinnerungsfunktion in `docs/MS4_Benutzerhandbuch.md` als nachvollziehbaren
-      Ablauf beschreiben.
-- [ ] Schritt 8: Statusabsatz in `README.md` vollständig neu schreiben.
-- [ ] Schritt 9: Hinweis zum `SECRET_KEY` in `docs/MS4_Betriebsdokumentation.md` ergänzen.
-- [ ] Schritt 10: Abgeschlossene ExecPlans aus `docs/ExecPlans/active/` nach `completed/`
-      verschieben und den ungenutzten Ordner `frontend/src/app/goals/` als offene Teamfrage
-      festhalten.
-- [ ] Schritt 11: Committen und diesen Plan nach `docs/ExecPlans/completed/` verschieben.
+- [x] Schritt 1: Erinnerungslogik in `backend/app/routes/dashboard.py` erweitert (2026-08-11).
+      Dabei wurde ein zusätzlicher, beim Implementieren entdeckter Fehler behoben — siehe
+      `Surprises & Discoveries`.
+- [x] Schritt 2: Anzeige in `dashboard.ts` und Typ in `models/index.ts` angepasst (2026-08-11).
+- [x] Schritt 3: `backend/tests/test_reminders.py` angelegt, `pytest` ausgeführt (2026-08-11):
+      nach Behebung des Zeitzonen-Bugs (siehe `Surprises & Discoveries`) alle 5 neuen Tests grün,
+      57 von 57 insgesamt.
+- [x] Schritt 4: Schutz gegen fehlenden `SECRET_KEY` in `backend/app/__init__.py` eingebaut
+      (2026-08-11). **Abweichung vom Plan:** Die vorgeschriebene vorherige Prüfung in Railway war
+      in dieser Sitzung nicht möglich (kein Railway-Zugriff); auf Rückfrage hat der Nutzer
+      entschieden, den Schutz trotzdem einzubauen, siehe `Decision Log`. **Risiko für das Team:**
+      Ist `SECRET_KEY` in Railway tatsächlich nicht gesetzt, schlägt der nächste
+      Produktions-Deploy dieses Branches fehl, bis die Variable nachgetragen wird — unbedingt vor
+      dem Mergen/Deployen prüfen.
+- [x] Schritt 5: Alle Testbefehle ausgeführt, echte Zahlen notiert (2026-08-11): Backend 57
+      passed, `ruff check .` nur der vorbestehende Fehler aus `config.py`; Frontend 32 passed,
+      `npx ng lint` 17 vorbestehende Fehler. Playwright nicht erneut ausgeführt, siehe
+      `Surprises & Discoveries`.
+- [x] Schritt 6: `docs/MS4_Testabschlussbericht.md` korrigiert (2026-08-11): echte Zahlen,
+      wahrheitsgemäße CI-Aussage, Hinweis auf `frontend/src/app/goals/`, Hinweis zu Playwright
+      außerhalb der CI, Verweis auf den zweiten manuellen Testdurchlauf. PDF-Neuerzeugung nicht
+      durchgeführt, siehe `Surprises & Discoveries`.
+- [x] Schritt 7: Abschnitt 6.4 in `docs/MS4_Benutzerhandbuch.md` auf „Erinnerungen" mit beiden
+      Fällen aktualisiert (2026-08-11) — bestehenden Abschnitt erweitert statt einen zweiten,
+      widersprüchlichen Abschnitt anzulegen.
+- [x] Schritt 8: Statusabsatz in `README.md` neu geschrieben (2026-08-11); zusätzlich die beiden
+      vom Plan genannten weiteren veralteten Stellen (Auth-Bibliothek „noch offen", alte
+      Migrationsbeschreibung) korrigiert, außerdem eine dritte, beim Schreiben entdeckte veraltete
+      Aussage („E2E-Tests... bewusst noch nicht eingeführt") richtiggestellt.
+- [x] Schritt 9: Hinweis zum `SECRET_KEY` in `docs/MS4_Betriebsdokumentation.md` ergänzt
+      (2026-08-11); zusätzlich die Pflicht-Spalte der bestehenden Variablentabelle von „Nein
+      (Fallback)" auf „Ja (Produktion)" korrigiert, da sonst Tabelle und neuer Hinweistext
+      widersprüchlich gewesen wären.
+- [x] Schritt 10: Geprüft (2026-08-11). `docs/ExecPlans/active/2026-08-07_MS4-Implementierung.md`
+      hat alle Progress-Punkte abgehakt, aber `Outcomes & Retrospective` ist noch Platzhalter —
+      **nicht verschoben**. `docs/ExecPlans/active/2026-08-10_MS4-Abschluss.md` hat vier offene
+      Punkte (Railway-Deployment live, Railway-URL eintragen, Playwright lokal ausführen,
+      PDF-Upload nach Redmine) — **nicht verschoben**. Beide erfordern Aktionen, die in dieser
+      Sitzung nicht möglich waren (Railway-/Redmine-Zugriff). Die offene Teamfrage zum Ordner
+      `frontend/src/app/goals/` ist im Testbericht (Abschnitt 4) sowie unten in
+      `Surprises & Discoveries` festgehalten.
+- [x] Schritt 11: Committet und diesen Plan nach `docs/ExecPlans/completed/` verschoben
+      (2026-08-11).
 
 ## Surprises & Discoveries
 
@@ -87,6 +113,45 @@ ließen.
 - Beobachtung: `backend/app/config.py` setzt in Zeile 6 und 7 Vorgabewerte für `SECRET_KEY` und
   `JWT_SECRET_KEY`. Fehlt die Umgebungsvariable in Railway, startet die Anwendung trotzdem und
   signiert Anmelde-Ausweise mit einem Wert, der im öffentlichen Quelltext steht.
+
+- Beobachtung (2026-08-11, beim Implementieren von Schritt 1): Der im Plan vorgegebene Code für
+  `days_since_last_session` (`(today - last_session_start.date()).days`, mit `today = date.today()`)
+  enthält selbst einen Zeitzonenfehler derselben Art, die Plan P2 andernorts behoben hat:
+  `today` ist die **lokale** Systemdatum, `last_session_start` aber ein naiv-UTC-Zeitstempel. Nahe
+  Mitternacht (lokale Sommerzeit UTC+2) liegen beide Werte einen Kalendertag auseinander. Der neue
+  Test `test_reminder_after_three_days_without_session` deckte das direkt auf: Mit einer Sitzung
+  „vor 4 Tagen" (berechnet in UTC) meldete die Route „Seit 5 Tagen" statt „Seit 4 Tagen", weil zum
+  Testzeitpunkt (2026-08-12 00:19 Uhr lokal, aber 2026-08-11 22:19 UTC) `date.today()` bereits auf
+  den nächsten Tag gesprungen war.
+  Evidence:
+
+      local date.today(): 2026-08-12
+      utc now: 2026-08-11 22:19:44+00:00
+      -> Route antwortete "Seit 5 Tagen" statt der erwarteten "Seit 4 Tagen"
+
+  Behoben durch einen konsequenten UTC-Vergleich: `days_since_last_session` wird jetzt aus der
+  Differenz zweier naiv-UTC-Zeitpunkte berechnet (`datetime.now(timezone.utc).replace(tzinfo=None)`
+  gegen `last_session_start`), statt `today` (lokal) und `last_session_start.date()` (UTC) zu
+  mischen. Die Variable `today` bleibt für alle anderen Zwecke in der Funktion (Abgleich mit
+  `PlanSlot.day`, der als reine, zeitzonenlose Kalenderangabe vom Nutzer gewählt wird) unverändert
+  lokal — nur die neue Erinnerungslogik mit dem naiv-UTC-Feld `started_at` wurde umgestellt.
+
+- Beobachtung (2026-08-11): In dieser Sitzung stand kein Railway-Zugriff zur Verfügung, um vor
+  Schritt 4 zu prüfen, ob `SECRET_KEY` im Backend-Dienst gesetzt ist. Auf Rückfrage hat der Nutzer
+  entschieden, den Produktions-Schutz trotzdem einzubauen (siehe `Decision Log`). Das Team muss vor
+  dem nächsten Deploy dieses Branches selbst in Railway nachsehen.
+
+- Beobachtung (2026-08-11): Kein Chrome-Browser-Werkzeug in dieser Sitzung verfügbar (wie bereits
+  in P1 und P2 vermerkt). Die Erinnerung wurde stattdessen funktional per HTTP gegen das laufende
+  Backend nachgewiesen (kein Plan → keine Erinnerung; Plan für heute ohne Session → Erinnerungstext
+  mit „heute"). Der visuelle Nachweis im Dashboard (gelber Hinweis, Knopf „Timer starten") steht
+  noch aus.
+
+- Beobachtung (2026-08-11): Wie die PDF-Fassungen der `docs/MS4_*.md`-Dateien im Team erzeugt
+  werden, steht nicht im Repository (kein Skript, kein dokumentiertes Werkzeug gefunden). Die PDF
+  `docs/MS4_Testabschlussbericht.pdf` wurde deshalb in dieser Sitzung **nicht** neu erzeugt und ist
+  jetzt hinter der `.md`-Fassung veraltet. Das Team muss die PDF vor der Abgabe manuell
+  aktualisieren.
 
 ## Decision Log
 
@@ -128,9 +193,64 @@ ließen.
   **zuerst** in Railway geprüft, ob die Variable gesetzt ist.
   Date/Author: 2026-08-11, Julian
 
+- Decision: Der Schutz aus Schritt 4 wurde ohne die im Plan vorgesehene vorherige Railway-Prüfung
+  eingebaut, weil in dieser Ausführungssitzung kein Railway-Zugriff bestand. Auf Rückfrage hat der
+  Nutzer sich für „Jetzt einbauen, Railway-Prüfung auslassen" entschieden statt „Schritt
+  überspringen" oder „Nutzer prüft zuerst selbst".
+  Rationale: Der Code liegt zunächst nur auf einem Feature-Branch und wird nicht automatisch
+  deployt; das Risiko eines fehlgeschlagenen Produktions-Starts betrifft erst den Moment des
+  nächsten Merges/Deploys. Der Nutzer wollte den Fortschritt nicht dafür blockieren.
+  Konsequenz: Das Team **muss** vor dem Mergen/Deployen dieses Branches in Railway prüfen, dass
+  `SECRET_KEY` gesetzt ist — siehe Warnung in `Surprises & Discoveries` und in
+  `docs/MS4_Betriebsdokumentation.md`.
+  Date/Author: 2026-08-11, Julian (im Namen des Nutzers, per Rückfrage in dieser Sitzung)
+
 ## Outcomes & Retrospective
 
-(Wird bei Abschluss ausgefüllt.)
+Umgesetzt auf dem Branch `fix/P3-Erinnerungen-und-Dokumentation`, gestapelt auf
+`fix/P2-Zeitzonen-Filter-und-Darstellung` (der wiederum auf P1 und P0 aufsetzt) — bewusst als
+letzter der drei Pläne, damit die in Schritt 5/6 dokumentierten Testzahlen den kumulierten Stand
+aller drei Pläne widerspiegeln, wie im Abschnitt „Hinweis zur Reihenfolge" gefordert.
+
+Backend: `python -m pytest -q` → 57 passed (52 aus P1+P2 + 5 neue aus `test_reminders.py`).
+`ruff check .` zeigt unverändert nur den vorbestehenden Fehler in `config.py`. Beim Implementieren
+der Erinnerungslogik deckte der neue Test `test_reminder_after_three_days_without_session` einen
+echten Zeitzonenfehler im vom Plan vorgegebenen Code auf (lokales `date.today()` gegen
+naiv-UTC-Zeitstempel verglichen); der Fehler wurde direkt behoben, siehe
+`Surprises & Discoveries`. Funktional gegen das laufende Backend bestätigt: ohne Planung keine
+Erinnerung, mit Planung für heute erscheint der erwartete Erinnerungstext.
+
+Der Produktions-Schutz für `SECRET_KEY` wurde eingebaut, aber **ohne** die vom Plan geforderte
+vorherige Prüfung in Railway — dafür stand in dieser Sitzung kein Zugriff zur Verfügung. Der
+Nutzer hat auf Rückfrage entschieden, den Schutz trotzdem einzubauen (siehe `Decision Log`). Lokal
+bestätigt: `pytest` bleibt unverändert grün (der Schutz greift nur bei `config_name ==
+"production"`), und `create_app("production")` ohne gesetzte Variable wirft den erwarteten
+`RuntimeError`. **Wichtig für das Team:** Vor dem nächsten Merge/Deploy dieses Branches muss in
+Railway geprüft werden, dass `SECRET_KEY` gesetzt ist — sonst startet der Dienst nicht mehr.
+
+Frontend: `npx ng test --watch=false` → 32 passed, 0 failed (unverändert gegenüber P2, da dieser
+Schritt nur eine Vorlagenänderung ohne neue Tests war). `npx ng lint` weiterhin 17 vorbestehende
+Fehler.
+
+Die fünf betroffenen Dokumente (`MS4_Testabschlussbericht.md`, `MS4_Benutzerhandbuch.md`,
+`README.md`, `MS4_Betriebsdokumentation.md`) wurden mit den tatsächlich gemessenen Zahlen und dem
+tatsächlichen Funktionsumfang in Übereinstimmung gebracht. Kleinere, beim Schreiben entdeckte
+zusätzliche Falschaussagen (README: „E2E-Tests bewusst noch nicht eingeführt" trotz 13
+existierender Playwright-Tests; Betriebsdokumentation: `SECRET_KEY` als „Nein (Fallback)" markiert
+trotz des neuen Zwangs) wurden im selben Zug korrigiert, um keine neuen Widersprüche im Dokument
+zu hinterlassen. Die PDF-Fassung von `MS4_Testabschlussbericht.md` wurde **nicht** neu erzeugt, da
+das Erzeugungsverfahren nicht im Repository dokumentiert ist; das Team muss sie vor der Abgabe von
+Hand aktualisieren.
+
+Von den ursprünglich elf geplanten Schritten war keiner ausführbar wie im Plan wörtlich
+vorgesehen, ohne mindestens eine der drei dokumentierten Abweichungen (Zeitzonenfehler im
+vorgegebenen Code, fehlender Railway-Zugriff, fehlendes PDF-Werkzeug) — alle drei sind im laufenden
+Repository begründet, nicht in einem Fehler dieses Plans, und wurden transparent gemacht statt
+stillschweigend übergangen.
+
+Ein visueller Browser-Durchgang (gelber Hinweis mit „Timer starten"-Knopf) steht wie bei P1 und P2
+noch aus; das Team sollte alle drei offenen manuellen Durchgänge gemeinsam vor der Abgabe
+nachholen.
 
 ## Context and Orientation
 

@@ -8,25 +8,24 @@ Team: Elias (Product Owner), Assis (Developer, Schwerpunkt Coding), Julian (Deve
 Infrastruktur/Deployment/Testing).
 Abgabeziel: **31.08.2026**.
 
-> **Status: FR-1.4 (Lernziele priorisieren) ist umgesetzt – Anforderungsgruppe 1 „Lernziele
-> festlegen" (FR-1.1 bis FR-1.4) ist damit vollständig.** Jedes Lernziel kann beim Anlegen unter
-> `/ziele/neu` und beim Bearbeiten unter `/ziele/<id>/bearbeiten` optional eine Priorität erhalten
-> – *Hoch*, *Mittel* oder *Niedrig*, voreingestellt ist „– keine –". Die Übersicht unter `/ziele`
-> zeigt dafür eine zusätzliche Spalte „Priorität": eine gesetzte Priorität erscheint als farbig
-> hinterlegte Markierung (Hoch rot, Mittel gelb, Niedrig grau), eine fehlende als grauer
-> Gedankenstrich. Die Liste bleibt weiterhin nach Zieldatum sortiert; nach Priorität wird bewusst
-> nicht sortiert oder gefiltert. Die API akzeptiert am Feld `priority` in `POST`/`PUT /api/goals`
-> die Werte `hoch`, `mittel`, `niedrig` sowie – gleichbedeutend mit „keine Priorität" – ein
-> fehlendes Feld, `null` oder die leere Zeichenkette `""`; jeder andere Wert liefert HTTP 400. Die
-> Tabelle `goals` hat dafür eine neue, nullable Spalte `priority` (`character varying(20)`)
-> erhalten. Nach einem `git pull` ist deshalb `flask db upgrade` in `backend/` bei aktivierter
-> venv nötig – ohne das schlägt `/api/goals` mit `column goals.priority does not exist` fehl. Als
-> Nächstes steht Anforderungsgruppe 2 (FR-2, Grobplanung von Lernzeiten) aus
-> [`docs/01_Funktionale_Anforderungen.md`](docs/01_Funktionale_Anforderungen.md) an; abgeschlossene
-> ExecPlans liegen in [`docs/ExecPlans/completed/`](docs/ExecPlans/completed/). Die Anmeldung
-> übersteht außerdem einen Seiten-Reload: Der Ausweis (Token) liegt im `localStorage` des Browsers
-> unter dem Schlüssel `lm_token` und wird beim Start der Anwendung über `GET /api/auth/me` geprüft;
-> abgemeldet wird nur, wenn der Server den Ausweis ausdrücklich mit HTTP 401 oder 403 ablehnt.
+> **Status: Die Anwendung hat Nutzerkonten und ist funktional vollständig für MS4.** Registrierung
+> und Anmeldung laufen über ein JWT-Zugriffstoken (`flask-jwt-extended`), das im Browser unter dem
+> Schlüssel `lm_token` gespeichert wird und acht Stunden gültig ist; die Anmeldung übersteht einen
+> Seiten-Reload, weil der Token beim Start der Anwendung über `GET /api/auth/me` geprüft wird und
+> nur bei einer ausdrücklichen Ablehnung mit HTTP 401 oder 403 abgemeldet wird. Alle Endpunkte
+> außer `/api/health`, `/api/auth/register` und `/api/auth/login` sind geschützt. Umgesetzt sind
+> Lernziele (anlegen, Status ändern, löschen), Grob- und Detailplanung von Lernzeiten, ein Timer
+> mit Start, Pause, Fortsetzen und Stopp, eine Übersichtsseite mit Fortschritt sowie eine
+> Erinnerung bei versäumter Lernzeit (FR-7.1) mit zwei Auslösern: heute geplant und noch nicht
+> gelernt, oder seit mindestens drei Tagen keine Session trotz Planung für den laufenden Monat. Die
+> Eingaben (E-Mail, ECTS, Datum, Tag, Dauer, Uhrzeit) werden serverseitig geprüft und im Formular
+> direkt unter dem betroffenen Feld angezeigt; siehe den Abschnitt „Geltende Wertebereiche der API"
+> weiter unten. Alle ausgelieferten Zeitstempel sind als UTC gekennzeichnet (angehängtes `Z`), damit
+> der Browser sie nicht fälschlich als Ortszeit deutet. Die Datenbank enthält die Tabellen `users`,
+> `goals`, `plan_slots` und `study_sessions`, angelegt durch die Migration
+> `backend/migrations/versions/0001_ms4_initial_schema.py`; nach jedem `git pull` ist in `backend/`
+> bei aktivierter venv `flask db upgrade` auszuführen. Abgeschlossene ExecPlans liegen in
+> [`docs/ExecPlans/completed/`](docs/ExecPlans/completed/).
 
 > **Dieses README ist die verbindliche Beschreibung des Ist-Zustands.** Wer etwas ändert, das eine
 > Aussage hier falsch macht (neuer Befehl, neues Setup, neue Abhängigkeit, neues Feature),
@@ -104,21 +103,15 @@ höchstens 500 Zeichen lang. Das Frontend spiegelt dieselben Regeln in
 
 **Testing steht** (seit dem Repository-Bootstrap): `pytest` im Backend, `vitest` im Frontend.
 Vitest ist seit Angular 22 der Standard-Test-Runner der Angular CLI – `ng test` startet ihn, ein
-Browser wird nicht benötigt. Karma/Jasmine kommt hier **nicht** zum Einsatz. E2E-Tests
-(Playwright/Cypress) sind bewusst noch nicht eingeführt.
-
-**Noch offen** (siehe [`docs/04_Tech-Stack_und_Tools.md`](docs/04_Tech-Stack_und_Tools.md)) – bitte
-nicht eigenmächtig festlegen, sondern im Mittwochs-Meeting entscheiden:
-
-- Auth-Bibliothek für Flask. Kandidaten: `Flask-Login` + `Werkzeug`-Hashing für Session-Auth, oder
-  `Flask-JWT-Extended` für Token-Auth, was besser zu einer Angular-SPA passt. Im Decision Log von
-  [`docs/ExecPlans/active/2026-07-28_MS1-Repository-Bootstrap.md`](docs/ExecPlans/active/2026-07-28_MS1-Repository-Bootstrap.md)
-  ist `Flask-JWT-Extended` als Vorschlag festgehalten, aber **noch nicht im Team beschlossen** und
-  auch noch nicht installiert. Solange das offen ist, kennt die Anwendung keine Nutzerkonten:
-  Daten gehören niemandem, und alle API-Endpoints sind ungeschützt.
+Browser wird nicht benötigt. Karma/Jasmine kommt hier **nicht** zum Einsatz. Zusätzlich existieren
+13 Playwright-E2E-Tests unter `frontend/e2e/`; sie laufen **nicht** in der CI, sondern werden
+manuell gegen eine laufende Umgebung ausgeführt (`cd frontend && npx playwright test`).
 
 **Bereits entschieden:** Monorepo. Frontend und Backend liegen in diesem Repo (`frontend/`,
-`backend/`), weil bei drei Personen zwei Repos mehr Overhead als Nutzen bringen.
+`backend/`), weil bei drei Personen zwei Repos mehr Overhead als Nutzen bringen. Als Auth-Bibliothek
+für Flask ist `Flask-JWT-Extended` (Token-Auth) im Einsatz, eingetragen in
+`backend/requirements.txt`; Nutzerkonten und geschützte Endpunkte sind damit umgesetzt (siehe
+Statusabsatz oben).
 
 ---
 
@@ -331,19 +324,12 @@ SELECT * FROM users;
 `could not connect to server: Connection refused` fehl. Erst `docker compose up -d`, dann pgAdmin.
 
 **Migrationen:** Schema-Änderungen laufen über
-[Flask-Migrate/Alembic](https://flask-migrate.readthedocs.io/). Die erste Migration
-(`backend/migrations/versions/36776bba1943_lernziele_tabelle_angelegt.py`) legt die Tabelle
-`goals` an (Spalten `id`, `title`, `target_date`, `created_at`). Eine zweite Migration
-(`backend/migrations/versions/3c4b2fb57969_modul_und_status_am_lernziel_ergaenzt.py`, FR-1.2)
-ergänzt die Pflichtfelder `module` (`character varying(100)`) und `status`
-(`character varying(20)`); bereits vorhandene Zeilen erhalten dabei automatisch die Vorgabewerte
-`Nicht zugeordnet` und `offen`. Eine dritte Migration
-(`backend/migrations/versions/92b49259af45_prioritaet_am_lernziel_ergaenzt.py`, FR-1.4) ergänzt die
-optionale (nullable) Spalte `priority` (`character varying(20)`); bereits vorhandene Zeilen
-behalten dort `NULL`, eine manuelle Nachbearbeitung war deshalb nicht nötig. Nach jedem `git pull`
-unbedingt in `backend/` bei aktivierter venv `flask db upgrade` ausführen, sonst passen Code und
-lokales Schema nicht mehr zusammen – ohne das schlägt `/api/goals` zum Beispiel mit
-`column goals.priority does not exist` fehl. Für ein neues Modell:
+[Flask-Migrate/Alembic](https://flask-migrate.readthedocs.io/). Das aktuelle Schema entsteht durch
+eine einzige Migration, `backend/migrations/versions/0001_ms4_initial_schema.py`, die alle vier
+Tabellen (`users`, `goals`, `plan_slots`, `study_sessions`) mit den Spalten anlegt, die die
+Modelle unter `backend/app/models/` beschreiben. Nach jedem `git pull` unbedingt in `backend/` bei
+aktivierter venv `flask db upgrade` ausführen, sonst passen Code und lokales Schema nicht mehr
+zusammen. Für ein neues Modell oder eine Schemaänderung:
 
 ```powershell
 flask db migrate -m "beschreibung"   # Migration erzeugen (in backend/, venv aktiv)
