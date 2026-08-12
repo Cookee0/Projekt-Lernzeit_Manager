@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Goal, PlanSlot } from '../../core/models';
 import { GoalService } from '../../core/services/goal.service';
 import { PlanService } from '../../core/services/plan.service';
+import { validateClockTime, validateDayOfMonth, validateDuration } from '../../core/validation';
 
 const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
 
@@ -55,17 +56,32 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
             </div>
             <div class="form-group">
               <label for="slot-day">Tag des Monats (optional)</label>
-              <input id="slot-day" type="number" [(ngModel)]="newSlot.day" name="day" min="1" max="31" placeholder="z.B. 15" />
+              <input id="slot-day" type="number" [(ngModel)]="newSlot.day" name="day" min="1" max="31"
+                (ngModelChange)="clearFieldError('day')"
+                [class.input-error]="fieldErrors()['day']" placeholder="z.B. 15" />
+              @if (fieldErrors()['day']) {
+                <p class="field-error">{{ fieldErrors()['day'] }}</p>
+              }
             </div>
           </div>
           <div class="form-row">
             <div class="form-group">
               <label for="slot-time">Uhrzeit (optional)</label>
-              <input id="slot-time" type="time" [(ngModel)]="newSlot.planned_time" name="time" />
+              <input id="slot-time" type="time" [(ngModel)]="newSlot.planned_time" name="time"
+                (ngModelChange)="clearFieldError('time')"
+                [class.input-error]="fieldErrors()['time']" />
+              @if (fieldErrors()['time']) {
+                <p class="field-error">{{ fieldErrors()['time'] }}</p>
+              }
             </div>
             <div class="form-group">
               <label for="slot-duration">Wie lange? (Minuten)</label>
-              <input id="slot-duration" type="number" [(ngModel)]="newSlot.duration_minutes" name="duration" min="5" max="480" />
+              <input id="slot-duration" type="number" [(ngModel)]="newSlot.duration_minutes" name="duration" min="5" max="480"
+                (ngModelChange)="clearFieldError('duration')"
+                [class.input-error]="fieldErrors()['duration']" />
+              @if (fieldErrors()['duration']) {
+                <p class="field-error">{{ fieldErrors()['duration'] }}</p>
+              }
             </div>
           </div>
           <div class="form-group">
@@ -113,6 +129,17 @@ export class PlanningComponent implements OnInit {
   loading = signal(false);
   saving = signal(false);
   createError = signal('');
+  fieldErrors = signal<Record<string, string>>({});
+
+  /** Loescht die Fehlermeldung eines Feldes, sobald der Wert geaendert wird. */
+  clearFieldError(field: string): void {
+    this.fieldErrors.update((errors) => {
+      if (!errors[field]) return errors;
+      const rest = { ...errors };
+      delete rest[field];
+      return rest;
+    });
+  }
 
   selectedGoalId = 0;
   selectedMonth: string;
@@ -164,6 +191,18 @@ export class PlanningComponent implements OnInit {
       this.createError.set('Bitte ein Lernziel wählen.');
       return;
     }
+
+    const [jahr, monat] = this.selectedMonth.split('-').map(Number);
+    const errors: Record<string, string> = {};
+    const dayError = validateDayOfMonth(this.newSlot.day, jahr, monat);
+    const durationError = validateDuration(this.newSlot.duration_minutes);
+    const timeError = validateClockTime(this.newSlot.planned_time);
+    if (dayError) errors['day'] = dayError;
+    if (durationError) errors['duration'] = durationError;
+    if (timeError) errors['time'] = timeError;
+    this.fieldErrors.set(errors);
+    if (Object.keys(errors).length > 0) return;
+
     this.saving.set(true);
     try {
       const [year, month] = this.selectedMonth.split('-').map(Number);

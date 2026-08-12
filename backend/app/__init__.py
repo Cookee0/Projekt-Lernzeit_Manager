@@ -1,10 +1,11 @@
 from pathlib import Path
 
-from flask import Flask, send_from_directory
+from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
 
 from .config import config_by_name
 from .extensions import db, jwt, migrate
+from .validation import ValidationError
 
 _FRONTEND_DIST = (
     Path(__file__).parent.parent.parent / "frontend" / "dist" / "frontend" / "browser"
@@ -26,6 +27,10 @@ def create_app(config_name: str = "development") -> Flask:
     app.config.from_object(config_by_name[config_name])
 
     CORS(app, origins=app.config.get("CORS_ORIGINS", ["http://localhost:4200"]))
+
+    @app.errorhandler(ValidationError)
+    def _handle_validation_error(err: ValidationError):
+        return jsonify({"error": err.message}), 400
 
     db.init_app(app)
     migrate.init_app(app, db)

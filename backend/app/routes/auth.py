@@ -3,6 +3,7 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 
 from ..extensions import db
 from ..models.user import User
+from ..validation import require_email, require_password, require_text
 
 auth_bp = Blueprint("auth", __name__)
 
@@ -10,14 +11,10 @@ auth_bp = Blueprint("auth", __name__)
 @auth_bp.post("/api/auth/register")
 def register():
     data = request.get_json(silent=True) or {}
-    email = (data.get("email") or "").strip().lower()
-    name = (data.get("name") or "").strip()
-    password = data.get("password") or ""
+    email = require_email(data.get("email"))
+    name = require_text(data.get("name"), "Name", 255)
+    password = require_password(data.get("password"))
 
-    if not email or not name or not password:
-        return jsonify({"error": "email, name und password sind Pflichtfelder"}), 400
-    if len(password) < 6:
-        return jsonify({"error": "Passwort muss mindestens 6 Zeichen haben"}), 400
     if User.query.filter_by(email=email).first():
         return jsonify({"error": "E-Mail bereits registriert"}), 409
 
