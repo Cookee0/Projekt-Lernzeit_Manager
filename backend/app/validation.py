@@ -121,3 +121,16 @@ def optional_clock_time(value) -> str | None:
     if not TIME_PATTERN.match(text):
         raise ValidationError("Uhrzeit muss im Format HH:MM angegeben werden, zum Beispiel 14:30")
     return text
+
+
+def optional_int_arg(value, field_label: str, minimum: int, maximum: int) -> int | None:
+    """Ganze Zahl aus einem Abfrageparameter der Adresszeile.
+
+    Fehlt der Parameter, liefert die Funktion None; der Aufrufer filtert
+    dann nicht danach. Ein vorhandener, aber unsinniger Wert wie "abc"
+    fuehrt zu ValidationError und damit zu HTTP 400 statt zu einem
+    Serverfehler.
+    """
+    if _is_missing(value):
+        return None
+    return require_int_in_range(value, field_label, minimum, maximum)

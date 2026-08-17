@@ -6,8 +6,14 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from ..extensions import db
 from ..models.goal import Goal
 from ..models.study_session import StudySession
+from ..validation import optional_int_arg, require_int_in_range
 
 sessions_bp = Blueprint("sessions", __name__)
+
+# Obergrenze fuer /api/sessions?limit=... - ohne sie koennte ein einzelner
+# Aufruf die gesamte Sitzungshistorie in eine Antwort laden.
+MAX_SESSION_LIMIT = 200
+DEFAULT_SESSION_LIMIT = 50
 
 
 def _now() -> datetime:
@@ -37,10 +43,14 @@ def get_active():
 @jwt_required()
 def list_sessions():
     uid = _current_user_id()
+    goal_id = optional_int_arg(request.args.get("goal_id"), "Lernziel", 1, 2_147_483_647)
+    limit = optional_int_arg(request.args.get("limit"), "Anzahl", 1, MAX_SESSION_LIMIT)
+    if limit is None:
+        limit = DEFAULT_SESSION_LIMIT
+
     q = StudySession.query.filter_by(user_id=uid)
-    if goal_id := request.args.get("goal_id"):
-        q = q.filter_by(goal_id=int(goal_id))
-    limit = int(request.args.get("limit") or 50)
+    if goal_id is not None:
+        q = q.filter_by(goal_id=goal_id)
     sessions = q.order_by(StudySession.started_at.desc()).limit(limit).all()
     return jsonify([s.to_dict() for s in sessions]), 200
 
@@ -50,11 +60,9 @@ def list_sessions():
 def start_session():
     uid = _current_user_id()
     data = request.get_json(silent=True) or {}
-    goal_id = data.get("goal_id")
-    if not goal_id:
-        return jsonify({"error": "goal_id ist Pflichtfeld"}), 400
+    goal_id = require_int_in_range(data.get("goal_id"), "Lernziel", 1, 2_147_483_647)
 
-    Goal.query.filter_by(id=int(goal_id), user_id=uid).first_or_404()
+    Goal.query.filter_by(id=goal_id, user_id=uid).first_or_404()
 
     existing = StudySession.query.filter(
         StudySession.user_id == uid,
@@ -66,7 +74,7 @@ def start_session():
 
     session = StudySession(
         user_id=uid,
-        goal_id=int(goal_id),
+        goal_id=goal_id,
         started_at=_now(),
         status="active",
     )
