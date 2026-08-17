@@ -29,6 +29,23 @@ export interface PlanSlot {
   note: string | null;
 }
 
+/** Grobplanungs-Vorschlag je Lernziel (FR-2.1, FR-2.2, FR-3.3). */
+export interface PlanProposalGoal {
+  goal_id: number;
+  title: string;
+  module_name: string;
+  weekly_budget_minutes: number;
+  suggested_month_minutes: number;
+  planned_minutes: number;
+  deviation_minutes: number;
+}
+
+export interface PlanProposal {
+  year: number;
+  month: number;
+  goals: PlanProposalGoal[];
+}
+
 export interface Milestone {
   id: number;
   goal_id: number | null;

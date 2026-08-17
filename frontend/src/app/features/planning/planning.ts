@@ -1,7 +1,7 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { Goal, Milestone, PlanSlot } from '../../core/models';
+import { Goal, Milestone, PlanProposalGoal, PlanSlot } from '../../core/models';
 import { GoalService } from '../../core/services/goal.service';
 import { MilestoneService } from '../../core/services/milestone.service';
 import { PlanService } from '../../core/services/plan.service';
@@ -104,6 +104,41 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
         </form>
       </div>
 
+      <div class="card">
+        <h3>Grobplanung: Budget &amp; Vorschlag {{ milestoneMonthLabel() }}</h3>
+        <p class="hint">Wochenbudget aus dem ECTS-Workload (30 h je ECTS), Restaufwand
+          gleichmäßig auf die Monate bis zum Zieldatum verteilt.</p>
+        @if (proposalGoals().length === 0) {
+          <p class="empty">Kein aktives Lernziel mit Zieldatum in diesem Monat oder später.</p>
+        } @else {
+          <table class="proposal-table">
+            <thead>
+              <tr>
+                <th>Modul / Ziel</th>
+                <th>Budget/Woche</th>
+                <th>Vorschlag {{ milestoneMonthLabel() }}</th>
+                <th>Geplant {{ milestoneMonthLabel() }}</th>
+                <th>Abweichung</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of proposalGoals(); track p.goal_id) {
+                <tr>
+                  <td>{{ p.title }} <span class="module-tag">{{ p.module_name }}</span></td>
+                  <td>{{ formatMinutes(p.weekly_budget_minutes) }}</td>
+                  <td>{{ formatMinutes(p.suggested_month_minutes) }}</td>
+                  <td>{{ formatMinutes(p.planned_minutes) }}</td>
+                  <td [class.deviation-negative]="p.deviation_minutes < 0"
+                      [class.deviation-ok]="p.deviation_minutes >= 0">
+                    {{ deviationLabel(p) }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        }
+      </div>
+
       <div class="slots-list">
         <h3>Geplante Lernzeiten</h3>
         @if (loading()) {
@@ -184,6 +219,8 @@ export class PlanningComponent implements OnInit {
   createError = signal('');
   fieldErrors = signal<Record<string, string>>({});
 
+  proposalGoals = signal<PlanProposalGoal[]>([]);
+
   milestones = signal<Milestone[]>([]);
   newMilestoneTitle = '';
   newMilestoneDay: number | null = null;
@@ -250,6 +287,7 @@ export class PlanningComponent implements OnInit {
       }
       this.slots.set(await this.planService.list(filters));
       await this.loadMilestones();
+      await this.loadProposal();
     } finally {
       this.loading.set(false);
     }
@@ -298,6 +336,7 @@ export class PlanningComponent implements OnInit {
   async removeSlot(slot: PlanSlot): Promise<void> {
     await this.planService.delete(slot.id);
     this.slots.update(ss => ss.filter(s => s.id !== slot.id));
+    await this.loadProposal();
   }
 
   goalName(id: number): string {
@@ -325,6 +364,27 @@ export class PlanningComponent implements OnInit {
 
   doneCount(): number {
     return this.milestones().filter(m => m.done).length;
+  }
+
+  /** Laedt den Grobplanungs-Vorschlag fuer den aktiven Monat (FR-2.1, FR-2.2, FR-3.3). */
+  async loadProposal(): Promise<void> {
+    const { year, month } = this.activeYearMonth();
+    const proposal = await this.planService.proposal(year, month);
+    this.proposalGoals.set(proposal.goals);
+  }
+
+  formatMinutes(minutes: number): string {
+    if (minutes < 60) return `${minutes} min`;
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    return m > 0 ? `${h}h ${m}min` : `${h}h`;
+  }
+
+  /** Abweichung geplant gegen Vorschlag, als lesbarer Text (FR-3.3). */
+  deviationLabel(p: PlanProposalGoal): string {
+    if (p.deviation_minutes < 0) return `${this.formatMinutes(-p.deviation_minutes)} fehlen`;
+    if (p.deviation_minutes === 0) return 'passt genau';
+    return `${this.formatMinutes(p.deviation_minutes)} mehr geplant`;
   }
 
   async loadMilestones(): Promise<void> {

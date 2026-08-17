@@ -256,6 +256,23 @@ input, select, textarea, button { font: inherit; }
 .slot-duration { color: var(--primary); }
 .slot-meta { display: flex; gap: 0.75rem; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.5rem; }
 
+.hint { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem; }
+.proposal-table { width: 100%; border-collapse: collapse; font-size: 0.875rem; }
+.proposal-table th {
+  text-align: left;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--border);
+}
+.proposal-table td { padding: 0.5rem 0.6rem; border-bottom: 1px solid var(--border); }
+.proposal-table tr:last-child td { border-bottom: none; }
+.deviation-negative { color: var(--danger); font-weight: 600; }
+.deviation-ok { color: var(--success); font-weight: 600; }
+
 /* ===== Timer ===== */
 .timer-card { text-align: center; padding: 2rem; }
 .timer-setup { display: flex; flex-direction: column; align-items: center; gap: 1.25rem; }
