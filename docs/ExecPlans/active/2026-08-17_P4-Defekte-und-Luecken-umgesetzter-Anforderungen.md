@@ -36,9 +36,9 @@ automatisierte Tests abgesichert. Bisher existiert im gesamten Backend **kein ei
 
 ## Progress
 
-- [ ] M1 — Ungültige Abfrageparameter liefern HTTP 400 statt HTTP 500
-- [ ] M2 — Ein Lernziel mit verstrichenem Zieldatum lässt sich bearbeiten
-- [ ] M3 — Migration 0002: Spalten `priority`, `grade`, `result_note` an `goals`
+- [x] (2026-08-17 00:00Z) M1 — Ungültige Abfrageparameter liefern HTTP 400 statt HTTP 500
+- [x] (2026-08-17 00:00Z) M2 — Ein Lernziel mit verstrichenem Zieldatum lässt sich bearbeiten
+- [x] (2026-08-17 00:00Z) M3 — Migration 0002: Spalten `priority`, `grade`, `result_note` an `goals`
 - [ ] M4 — Backend akzeptiert und liefert Priorität, Note und Ergebnis-Notiz
 - [ ] M5 — Bearbeiten-Formular für Lernziele in der Oberfläche (FR-1.3, FR-1.4, FR-5.2)
 - [ ] M6 — Notiz beim Stoppen einer Lernsession (FR-5.2, zweiter Teil)
@@ -76,6 +76,17 @@ Ausgangsbefund; alles, was während der Umsetzung dazukommt, wird hier ergänzt.
   Evidenz: Von den sieben Dateien in `backend/tests/` ruft nur `test_time_format.py` überhaupt
   `/api/sessions/start` auf, und zwar um das Zeitformat zu prüfen. `pause`, `resume` und `stop`
   kommen in keiner Testdatei vor.
+
+- Beobachtung: Die im Plan vorgeschlagene Revision-ID `0002_goal_prioritaet_und_ergebnis` ist mit
+  33 Zeichen einen zu lang für die Standardspalte `alembic_version.version_num`
+  (`varchar(32)`); `flask db upgrade` brach mit `StringDataRightTruncation` ab (Transaktion rollte
+  sauber zurück, keine Daten betroffen). Behoben durch Kürzung auf `0002_goal_prioritaet_ergebnis`
+  (29 Zeichen), Datei entsprechend umbenannt.
+
+- Beobachtung: Lokal belegt bereits ein anderes Projekt (`bachelorarbeit`) Port 5432 mit einem
+  eigenen Postgres-Container. Die Migration wurde daher mit `POSTGRES_PORT=5433` (nur als
+  Umgebungsvariable, nicht in `.env` persistiert) gegen den `lernzeit-db`-Container auf Port 5433
+  gefahren.
 
 - Beobachtung: Die Tests laufen gegen SQLite im Arbeitsspeicher, nicht gegen PostgreSQL, und
   erzeugen das Schema mit `db.create_all()` statt über die Migrationen.
