@@ -39,10 +39,10 @@ automatisierte Tests abgesichert. Bisher existiert im gesamten Backend **kein ei
 - [x] (2026-08-17 00:00Z) M1 — Ungültige Abfrageparameter liefern HTTP 400 statt HTTP 500
 - [x] (2026-08-17 00:00Z) M2 — Ein Lernziel mit verstrichenem Zieldatum lässt sich bearbeiten
 - [x] (2026-08-17 00:00Z) M3 — Migration 0002: Spalten `priority`, `grade`, `result_note` an `goals`
-- [ ] M4 — Backend akzeptiert und liefert Priorität, Note und Ergebnis-Notiz
-- [ ] M5 — Bearbeiten-Formular für Lernziele in der Oberfläche (FR-1.3, FR-1.4, FR-5.2)
-- [ ] M6 — Notiz beim Stoppen einer Lernsession (FR-5.2, zweiter Teil)
-- [ ] M7 — Stillgelegten Ordner `frontend/src/app/goals/` entfernen
+- [x] (2026-08-17 00:00Z) M4 — Backend akzeptiert und liefert Priorität, Note und Ergebnis-Notiz
+- [x] (2026-08-17 00:00Z) M5 — Bearbeiten-Formular für Lernziele in der Oberfläche (FR-1.3, FR-1.4, FR-5.2)
+- [x] (2026-08-17 00:00Z) M6 — Notiz beim Stoppen einer Lernsession (FR-5.2, zweiter Teil)
+- [x] (2026-08-17 00:00Z) M7 — Stillgelegten Ordner `frontend/src/app/goals/` entfernen (Frontend-Tests: 32 -> 15)
 - [ ] M8 — Backend-Tests für `/api/sessions` und `/api/plans`
 - [ ] M9 — Ehrlicher Löschhinweis und Aktualisierung der Dokumentation
 
