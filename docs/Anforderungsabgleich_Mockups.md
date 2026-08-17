@@ -16,9 +16,12 @@ Meilenstein MS4. Wer sie als Abnahmekriterium liest, misst gegen ein Ziel, das f
 war.
 
 Der Stand, gegen den hier abgeglichen wird, ist der Stand **nach** Abschluss der Pläne
-[`P4`](ExecPlans/completed/2026-08-17_P4-Defekte-und-Luecken-umgesetzter-Anforderungen.md) und
-[`P5`](ExecPlans/completed/2026-08-17_P5-FR-3.2-Zwischenziele.md); beide sind zum Zeitpunkt dieses
-Dokuments abgeschlossen (siehe `docs/ExecPlans/completed/`).
+[`P4`](ExecPlans/completed/2026-08-17_P4-Defekte-und-Luecken-umgesetzter-Anforderungen.md),
+[`P5`](ExecPlans/completed/2026-08-17_P5-FR-3.2-Zwischenziele.md) und
+[`P7`](ExecPlans/completed/2026-08-17_P7-Restarbeit-Must-und-Should-Anforderungen.md); Plan P7
+hat die in der Erstfassung dieses Dokuments benannte Restarbeit (FR-2.1 sowie alle offenen
+Should-Punkte) umgesetzt. Offen sind seither nur noch die bewusst zurückgestellten
+Could-Anforderungen.
 
 ## Übersicht (`2a-dashboard.html`)
 
@@ -34,9 +37,9 @@ Sessions.
 | Erinnerungskarte | Ja | FR-7.1 | Zwei Auslöser: heute geplant/nicht gelernt, 3 Tage Inaktivität |
 | Hinweis auf laufende Session mit Sprung zum Timer | Ja | FR-4.1 | `active_session` im Dashboard-Antwort |
 | Zähler Zwischenziele des Monats | Ja | FR-3.2 | Seit Plan P5, Kachel „Zwischenziele \<Monat\>" |
-| Modulliste mit Wochenbudgets in der Seitenleiste | Nein | FR-2.1 | Teilweise offen — siehe „Bekannte Abweichungen" unten |
+| Wochenbudgets je Modul | Ja | FR-2.1 | Seit Plan P7: „Budget: X/Woche" auf den Lernziel-Karten und in der Grobplanungstabelle der Planungsseite; die Seitenleisten-Form des Entwurfs ist reine Darstellung |
 | Wochenkalenderraster | Nein | — | Keine Anforderung, reine Darstellungsform |
-| „Ungestörte Zeit" als eigene Kennzahl | Nein | FR-4.3 (Darstellung) | Daten liegen vor (`total_paused_seconds`), keine eigene Anzeige |
+| „Ungestörte Zeit" als eigene Kennzahl | Ja | FR-4.3 (Darstellung) | Seit Plan P7: Kacheln „Ungestört gelernt" und „Pausen"; die gezählte Lernzeit war schon immer die Zeit ohne Pausen |
 | Knopf „Nacherfassen" | Nein | FR-4.4 (Could) | Nicht implementiert |
 | Semesterauswahl | Nein | — | Keine Anforderung, siehe Abschnitt „Entwurfsinhalte ohne Anforderung" |
 
@@ -66,10 +69,10 @@ Zeitachse über sechs Monate, einer Tabelle „Automatische Aufteilung auf Monat
 
 | Element im Entwurf | umgesetzt? | Anforderung | Bemerkung |
 |---|---|---|---|
-| ECTS-Workload je Lernziel als Bezugsgröße | Ja | FR-2.1 (teilweise) | `MINUTES_PER_ECTS` in `backend/app/routes/dashboard.py` |
+| ECTS-Workload je Lernziel als Bezugsgröße | Ja | FR-2.1 | `MINUTES_PER_ECTS` in `backend/app/workload.py` (seit Plan P7 dort) |
 | Lernzeit ohne festen Tag für einen ganzen Monat einplanen | Ja | FR-2.1 (faktisch) | `plan_slots.day = NULL`; Seite heißt nicht „Grobplanung", leistet es aber |
-| Wochenbudget je Modul | Nein | FR-2.1 (Must) | **Einzige verbleibende Must-Lücke** — siehe Übersichtstabelle unten |
-| Automatische Aufteilung des Workloads auf Monate/Wochen | Nein | FR-2.2 (Should) | Nicht implementiert |
+| Wochenbudget je Modul | Ja | FR-2.1 (Must) | Seit Plan P7: Restaufwand (ECTS-Workload minus gelernte Zeit) je verbleibender Woche bis zum Zieldatum |
+| Automatische Aufteilung des Workloads auf Monate/Wochen | Ja | FR-2.2 (Should) | Seit Plan P7 als berechneter Vorschlag (`GET /api/plans/proposal`); Slots legt er bewusst nicht an — der Vorschlag bleibt manuell anpassbar |
 | Berücksichtigung von Urlaub und Feiertagen | Nein | FR-2.3 (Could) | Nicht implementiert |
 | Zeitachse als Darstellungsform | Nein | — | Keine Anforderung |
 | Eigene Seite für Grobplanung | Nein | — | Grob- und Detailplanung teilen sich `/planning` und die Tabelle `plan_slots` |
@@ -87,7 +90,7 @@ Zwischenziele des Monats.
 | Monatsfilter | Ja | FR-3.1 | |
 | Block „Zwischenziele" mit Zähler und Abhaken | Ja | FR-3.2 | Seit Plan P5 |
 | Kalenderdarstellung als Monatsraster | Nein | — | Keine Anforderung; die Liste erfüllt FR-3.1 vollständig |
-| Abweichung je Kalenderwoche mit Restbudget | Nein | FR-3.3 (Should) | Heute nur die Monatssumme auf dem Dashboard |
+| Abweichung zur Grobplanung | Ja | FR-3.3 (Should) | Seit Plan P7: Abweichung geplant gegen Monatsvorschlag je Ziel auf der Planungsseite; die Aufschlüsselung je Kalenderwoche des Entwurfs ist Darstellungsform |
 | Knopf „Aus Grobplanung füllen" | Nein | — | Folge von FR-2.2, nicht implementiert |
 | Kennzeichnung von Feiertagen | Nein | FR-2.3 (Could) | Nicht implementiert |
 
@@ -101,7 +104,7 @@ je Monat" über sechs Monate, den erreichten Zielen mit Noten und einer Auswertu
 |---|---|---|---|
 | Vergleich geplant gegen erfasst (laufender Monat) | Ja | FR-6.1 | Auf dem Dashboard, nicht auf eigener Seite |
 | Fortschritt je Lernziel mit Ampelfarben | Ja | FR-6.2 | Auf dem Dashboard |
-| Diagramm über den Zeitverlauf | Nein | FR-6.3 (Should) | Nicht implementiert |
+| Diagramm über den Zeitverlauf | Ja | FR-6.3 (Should) | Seit Plan P7: Balkendiagramm „Lernzeit der letzten 8 Wochen" auf dem Dashboard, eigenes SVG ohne Diagrammbibliothek |
 | Vergleich Plan gegen Ist über volle sechs Monate | Nein | FR-6.4 (Could) | Nicht implementiert |
 | Eigene Auswertungsseite | Nein | — | Keine Anforderung — FR-6.1 verlangt „Dashboard/Übersicht" |
 | Exportfunktion | Nein | — | Keine Anforderung |
@@ -116,8 +119,8 @@ Vorschau.
 | Element im Entwurf | umgesetzt? | Anforderung | Bemerkung |
 |---|---|---|---|
 | Erinnerung bei versäumter Lernzeit | Ja | FR-7.1 (Must) | Zwei Auslöser: heute geplant/nicht gelernt, 3 Tage Inaktivität; als Hinweis auf dem Dashboard |
-| Erinnerung vor einem geplanten Slot | Nein | FR-7.2 (Should) | Nicht implementiert |
-| Erinnerung bei nahendem Zieltermin ohne Fortschritt | Nein | FR-7.3 (Should) | Nicht implementiert |
+| Erinnerung vor einem geplanten Slot | Ja | FR-7.2 (Should) | Seit Plan P7: Hinweis auf dem Dashboard ab 60 Minuten vor Beginn; im Browser berechnet, weil die Slot-Uhrzeit Ortszeit ist |
+| Erinnerung bei nahendem Zieltermin ohne Fortschritt | Ja | FR-7.3 (Should) | Seit Plan P7: Warnung bei Zieldatum in ≤ 14 Tagen und Fortschritt < 50 % |
 | Konfigurierbare Kanäle | Nein | FR-7.4 (Could) | Nicht implementiert |
 | Einstellbare Schwellen | Nein | FR-7.4 (Could) | Nicht implementiert |
 | Ruhezeiten und Wochenrückblick | Nein | — | Keine Anforderung |
@@ -125,19 +128,15 @@ Vorschau.
 
 ## Übersicht: Was noch fehlt
 
+Seit Plan P7 sind alle Must- und Should-Anforderungen umgesetzt. Offen sind nur noch die
+Could-Anforderungen — bewusst zurückgestellt, nicht vergessen:
+
 | Offen | Entwurf | Anforderung | Priorität |
 |---|---|---|---|
-| Wochenbudget je Modul, eigene Grobplanungsansicht | 2a, 2c | FR-2.1 | Must (teilweise offen) |
-| Automatische Aufteilung des Workloads auf Monate und Wochen | 2c | FR-2.2 | Should |
 | Urlaub und Feiertage aus dem Budget rechnen | 2c, 2d | FR-2.3 | Could |
-| Abweichung geplant gegen Restbudget je Kalenderwoche | 2d | FR-3.3 | Should |
-| Ungestörte Zeit als eigene Kennzahl | 2a | FR-4.3 (Darstellung) | Should |
 | Nacherfassen einer Lernzeit ohne Timer | 2a, 2f | FR-4.4 | Could |
 | Historie aller erreichten Ziele als eigene Ansicht | 2b, 2e | FR-5.3 | Could |
-| Diagramm Lernzeit über den Zeitverlauf | 2e | FR-6.3 | Should |
 | Plan gegen Ist über die vollen sechs Monate | 2c, 2e | FR-6.4 | Could |
-| Erinnerung vor einem geplanten Slot | 2f | FR-7.2 | Should |
-| Erinnerung bei nahendem Zieltermin ohne Fortschritt | 2f | FR-7.3 | Should |
 | Konfigurierbare Kanäle und Schwellen | 2f | FR-7.4 | Could |
 
 ## Entwurfsinhalte ohne Anforderung
@@ -174,7 +173,7 @@ verlangt — das lässt sich an der Anforderungsdatei selbst nachprüfen.
 **Der ECTS-Faktor.** Die Entwürfe rechnen mit 25 Stunden je ECTS-Punkt (`2c-grobplanung.html`:
 „1 ECTS ≈ 25 h Workload", „30 ECTS · 6 Monate" für 750 Stunden; `2b-lernziele.html`:
 „6 ECTS × 25 h" für 150 Stunden). Die Anwendung rechnet mit 30 Stunden
-(`MINUTES_PER_ECTS = 30 * 60` in `backend/app/routes/dashboard.py`, dieselbe Zahl in
+(`MINUTES_PER_ECTS = 30 * 60` in `backend/app/workload.py`, dieselbe Zahl in
 `frontend/src/app/features/goals/goals.ts` und in `README.md`). Es gilt der Code: 30 Stunden
 entsprechen der an der IU üblichen Rechnung „5 ECTS = 150 Stunden". Teamentscheidung vom
 2026-08-17.
@@ -185,18 +184,12 @@ und `README.md`. Die Entwürfe bleiben verbindlich für Felder, Beschriftungen u
 
 ## Empfehlung für die Restarbeit
 
-Zuerst **FR-2.1 vollständig machen**, also das Wochenbudget je Modul aus dem ECTS-Workload
-ableiten und anzeigen. Es ist die einzige verbleibende Must-Anforderung und zugleich die
-Voraussetzung für zwei weitere: FR-2.2 (automatische Aufteilung) braucht ein Budget, das sich
-aufteilen lässt, und FR-3.3 (Abweichung je Woche) braucht einen Sollwert, gegen den es vergleichen
-kann. Ohne FR-2.1 hängen beide in der Luft.
-
-Danach das **Should-Bündel FR-6.3, FR-7.2 und FR-7.3**. Alle drei kommen mit Daten aus, die
-bereits in der Datenbank stehen — erfasste Sessions, geplante Slots, Zieldaten der Lernziele — und
-brauchen keine neue Tabelle und keine Migration. FR-6.3 (Diagramm über den Zeitverlauf) ist dabei
-der größte Posten, weil eine Diagrammbibliothek hinzukommt; FR-7.2 und FR-7.3 sind Erweiterungen
-der Erinnerungslogik, die in `backend/app/routes/dashboard.py` bereits existiert und dort nur um
-zwei weitere Auslöser ergänzt werden müsste.
+Die in der Erstfassung dieses Dokuments empfohlene Restarbeit ist mit Plan P7 (2026-08-17)
+erledigt: FR-2.1 (Wochenbudget je Modul) zuerst, darauf aufbauend FR-2.2 und FR-3.3, dazu die
+Should-Punkte FR-4.3 (Darstellung), FR-6.3, FR-7.2 und FR-7.3. Wie erwartet kamen alle Punkte
+ohne neue Tabelle und ohne Migration aus; das Diagramm für FR-6.3 brauchte entgegen der
+ursprünglichen Vermutung keine Diagrammbibliothek, sondern ist ein eigenes SVG (Begründung im
+Decision Log von `ExecPlans/completed/2026-08-17_P7-Restarbeit-Must-und-Should-Anforderungen.md`).
 
 Die **Could-Anforderungen** FR-2.3, FR-4.4, FR-5.3, FR-6.4 und FR-7.4 bleiben offen. Sie sind laut
 der im Kickoff abgenommenen Priorisierung nicht abgabekritisch. Im Projektbericht werden sie als
