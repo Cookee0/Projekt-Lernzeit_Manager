@@ -10,10 +10,9 @@ from ..models.milestone import Milestone
 from ..models.plan_slot import PlanSlot
 from ..models.study_session import StudySession
 from ..time_utils import iso_utc
+from ..workload import MINUTES_PER_ECTS, weekly_budget_minutes
 
 dashboard_bp = Blueprint("dashboard", __name__)
-
-MINUTES_PER_ECTS = 30 * 60  # 30 hours per ECTS credit, expressed in minutes
 
 # Ab wie vielen Tagen ohne abgeschlossene Lernsitzung erinnert wird (FR-7.1).
 # Ein einzelner freier Tag ist normal; drei Tage Stillstand bei laufender
@@ -64,11 +63,15 @@ def dashboard():
             .filter_by(user_id=uid, goal_id=goal.id, status="completed")
             .scalar()
         )
+        actual_goal_minutes = total_sec // 60
         goals_data.append(
             {
                 **goal.to_dict(),
-                "total_actual_minutes": total_sec // 60,
+                "total_actual_minutes": actual_goal_minutes,
                 "planned_ects_minutes": goal.ects * MINUTES_PER_ECTS,
+                "weekly_budget_minutes": weekly_budget_minutes(
+                    goal.ects, actual_goal_minutes, goal.target_date, today, goal.status
+                ),
             }
         )
 
