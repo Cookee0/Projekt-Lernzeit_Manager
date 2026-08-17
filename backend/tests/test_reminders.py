@@ -7,35 +7,14 @@ lassen - der Timer kennt nur "jetzt".
 
 from datetime import date, datetime, timedelta, timezone
 
-import pytest
-
 from app.extensions import db
 from app.models.plan_slot import PlanSlot
 from app.models.study_session import StudySession
 
-REGISTER_URL = "/api/auth/register"
 GOALS_URL = "/api/goals"
 DASHBOARD_URL = "/api/dashboard"
 
 FUTURE_DATE = (date.today() + timedelta(days=200)).isoformat()
-
-
-@pytest.fixture
-def auth_header(client):
-    resp = client.post(
-        REGISTER_URL, json={"email": "erinnerung@example.de", "name": "E", "password": "pass123"}
-    )
-    return {"Authorization": f"Bearer {resp.get_json()['access_token']}"}
-
-
-@pytest.fixture
-def goal_id(client, auth_header):
-    resp = client.post(
-        GOALS_URL,
-        json={"title": "Erinnerungsziel", "module_name": "M", "target_date": FUTURE_DATE},
-        headers=auth_header,
-    )
-    return resp.get_json()["id"]
 
 
 def _user_id_of(goal_id: int) -> int:

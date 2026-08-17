@@ -43,7 +43,7 @@ automatisierte Tests abgesichert. Bisher existiert im gesamten Backend **kein ei
 - [x] (2026-08-17 00:00Z) M5 — Bearbeiten-Formular für Lernziele in der Oberfläche (FR-1.3, FR-1.4, FR-5.2)
 - [x] (2026-08-17 00:00Z) M6 — Notiz beim Stoppen einer Lernsession (FR-5.2, zweiter Teil)
 - [x] (2026-08-17 00:00Z) M7 — Stillgelegten Ordner `frontend/src/app/goals/` entfernen (Frontend-Tests: 32 -> 15)
-- [ ] M8 — Backend-Tests für `/api/sessions` und `/api/plans`
+- [x] (2026-08-17 00:00Z) M8 — Backend-Tests für `/api/sessions` und `/api/plans` (86 passed; Gegenprobe rot bestaetigt)
 - [ ] M9 — Ehrlicher Löschhinweis und Aktualisierung der Dokumentation
 
 Zeitstempel im Format `(JJJJ-MM-TT HH:MMZ)` beim Abhaken voranstellen, damit sich das

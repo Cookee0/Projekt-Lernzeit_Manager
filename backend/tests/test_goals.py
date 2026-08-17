@@ -1,9 +1,5 @@
 from datetime import date, timedelta
 
-import pytest
-
-REGISTER_URL = "/api/auth/register"
-LOGIN_URL = "/api/auth/login"
 GOALS_URL = "/api/goals"
 
 FUTURE_DATE = (date.today() + timedelta(days=200)).isoformat()
@@ -15,15 +11,6 @@ _GOAL_PAYLOAD = {
     "ects": 5,
     "status": "open",
 }
-
-
-@pytest.fixture
-def auth_header(client):
-    reg = {"email": "goals@example.com", "name": "G", "password": "pass123"}
-    client.post(REGISTER_URL, json=reg)
-    resp = client.post(LOGIN_URL, json={"email": "goals@example.com", "password": "pass123"})
-    token = resp.get_json()["access_token"]
-    return {"Authorization": f"Bearer {token}"}
 
 
 def test_list_goals_empty(client, auth_header):
