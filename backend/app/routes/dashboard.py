@@ -1,4 +1,4 @@
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 
 from flask import Blueprint, jsonify
 from flask_jwt_extended import get_jwt_identity, jwt_required
@@ -18,6 +18,16 @@ dashboard_bp = Blueprint("dashboard", __name__)
 # Ein einzelner freier Tag ist normal; drei Tage Stillstand bei laufender
 # Planung sind der Fall, den die Anforderung meint.
 INACTIVITY_DAYS = 3
+
+# Warnung bei nahendem Zieltermin ohne Fortschritt (FR-7.3): gewarnt wird,
+# wenn das Zieldatum in hoechstens 14 Tagen liegt und weniger als die Haelfte
+# des ECTS-Workloads gelernt ist. Beide Schwellen sind bewusst gewaehlte
+# Standardwerte - die Anforderung nennt keine Zahlen.
+DEADLINE_WARNING_DAYS = 14
+DEADLINE_WARNING_PROGRESS = 0.5
+
+# Laenge der Wochenhistorie fuer die Trendauswertung (FR-6.3).
+HISTORY_WEEKS = 8
 
 
 def _current_user_id() -> int:
@@ -55,8 +65,24 @@ def dashboard():
     )
     actual_minutes = actual_seconds // 60
 
+    # FR-4.3 (Darstellung): duration_seconds zaehlt Pausen nie mit (siehe
+    # stop_session in backend/app/routes/sessions.py). Die Pausenzeit des
+    # Monats wird hier als eigene Kennzahl ausgewiesen.
+    paused_seconds = (
+        db.session.query(func.coalesce(func.sum(StudySession.total_paused_seconds), 0))
+        .filter(
+            StudySession.user_id == uid,
+            StudySession.status == "completed",
+            StudySession.started_at >= month_start,
+            StudySession.started_at < month_end,
+        )
+        .scalar()
+    )
+    paused_minutes = paused_seconds // 60
+
     goals = Goal.query.filter_by(user_id=uid).order_by(Goal.target_date).all()
     goals_data = []
+    deadline_warnings = []
     for goal in goals:
         total_sec = (
             db.session.query(func.coalesce(func.sum(StudySession.duration_seconds), 0))
@@ -74,6 +100,51 @@ def dashboard():
                 ),
             }
         )
+
+        # FR-7.3: nahender Zieltermin ohne entsprechenden Fortschritt.
+        days_left = (goal.target_date - today).days
+        workload = goal.ects * MINUTES_PER_ECTS
+        progress = actual_goal_minutes / workload if workload > 0 else 1.0
+        if (
+            goal.status != "achieved"
+            and 0 <= days_left <= DEADLINE_WARNING_DAYS
+            and progress < DEADLINE_WARNING_PROGRESS
+        ):
+            deadline_warnings.append(
+                {
+                    "goal_id": goal.id,
+                    "title": goal.title,
+                    "target_date": goal.target_date.isoformat(),
+                    "days_left": days_left,
+                    "progress_pct": round(progress * 100),
+                }
+            )
+
+    # FR-6.3: Lernzeit je Kalenderwoche der letzten HISTORY_WEEKS Wochen.
+    # Sessions werden in naiver UTC gespeichert; der Wochenmontag wird deshalb
+    # ebenfalls in UTC bestimmt. Gruppiert wird in Python - die Datenmenge ist
+    # klein und der SQL-Dialekt (SQLite im Test, PostgreSQL im Betrieb) bleibt egal.
+    utc_today = datetime.now(timezone.utc).date()
+    this_monday = utc_today - timedelta(days=utc_today.weekday())
+    history_start = this_monday - timedelta(weeks=HISTORY_WEEKS - 1)
+    minutes_per_week = {
+        this_monday - timedelta(weeks=i): 0 for i in range(HISTORY_WEEKS - 1, -1, -1)
+    }
+    history_start_at = datetime(history_start.year, history_start.month, history_start.day)
+    history_sessions = StudySession.query.filter(
+        StudySession.user_id == uid,
+        StudySession.status == "completed",
+        StudySession.started_at >= history_start_at,
+    ).all()
+    for session in history_sessions:
+        session_day = session.started_at.date()
+        monday = session_day - timedelta(days=session_day.weekday())
+        if monday in minutes_per_week:
+            minutes_per_week[monday] += (session.duration_seconds or 0) // 60
+    weekly_history = [
+        {"week_start": monday.isoformat(), "minutes": minutes}
+        for monday, minutes in minutes_per_week.items()
+    ]
 
     milestones_total = Milestone.query.filter_by(user_id=uid, year=year, month=month).count()
     milestones_done = Milestone.query.filter_by(
@@ -145,8 +216,11 @@ def dashboard():
                 "month": month,
                 "planned_minutes": planned_minutes,
                 "actual_minutes": actual_minutes,
+                "paused_minutes": paused_minutes,
             },
             "goals": goals_data,
+            "weekly_history": weekly_history,
+            "deadline_warnings": deadline_warnings,
             "milestones": {"done": milestones_done, "total": milestones_total},
             "inactivity_warning": inactivity_warning,
             "reminder_text": reminder_text,
