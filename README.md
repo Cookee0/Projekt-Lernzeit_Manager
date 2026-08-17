@@ -20,14 +20,19 @@ Abgabeziel: **31.08.2026**.
 > Übersichtsseite mit Fortschritt sowie eine Erinnerung bei versäumter Lernzeit (FR-7.1) mit zwei
 > Auslösern: heute geplant und noch nicht gelernt, oder seit mindestens drei Tagen keine Session
 > trotz Planung für den laufenden Monat. Zu einem Lernziel lassen sich außerdem eine Note und eine
-> Ergebnis-Notiz hinterlegen. Die Eingaben (E-Mail, ECTS, Datum, Tag, Dauer, Uhrzeit, Priorität,
-> Note, Notizen) werden serverseitig geprüft und im Formular direkt unter dem betroffenen Feld
-> angezeigt; siehe den Abschnitt „Geltende Wertebereiche der API" weiter unten. Alle ausgelieferten
-> Zeitstempel sind als UTC gekennzeichnet (angehängtes `Z`), damit der Browser sie nicht fälschlich
-> als Ortszeit deutet. Die Datenbank enthält die Tabellen `users`, `goals`, `plan_slots` und
-> `study_sessions`, angelegt durch die Migrationen `backend/migrations/versions/0001_ms4_initial_schema.py`
-> und `backend/migrations/versions/0002_goal_prioritaet_ergebnis.py`; nach jedem `git pull` ist in
-> `backend/` bei aktivierter venv `flask db upgrade` auszuführen. Abgeschlossene ExecPlans liegen in
+> Ergebnis-Notiz hinterlegen. Auf der Planungsseite lassen sich pro Monat außerdem **Zwischenziele**
+> festlegen (FR-3.2) — kurze Arbeitspakete wie „Kapitel 3 abschließen", optional mit einem Tag im
+> Monat und optional einem Lernziel zugeordnet, abhakbar und löschbar; ein Zähler der Form „1 / 4"
+> erscheint sowohl auf der Planungsseite als auch als Kachel auf dem Dashboard. Die Eingaben
+> (E-Mail, ECTS, Datum, Tag, Dauer, Uhrzeit, Priorität, Note, Notizen, Zwischenziel-Titel) werden
+> serverseitig geprüft und im Formular direkt unter dem betroffenen Feld angezeigt; siehe den
+> Abschnitt „Geltende Wertebereiche der API" weiter unten. Alle ausgelieferten Zeitstempel sind als
+> UTC gekennzeichnet (angehängtes `Z`), damit der Browser sie nicht fälschlich als Ortszeit deutet.
+> Die Datenbank enthält die Tabellen `users`, `goals`, `plan_slots`, `study_sessions` und
+> `milestones`, angelegt durch die Migrationen `backend/migrations/versions/0001_ms4_initial_schema.py`,
+> `backend/migrations/versions/0002_goal_prioritaet_ergebnis.py` und
+> `backend/migrations/versions/0003_milestones.py`; nach jedem `git pull` ist in `backend/` bei
+> aktivierter venv `flask db upgrade` auszuführen. Abgeschlossene ExecPlans liegen in
 > [`docs/ExecPlans/completed/`](docs/ExecPlans/completed/).
 
 > **Dieses README ist die verbindliche Beschreibung des Ist-Zustands.** Wer etwas ändert, das eine
@@ -89,8 +94,10 @@ Lernziels ist `high`, `medium`, `low` oder leer; die Note ist höchstens 10 Zeic
 Ergebnis-Notiz eines Lernziels und die Notiz einer Lernsession sind höchstens 500 Zeichen lang;
 das Jahr einer Planung liegt zwischen 2020 und 2100, der Monat zwischen 1 und 12, der Tag muss zur
 Länge des gewählten Monats passen; die Dauer liegt zwischen 5 und 480 Minuten; die Uhrzeit folgt
-dem Format `HH:MM`; eine Notiz ist höchstens 500 Zeichen lang. Abfrageparameter von `/api/plans`
-und `/api/sessions` (`goal_id`, `year`, `month`, `limit`) werden ebenso geprüft und mit HTTP 400
+dem Format `HH:MM`; eine Notiz ist höchstens 500 Zeichen lang. Der Titel eines Zwischenziels ist 1
+bis 200 Zeichen lang; sein optionaler Tag muss zur Länge des gewählten Monats passen, geprüft mit
+derselben Regel wie bei der Planung. Abfrageparameter von `/api/plans`, `/api/sessions` und
+`/api/milestones` (`goal_id`, `year`, `month`, `limit`) werden ebenso geprüft und mit HTTP 400
 abgelehnt, wenn sie keine Zahl im erlaubten Bereich sind. Das Frontend spiegelt dieselben Regeln in
 `frontend/src/app/core/validation.ts` und zeigt Verstöße direkt unter dem betroffenen Feld an.
 
@@ -333,12 +340,14 @@ SELECT * FROM users;
 
 **Migrationen:** Schema-Änderungen laufen über
 [Flask-Migrate/Alembic](https://flask-migrate.readthedocs.io/). Das aktuelle Schema entsteht durch
-zwei Migrationen: `backend/migrations/versions/0001_ms4_initial_schema.py` legt alle vier Tabellen
-(`users`, `goals`, `plan_slots`, `study_sessions`) mit den Spalten an, die die Modelle unter
-`backend/app/models/` beschreiben; `backend/migrations/versions/0002_goal_prioritaet_ergebnis.py`
-ergänzt `goals` um die optionalen Spalten `priority`, `grade` und `result_note`. Nach jedem
-`git pull` unbedingt in `backend/` bei aktivierter venv `flask db upgrade` ausführen, sonst passen
-Code und lokales Schema nicht mehr zusammen. Für ein neues Modell oder eine Schemaänderung:
+drei Migrationen: `backend/migrations/versions/0001_ms4_initial_schema.py` legt die ersten vier
+Tabellen (`users`, `goals`, `plan_slots`, `study_sessions`) mit den Spalten an, die die Modelle
+unter `backend/app/models/` beschreiben; `backend/migrations/versions/0002_goal_prioritaet_ergebnis.py`
+ergänzt `goals` um die optionalen Spalten `priority`, `grade` und `result_note`;
+`backend/migrations/versions/0003_milestones.py` legt die Tabelle `milestones` für die monatlichen
+Zwischenziele (FR-3.2) an. Nach jedem `git pull` unbedingt in `backend/` bei aktivierter venv
+`flask db upgrade` ausführen, sonst passen Code und lokales Schema nicht mehr zusammen. Für ein
+neues Modell oder eine Schemaänderung:
 
 ```powershell
 flask db migrate -m "beschreibung"   # Migration erzeugen (in backend/, venv aktiv)
