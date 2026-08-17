@@ -12,42 +12,58 @@
 # Error details
 
 ```
-Error: expect(page).toHaveURL(expected) failed
+Error: expect(locator).toBeVisible() failed
 
-Expected: "http://localhost:4200/"
-Received: "http://localhost:4200/register"
-Timeout:  5000ms
+Locator: getByText('Timer-Ziel')
+Expected: visible
+Error: strict mode violation: getByText('Timer-Ziel') resolved to 2 elements:
+    1) <option value="31">Timer-Ziel</option> aka getByLabel('Lernziel auswählen')
+    2) <span>Timer-Ziel</span> aka locator('span').filter({ hasText: 'Timer-Ziel' })
 
 Call log:
-  - Expect "toHaveURL" with timeout 5000ms
-    13 × locator resolved to <html lang="de">…</html>
-       - unexpected value "http://localhost:4200/register"
+  - Expect "toBeVisible" with timeout 5000ms
+  - waiting for getByText('Timer-Ziel')
 
 ```
 
+# Page snapshot
+
 ```yaml
-- navigation:
-  - link "📚 Lernzeit-Manager":
-    - /url: /
-- heading "Lernzeit-Manager" [level=1]
-- heading "Registrieren" [level=2]
-- text: Registrierung fehlgeschlagen. Name
-- textbox "Name":
-  - /placeholder: Dein Name
-  - text: Timer Tester 1786434942254
-- text: E-Mail
-- textbox "E-Mail":
-  - /placeholder: name@beispiel.de
-  - text: timer-1786434942254@playwright.local
-- text: Passwort
-- textbox "Passwort":
-  - /placeholder: Mindestens 6 Zeichen
-  - text: Sicher123
-- button "Konto erstellen"
-- paragraph:
-  - text: Bereits registriert?
-  - link "Anmelden":
-    - /url: /login
+- generic [ref=f2e2]:
+  - navigation [ref=f2e4]:
+    - link "📚 Lernzeit-Manager" [ref=f2e6] [cursor=pointer]:
+      - /url: /
+    - list [ref=f2e7]:
+      - listitem [ref=f2e8]:
+        - link "Dashboard" [ref=f2e9] [cursor=pointer]:
+          - /url: /
+      - listitem [ref=f2e10]:
+        - link "Lernziele" [ref=f2e11] [cursor=pointer]:
+          - /url: /goals
+      - listitem [ref=f2e12]:
+        - link "Planung" [ref=f2e13] [cursor=pointer]:
+          - /url: /planning
+      - listitem [ref=f2e14]:
+        - link "Timer" [ref=f2e15] [cursor=pointer]:
+          - /url: /timer
+    - generic [ref=f2e16]:
+      - generic [ref=f2e17]: Timer Tester 1787001269825
+      - button "Abmelden" [ref=f2e18] [cursor=pointer]
+  - generic [ref=f2e20]:
+    - heading "Lernzeit-Timer" [level=2] [ref=f2e21]
+    - generic [ref=f2e23]:
+      - generic [ref=f2e24]:
+        - generic [ref=f2e25]: Lernziel auswählen
+        - combobox "Lernziel auswählen" [ref=f2e26]:
+          - option "Ziel wählen…" [disabled]
+          - option "Timer-Ziel" [selected]
+      - button "▶ Start" [ref=f2e27] [cursor=pointer]
+    - generic [ref=f2e28]:
+      - heading "Zuletzt gelernt" [level=3] [ref=f2e29]
+      - generic [ref=f2e30]:
+        - generic [ref=f2e31]: Timer-Ziel
+        - generic [ref=f2e32]: 00:00:02
+        - generic [ref=f2e33]: 17.8.2026
 ```
 
 # Test source
@@ -65,8 +81,7 @@ Call log:
   10 |   await page.getByLabel('E-Mail').fill(email);
   11 |   await page.getByLabel('Passwort').fill(password);
   12 |   await page.getByRole('button', { name: 'Konto erstellen' }).click();
-> 13 |   await expect(page).toHaveURL('/');
-     |                      ^ Error: expect(page).toHaveURL(expected) failed
+  13 |   await expect(page).toHaveURL('/');
   14 | 
   15 |   // Lernziel anlegen (Voraussetzung für Timer)
   16 |   await page.goto('/goals');
@@ -120,7 +135,8 @@ Call log:
   64 | 
   65 |     // Session erscheint in Verlauf
   66 |     await expect(page.getByText('Zuletzt gelernt')).toBeVisible();
-  67 |     await expect(page.getByText('Timer-Ziel')).toBeVisible();
+> 67 |     await expect(page.getByText('Timer-Ziel')).toBeVisible();
+     |                                                ^ Error: expect(locator).toBeVisible() failed
   68 |   });
   69 | });
   70 | 

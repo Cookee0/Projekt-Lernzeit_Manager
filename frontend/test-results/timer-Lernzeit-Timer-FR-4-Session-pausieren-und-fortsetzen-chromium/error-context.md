@@ -31,14 +31,14 @@ Call log:
     - /url: /
 - heading "Lernzeit-Manager" [level=1]
 - heading "Registrieren" [level=2]
-- text: Registrierung fehlgeschlagen. Name
+- text: E-Mail bereits registriert Name
 - textbox "Name":
   - /placeholder: Dein Name
-  - text: Timer Tester 1786434935388
+  - text: Timer Tester 1787001262237
 - text: E-Mail
 - textbox "E-Mail":
   - /placeholder: name@beispiel.de
-  - text: timer-1786434935388@playwright.local
+  - text: timer-1787001262237@playwright.local
 - text: Passwort
 - textbox "Passwort":
   - /placeholder: Mindestens 6 Zeichen

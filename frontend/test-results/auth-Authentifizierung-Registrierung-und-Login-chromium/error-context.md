@@ -12,42 +12,73 @@
 # Error details
 
 ```
-Error: expect(page).toHaveURL(expected) failed
+Error: expect(locator).toBeVisible() failed
 
-Expected: "http://localhost:4200/"
-Received: "http://localhost:4200/register"
-Timeout:  5000ms
+Locator: getByText('Dashboard')
+Expected: visible
+Error: strict mode violation: getByText('Dashboard') resolved to 2 elements:
+    1) <a href="/" routerlink="/" class="active" routerlinkactive="active">Dashboard</a> aka getByRole('link', { name: 'Dashboard' })
+    2) <h2>Dashboard</h2> aka getByRole('heading', { name: 'Dashboard' })
 
 Call log:
-  - Expect "toHaveURL" with timeout 5000ms
-    14 × locator resolved to <html lang="de">…</html>
-       - unexpected value "http://localhost:4200/register"
+  - Expect "toBeVisible" with timeout 5000ms
+  - waiting for getByText('Dashboard')
 
 ```
 
+# Page snapshot
+
 ```yaml
-- navigation:
-  - link "📚 Lernzeit-Manager":
-    - /url: /
-- heading "Lernzeit-Manager" [level=1]
-- heading "Registrieren" [level=2]
-- text: Registrierung fehlgeschlagen. Name
-- textbox "Name":
-  - /placeholder: Dein Name
-  - text: Playwright Nutzer 1786434928336
-- text: E-Mail
-- textbox "E-Mail":
-  - /placeholder: name@beispiel.de
-  - text: test-1786434928336@playwright.local
-- text: Passwort
-- textbox "Passwort":
-  - /placeholder: Mindestens 6 Zeichen
-  - text: Sicher123
-- button "Konto erstellen"
-- paragraph:
-  - text: Bereits registriert?
-  - link "Anmelden":
-    - /url: /login
+- generic [ref=e2]:
+  - navigation [ref=e4]:
+    - link "📚 Lernzeit-Manager" [ref=e6] [cursor=pointer]:
+      - /url: /
+    - list [ref=e7]:
+      - listitem [ref=e8]:
+        - link "Dashboard" [ref=e9] [cursor=pointer]:
+          - /url: /
+      - listitem [ref=e10]:
+        - link "Lernziele" [ref=e11] [cursor=pointer]:
+          - /url: /goals
+      - listitem [ref=e12]:
+        - link "Planung" [ref=e13] [cursor=pointer]:
+          - /url: /planning
+      - listitem [ref=e14]:
+        - link "Timer" [ref=e15] [cursor=pointer]:
+          - /url: /timer
+    - generic [ref=e16]:
+      - generic [ref=e17]: Playwright Nutzer 1787001262259
+      - button "Abmelden" [ref=e18] [cursor=pointer]
+  - generic [ref=e20]:
+    - heading "Dashboard" [level=2] [ref=e21]
+    - generic [ref=e22]:
+      - generic [ref=e23]:
+        - generic [ref=e24]: Geplant August
+        - generic [ref=e25]: 0 min
+      - generic [ref=e26]:
+        - generic [ref=e27]: Gelernt August
+        - generic [ref=e28]: 0 min
+      - generic [ref=e29]:
+        - generic [ref=e30]: Geschafft
+        - generic [ref=e31]: 0%
+      - generic [ref=e32]:
+        - generic [ref=e33]: Zwischenziele August
+        - generic [ref=e34]: 0 / 0
+    - generic [ref=e35]:
+      - heading "Dein Fortschritt im August" [level=3] [ref=e36]
+      - paragraph [ref=e37]:
+        - text: Noch keine Lernzeiten für diesen Monat geplant.
+        - link "Jetzt planen →" [ref=e38] [cursor=pointer]:
+          - /url: /planning
+    - generic [ref=e39]:
+      - generic [ref=e40]:
+        - heading "Lernziele" [level=3] [ref=e41]
+        - link "+ Neues Lernziel erstellen" [ref=e42] [cursor=pointer]:
+          - /url: /goals
+      - paragraph [ref=e43]:
+        - text: Noch keine Lernziele.
+        - link "Erstelle dein erstes Ziel." [ref=e44] [cursor=pointer]:
+          - /url: /goals
 ```
 
 # Test source
@@ -73,9 +104,9 @@ Call log:
   18 |     await page.getByRole('button', { name: 'Konto erstellen' }).click();
   19 | 
   20 |     // Nach Registrierung auf Dashboard landen
-> 21 |     await expect(page).toHaveURL('/');
-     |                        ^ Error: expect(page).toHaveURL(expected) failed
-  22 |     await expect(page.getByText('Dashboard')).toBeVisible();
+  21 |     await expect(page).toHaveURL('/');
+> 22 |     await expect(page.getByText('Dashboard')).toBeVisible();
+     |                                               ^ Error: expect(locator).toBeVisible() failed
   23 | 
   24 |     // Abmelden
   25 |     await page.getByRole('button', { name: 'Abmelden' }).click();
