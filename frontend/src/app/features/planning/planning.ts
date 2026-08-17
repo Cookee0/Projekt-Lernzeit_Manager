@@ -1,8 +1,9 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { Goal, PlanSlot } from '../../core/models';
+import { Goal, Milestone, PlanSlot } from '../../core/models';
 import { GoalService } from '../../core/services/goal.service';
+import { MilestoneService } from '../../core/services/milestone.service';
 import { PlanService } from '../../core/services/plan.service';
 import { validateClockTime, validateDayOfMonth, validateDuration } from '../../core/validation';
 
@@ -126,12 +127,55 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
           }
         }
       </div>
+
+      <div class="card">
+        <div class="section-header">
+          <h3>Zwischenziele {{ milestoneMonthLabel() }}</h3>
+          <span>{{ doneCount() }} / {{ milestones().length }}</span>
+        </div>
+
+        @if (milestoneError()) {
+          <div class="alert alert-error">{{ milestoneError() }}</div>
+        }
+
+        @if (milestones().length === 0) {
+          <p class="empty">Für diesen Monat ist noch kein Zwischenziel festgelegt.</p>
+        } @else {
+          @for (m of milestones(); track m.id) {
+            <div class="milestone-row">
+              <label class="milestone-check">
+                <input type="checkbox" [checked]="m.done" (change)="toggleMilestone(m)" />
+                <span [class.milestone-done]="m.done">{{ m.title }}</span>
+              </label>
+              @if (m.due_day) {
+                <span class="milestone-due">bis {{ m.due_day }}.</span>
+              }
+              <button class="btn btn-sm btn-danger" (click)="removeMilestone(m)">Löschen</button>
+            </div>
+          }
+        }
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="milestone-title">Neues Zwischenziel</label>
+            <input id="milestone-title" [(ngModel)]="newMilestoneTitle" name="milestone_title"
+              placeholder="z.B. Kapitel 3 abschließen" />
+          </div>
+          <div class="form-group">
+            <label for="milestone-day">Bis Tag (optional)</label>
+            <input id="milestone-day" type="number" [(ngModel)]="newMilestoneDay" name="milestone_day"
+              min="1" max="31" placeholder="z.B. 15" />
+          </div>
+        </div>
+        <button class="btn btn-primary" (click)="addMilestone()">+ Zwischenziel</button>
+      </div>
     </div>
   `,
 })
 export class PlanningComponent implements OnInit {
   private goalService = inject(GoalService);
   private planService = inject(PlanService);
+  private milestoneService = inject(MilestoneService);
 
   goals = signal<Goal[]>([]);
   slots = signal<PlanSlot[]>([]);
@@ -139,6 +183,11 @@ export class PlanningComponent implements OnInit {
   saving = signal(false);
   createError = signal('');
   fieldErrors = signal<Record<string, string>>({});
+
+  milestones = signal<Milestone[]>([]);
+  newMilestoneTitle = '';
+  newMilestoneDay: number | null = null;
+  milestoneError = signal('');
 
   /** Loescht die Fehlermeldung eines Feldes, sobald der Wert geaendert wird. */
   clearFieldError(field: string): void {
@@ -184,6 +233,7 @@ export class PlanningComponent implements OnInit {
   async ngOnInit(): Promise<void> {
     this.goals.set(await this.goalService.list());
     await this.loadSlots();
+    await this.loadMilestones();
   }
 
   async loadSlots(): Promise<void> {
@@ -199,6 +249,7 @@ export class PlanningComponent implements OnInit {
         filters.month = month;
       }
       this.slots.set(await this.planService.list(filters));
+      await this.loadMilestones();
     } finally {
       this.loading.set(false);
     }
@@ -257,5 +308,70 @@ export class PlanningComponent implements OnInit {
   slotDate(slot: PlanSlot): string {
     const monat = MONTH_NAMES[slot.month - 1] ?? String(slot.month);
     return slot.day ? `${slot.day}. ${monat} ${slot.year}` : `${monat} ${slot.year}`;
+  }
+
+  /** Der Monat, fuer den Zwischenziele angezeigt und angelegt werden.
+   *  Steht der Filter auf "Alle Monate", gilt der Monat des Anlegeformulars. */
+  private activeYearMonth(): { year: number; month: number } {
+    const key = this.selectedMonth || this.newSlotMonth;
+    const [year, month] = key.split('-').map(Number);
+    return { year, month };
+  }
+
+  milestoneMonthLabel(): string {
+    const { year, month } = this.activeYearMonth();
+    return `${MONTH_NAMES[month - 1]} ${year}`;
+  }
+
+  doneCount(): number {
+    return this.milestones().filter(m => m.done).length;
+  }
+
+  async loadMilestones(): Promise<void> {
+    const { year, month } = this.activeYearMonth();
+    this.milestones.set(await this.milestoneService.list({ year, month }));
+  }
+
+  async addMilestone(): Promise<void> {
+    this.milestoneError.set('');
+    const title = this.newMilestoneTitle.trim();
+    if (!title) {
+      this.milestoneError.set('Bitte einen Titel angeben.');
+      return;
+    }
+    if (title.length > 200) {
+      this.milestoneError.set('Titel darf höchstens 200 Zeichen lang sein.');
+      return;
+    }
+    const { year, month } = this.activeYearMonth();
+    const dayError = validateDayOfMonth(this.newMilestoneDay, year, month);
+    if (dayError) {
+      this.milestoneError.set(dayError);
+      return;
+    }
+    try {
+      const created = await this.milestoneService.create({
+        title,
+        year,
+        month,
+        due_day: this.newMilestoneDay ?? null,
+      });
+      this.milestones.update(ms => [...ms, created]);
+      this.newMilestoneTitle = '';
+      this.newMilestoneDay = null;
+    } catch (err) {
+      const msg = err instanceof HttpErrorResponse ? err.error?.error : undefined;
+      this.milestoneError.set(msg ?? 'Fehler beim Speichern.');
+    }
+  }
+
+  async toggleMilestone(milestone: Milestone): Promise<void> {
+    const updated = await this.milestoneService.update(milestone.id, { done: !milestone.done });
+    this.milestones.update(ms => ms.map(m => (m.id === milestone.id ? updated : m)));
+  }
+
+  async removeMilestone(milestone: Milestone): Promise<void> {
+    await this.milestoneService.delete(milestone.id);
+    this.milestones.update(ms => ms.filter(m => m.id !== milestone.id));
   }
 }
