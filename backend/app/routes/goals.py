@@ -63,7 +63,9 @@ def update_goal(goal_id: int):
     if "module_name" in data:
         goal.module_name = require_text(data["module_name"], "Modul/Kurs", 255)
     if "target_date" in data:
-        goal.target_date = require_future_date(data["target_date"], "Zieldatum")
+        goal.target_date = require_future_date(
+            data["target_date"], "Zieldatum", current=goal.target_date
+        )
     if "ects" in data:
         goal.ects = require_int_in_range(data["ects"], "ECTS-Punkte", 1, 30)
     if "status" in data:

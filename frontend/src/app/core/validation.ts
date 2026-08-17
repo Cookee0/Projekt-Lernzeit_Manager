@@ -42,14 +42,17 @@ export function validateEcts(value: number | null): string | null {
   return null;
 }
 
-export function validateTargetDate(value: string): string | null {
+export function validateTargetDate(value: string, current?: string): string | null {
   if (!value) return 'Zieldatum ist ein Pflichtfeld';
   const parsed = new Date(`${value}T00:00:00`);
   if (Number.isNaN(parsed.getTime())) return 'Zieldatum muss ein gültiges Datum sein';
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  if (parsed < today) return 'Zieldatum darf nicht in der Vergangenheit liegen';
   if (parsed.getFullYear() > today.getFullYear() + 10) return 'Zieldatum liegt zu weit in der Zukunft';
+  // Ein unveraendertes Datum bleibt zulaessig, auch wenn es verstrichen ist -
+  // sonst liesse sich ein altes Lernziel nicht mehr bearbeiten.
+  if (current && value === current) return null;
+  if (parsed < today) return 'Zieldatum darf nicht in der Vergangenheit liegen';
   return null;
 }
 

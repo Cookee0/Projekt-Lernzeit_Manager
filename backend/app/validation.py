@@ -85,8 +85,15 @@ def require_int_in_range(
     return number
 
 
-def require_future_date(value, field_label: str) -> date:
-    """ISO-Datum (JJJJ-MM-TT), heute oder spaeter, hoechstens 10 Jahre voraus."""
+def require_future_date(value, field_label: str, current: date | None = None) -> date:
+    """ISO-Datum (JJJJ-MM-TT), heute oder spaeter, hoechstens 10 Jahre voraus.
+
+    `current` ist der bereits gespeicherte Wert. Stimmt die Eingabe damit
+    ueberein, entfaellt die Pruefung auf Vergangenheit: Ein Lernziel, dessen
+    Termin verstrichen ist, muss sich weiterhin umbenennen lassen, ohne dass
+    die Nutzerin gezwungen waere, das Datum zu faelschen. Jede echte
+    Aenderung des Datums muss dagegen heute oder spaeter liegen.
+    """
     if _is_missing(value):
         raise ValidationError(f"{field_label} ist ein Pflichtfeld")
     try:
@@ -96,12 +103,14 @@ def require_future_date(value, field_label: str) -> date:
             f"{field_label} muss im Format JJJJ-MM-TT angegeben werden"
         ) from None
     today = date.today()
-    if parsed < today:
-        raise ValidationError(f"{field_label} darf nicht in der Vergangenheit liegen")
     if parsed.year > today.year + MAX_FUTURE_YEARS:
         raise ValidationError(
             f"{field_label} darf hoechstens {MAX_FUTURE_YEARS} Jahre in der Zukunft liegen"
         )
+    if parsed == current:
+        return parsed
+    if parsed < today:
+        raise ValidationError(f"{field_label} darf nicht in der Vergangenheit liegen")
     return parsed
 
 
