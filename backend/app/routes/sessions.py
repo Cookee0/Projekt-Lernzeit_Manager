@@ -6,7 +6,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from ..extensions import db
 from ..models.goal import Goal
 from ..models.study_session import StudySession
-from ..validation import optional_int_arg, require_int_in_range
+from ..validation import optional_int_arg, optional_text, require_int_in_range
 
 sessions_bp = Blueprint("sessions", __name__)
 
@@ -137,8 +137,8 @@ def stop_session(session_id: int):
     total_elapsed = int((now - session.started_at).total_seconds())
     session.duration_seconds = max(0, total_elapsed - (session.total_paused_seconds or 0))
     session.status = "completed"
-    if data.get("note"):
-        session.note = data["note"]
+    if "note" in data:
+        session.note = optional_text(data["note"], "Notiz", 500)
 
     db.session.commit()
     return jsonify(session.to_dict()), 200
