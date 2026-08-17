@@ -2,8 +2,13 @@ from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from ..extensions import db
-from ..models.goal import VALID_STATUSES, Goal
-from ..validation import require_future_date, require_int_in_range, require_text
+from ..models.goal import VALID_PRIORITIES, VALID_STATUSES, Goal
+from ..validation import (
+    optional_text,
+    require_future_date,
+    require_int_in_range,
+    require_text,
+)
 
 goals_bp = Blueprint("goals", __name__)
 
@@ -32,6 +37,13 @@ def create_goal():
     if status not in VALID_STATUSES:
         return jsonify({"error": f"status muss einer von {VALID_STATUSES} sein"}), 400
 
+    priority = data.get("priority") or None
+    if priority is not None and priority not in VALID_PRIORITIES:
+        return jsonify({"error": f"priority muss einer von {VALID_PRIORITIES} sein"}), 400
+
+    grade = optional_text(data.get("grade"), "Note", 10)
+    result_note = optional_text(data.get("result_note"), "Notiz", 500)
+
     goal = Goal(
         user_id=_current_user_id(),
         title=title,
@@ -39,6 +51,9 @@ def create_goal():
         target_date=target_date,
         ects=ects,
         status=status,
+        priority=priority,
+        grade=grade,
+        result_note=result_note,
     )
     db.session.add(goal)
     db.session.commit()
@@ -72,6 +87,15 @@ def update_goal(goal_id: int):
         if data["status"] not in VALID_STATUSES:
             return jsonify({"error": f"status muss einer von {VALID_STATUSES} sein"}), 400
         goal.status = data["status"]
+    if "priority" in data:
+        priority = data["priority"] or None
+        if priority is not None and priority not in VALID_PRIORITIES:
+            return jsonify({"error": f"priority muss einer von {VALID_PRIORITIES} sein"}), 400
+        goal.priority = priority
+    if "grade" in data:
+        goal.grade = optional_text(data["grade"], "Note", 10)
+    if "result_note" in data:
+        goal.result_note = optional_text(data["result_note"], "Notiz", 500)
 
     db.session.commit()
     return jsonify(goal.to_dict()), 200
