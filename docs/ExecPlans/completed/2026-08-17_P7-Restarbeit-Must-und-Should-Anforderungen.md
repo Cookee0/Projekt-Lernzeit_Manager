@@ -28,12 +28,12 @@ acht Wochen (FR-6.3), eine Warnung zu Lernzielen mit nahem Zieldatum und wenig F
 ## Progress
 
 - [x] (2026-08-17 12:20Z) Plan geschrieben.
-- [ ] M1: `backend/app/workload.py` + Wochenbudget im Dashboard + Tests.
-- [ ] M2: `GET /api/plans/proposal` (FR-2.2/FR-3.3-Daten) + Tests.
-- [ ] M3: Dashboard-Felder `paused_minutes`, `weekly_history`, `deadline_warnings` + Tests.
-- [ ] M4: Frontend Planungsseite — Grobplanung/Abweichung.
-- [ ] M5: Frontend Dashboard — Kennzahl Pausen, Wochenbudget je Ziel, SVG-Diagramm, Terminwarnungen, Slot-Erinnerung + Vitest-Spec.
-- [ ] M6: README und Abgleichdokument aktualisiert, alle Tests und Linter grün, Plan nach completed verschoben.
+- [x] (2026-08-17 12:45Z) M1: `backend/app/workload.py` + Wochenbudget im Dashboard + Tests (pytest: 110 passed).
+- [x] (2026-08-17 12:55Z) M2: `GET /api/plans/proposal` (FR-2.2/FR-3.3-Daten) + Tests.
+- [x] (2026-08-17 13:05Z) M3: Dashboard-Felder `paused_minutes`, `weekly_history`, `deadline_warnings` + Tests (pytest: 121 passed, ruff sauber).
+- [x] (2026-08-17 13:35Z) M4: Frontend Planungsseite — Grobplanung/Abweichung (ng lint sauber, 15 Vitest-Tests grün).
+- [x] (2026-08-17 13:55Z) M5: Frontend Dashboard — Kennzahl Pausen, Wochenbudget je Ziel, SVG-Diagramm, Terminwarnungen, Slot-Erinnerung + Vitest-Spec (22 Vitest-Tests grün, ng lint sauber).
+- [x] (2026-08-17 14:10Z) M6: README und Abgleichdokument aktualisiert, alle Tests und Linter grün (pytest 121, Vitest 22, ruff und ng lint sauber), Plan nach completed verschoben.
 
 ## Surprises & Discoveries
 
@@ -92,7 +92,19 @@ acht Wochen (FR-6.3), eine Warnung zu Lernzielen mit nahem Zieldatum und wenig F
 
 ## Outcomes & Retrospective
 
-Noch offen — wird beim Abschluss des Plans ausgefüllt.
+Abgeschlossen am 2026-08-17, alle sechs Milestones am selben Tag. Alle offenen Must- und
+Should-Punkte aus dem Abgleichdokument sind umgesetzt und getestet: Wochenbudget je Modul
+(FR-2.1) auf Planungsseite und Dashboard, automatische Monatsaufteilung als berechneter
+Vorschlag (FR-2.2), Abweichung geplant gegen Vorschlag je Monat (FR-3.3), Pausenzeit als eigene
+Kennzahl (FR-4.3), SVG-Balkendiagramm der letzten acht Wochen (FR-6.3), Slot-Erinnerung im
+Browser (FR-7.2) und Terminwarnungen (FR-7.3). Backend: 121 pytest-Tests grün (vorher 101),
+ruff sauber; Frontend: 22 Vitest-Tests grün (vorher 15), ng lint sauber. Wie geplant war keine
+Migration und keine neue Abhängigkeit nötig. Die Could-Anforderungen bleiben wie vorgesehen
+offen und sind im Abgleichdokument als bewusst zurückgestellt dokumentiert. Lessons learned:
+Die 480-Minuten-Obergrenze je Slot hätte ein automatisches Slot-Anlegen für FR-2.2 blockiert —
+die frühe Entscheidung für einen reinen Vorschlag hat das entschärft; und die Zeitzonen-Frage
+(Slot-Uhrzeit ist Ortszeit, Server läuft in UTC) hat die FR-7.2-Logik ins Frontend verlegt, wo
+sie als reine Funktion gut testbar ist.
 
 ## Context and Orientation
 
@@ -301,7 +313,12 @@ bleiben inhaltlich unverändert bei 30 Stunden je ECTS.
 
 Erwartete Antwortform von `GET /api/plans/proposal` siehe Milestone 2. Wichtigster Nachweis am
 Ende: pytest- und Vitest-Läufe mit 0 Fehlern sowie die im Abschnitt Validation beschriebenen
-Screens im Browser. Die tatsächlichen Testzahlen werden hier nach jedem Milestone eingetragen.
+Screens im Browser. Abschlussläufe:
+
+    backend:  121 passed                    (pytest; vor P7: 101)
+    backend:  All checks passed!            (ruff check .)
+    frontend: Test Files 5 passed, Tests 22 passed   (npx ng test --watch=false; vor P7: 15)
+    frontend: All files pass linting.       (npx ng lint)
 
 ## Interfaces and Dependencies
 
