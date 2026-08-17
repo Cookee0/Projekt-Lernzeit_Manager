@@ -43,6 +43,10 @@ const MONTH_NAMES = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
             <div class="stat-label">Geschafft</div>
             <div class="stat-value">{{ achievementPct() }}%</div>
           </div>
+          <div class="stat-card">
+            <div class="stat-label">Zwischenziele {{ monthLabel() }}</div>
+            <div class="stat-value">{{ data()!.milestones.done }} / {{ data()!.milestones.total }}</div>
+          </div>
         </div>
 
         <div class="month-progress card">

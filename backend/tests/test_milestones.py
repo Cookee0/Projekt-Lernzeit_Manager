@@ -125,3 +125,24 @@ def test_deleting_a_goal_keeps_its_milestones(client, auth_header, goal_id):
 
 def test_requires_authentication(client):
     assert client.get(MILESTONES_URL).status_code == 401
+
+
+def test_dashboard_counts_milestones_of_the_current_month(client, auth_header):
+    from datetime import date
+
+    heute = date.today()
+    erledigt = client.post(
+        MILESTONES_URL,
+        json={"title": "Fertig", "year": heute.year, "month": heute.month},
+        headers=auth_header,
+    ).get_json()
+    client.put(f"{MILESTONES_URL}/{erledigt['id']}", json={"done": True}, headers=auth_header)
+    client.post(
+        MILESTONES_URL,
+        json={"title": "Offen", "year": heute.year, "month": heute.month},
+        headers=auth_header,
+    )
+
+    resp = client.get("/api/dashboard", headers=auth_header)
+    assert resp.status_code == 200
+    assert resp.get_json()["milestones"] == {"done": 1, "total": 2}

@@ -6,6 +6,7 @@ from sqlalchemy import func
 
 from ..extensions import db
 from ..models.goal import Goal
+from ..models.milestone import Milestone
 from ..models.plan_slot import PlanSlot
 from ..models.study_session import StudySession
 from ..time_utils import iso_utc
@@ -70,6 +71,11 @@ def dashboard():
                 "planned_ects_minutes": goal.ects * MINUTES_PER_ECTS,
             }
         )
+
+    milestones_total = Milestone.query.filter_by(user_id=uid, year=year, month=month).count()
+    milestones_done = Milestone.query.filter_by(
+        user_id=uid, year=year, month=month, done=True
+    ).count()
 
     today_slots = (
         PlanSlot.query.filter_by(user_id=uid, year=year, month=month, day=today.day).count()
@@ -138,6 +144,7 @@ def dashboard():
                 "actual_minutes": actual_minutes,
             },
             "goals": goals_data,
+            "milestones": {"done": milestones_done, "total": milestones_total},
             "inactivity_warning": inactivity_warning,
             "reminder_text": reminder_text,
             "active_session": active_data,

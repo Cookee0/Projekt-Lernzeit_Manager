@@ -76,6 +76,7 @@ export interface CurrentMonth {
 export interface DashboardData {
   current_month: CurrentMonth;
   goals: GoalStats[];
+  milestones: { done: number; total: number };
   inactivity_warning: boolean;
   reminder_text: string | null;
   active_session: ActiveSession | null;
