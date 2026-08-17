@@ -14,17 +14,20 @@ Abgabeziel: **31.08.2026**.
 > Seiten-Reload, weil der Token beim Start der Anwendung über `GET /api/auth/me` geprüft wird und
 > nur bei einer ausdrücklichen Ablehnung mit HTTP 401 oder 403 abgemeldet wird. Alle Endpunkte
 > außer `/api/health`, `/api/auth/register` und `/api/auth/login` sind geschützt. Umgesetzt sind
-> Lernziele (anlegen, Status ändern, löschen), Grob- und Detailplanung von Lernzeiten, ein Timer
-> mit Start, Pause, Fortsetzen und Stopp, eine Übersichtsseite mit Fortschritt sowie eine
-> Erinnerung bei versäumter Lernzeit (FR-7.1) mit zwei Auslösern: heute geplant und noch nicht
-> gelernt, oder seit mindestens drei Tagen keine Session trotz Planung für den laufenden Monat. Die
-> Eingaben (E-Mail, ECTS, Datum, Tag, Dauer, Uhrzeit) werden serverseitig geprüft und im Formular
-> direkt unter dem betroffenen Feld angezeigt; siehe den Abschnitt „Geltende Wertebereiche der API"
-> weiter unten. Alle ausgelieferten Zeitstempel sind als UTC gekennzeichnet (angehängtes `Z`), damit
-> der Browser sie nicht fälschlich als Ortszeit deutet. Die Datenbank enthält die Tabellen `users`,
-> `goals`, `plan_slots` und `study_sessions`, angelegt durch die Migration
-> `backend/migrations/versions/0001_ms4_initial_schema.py`; nach jedem `git pull` ist in `backend/`
-> bei aktivierter venv `flask db upgrade` auszuführen. Abgeschlossene ExecPlans liegen in
+> Lernziele (anlegen, **vollständig bearbeiten** — Titel, Modul, ECTS, Zieldatum, Status,
+> optionale Priorität —, löschen), Grob- und Detailplanung von Lernzeiten, ein Timer mit Start,
+> Pause, Fortsetzen und Stopp (der beim Stoppen eine optionale Notiz aufnimmt), eine
+> Übersichtsseite mit Fortschritt sowie eine Erinnerung bei versäumter Lernzeit (FR-7.1) mit zwei
+> Auslösern: heute geplant und noch nicht gelernt, oder seit mindestens drei Tagen keine Session
+> trotz Planung für den laufenden Monat. Zu einem Lernziel lassen sich außerdem eine Note und eine
+> Ergebnis-Notiz hinterlegen. Die Eingaben (E-Mail, ECTS, Datum, Tag, Dauer, Uhrzeit, Priorität,
+> Note, Notizen) werden serverseitig geprüft und im Formular direkt unter dem betroffenen Feld
+> angezeigt; siehe den Abschnitt „Geltende Wertebereiche der API" weiter unten. Alle ausgelieferten
+> Zeitstempel sind als UTC gekennzeichnet (angehängtes `Z`), damit der Browser sie nicht fälschlich
+> als Ortszeit deutet. Die Datenbank enthält die Tabellen `users`, `goals`, `plan_slots` und
+> `study_sessions`, angelegt durch die Migrationen `backend/migrations/versions/0001_ms4_initial_schema.py`
+> und `backend/migrations/versions/0002_goal_prioritaet_ergebnis.py`; nach jedem `git pull` ist in
+> `backend/` bei aktivierter venv `flask db upgrade` auszuführen. Abgeschlossene ExecPlans liegen in
 > [`docs/ExecPlans/completed/`](docs/ExecPlans/completed/).
 
 > **Dieses README ist die verbindliche Beschreibung des Ist-Zustands.** Wer etwas ändert, das eine
@@ -80,10 +83,15 @@ Seit Plan P1 prüft das Backend jede eingehende Eingabe und lehnt Verstöße mit
 `{"error": "..."}` ab. Es gelten folgende Grenzen: Die E-Mail-Adresse muss der Form
 `name@domain.de` entsprechen; das Passwort ist 6 bis 128 Zeichen lang; Titel und Modul/Kurs eines
 Lernziels sind 1 bis 255 Zeichen lang; ECTS-Punkte liegen zwischen 1 und 30; das Zieldatum liegt
-heute oder in der Zukunft, höchstens zehn Jahre voraus; das Jahr einer Planung liegt zwischen 2020
-und 2100, der Monat zwischen 1 und 12, der Tag muss zur Länge des gewählten Monats passen; die
-Dauer liegt zwischen 5 und 480 Minuten; die Uhrzeit folgt dem Format `HH:MM`; eine Notiz ist
-höchstens 500 Zeichen lang. Das Frontend spiegelt dieselben Regeln in
+heute oder in der Zukunft, höchstens zehn Jahre voraus — außer es bleibt beim Bearbeiten
+unverändert, dann bleibt auch ein bereits verstrichenes Datum gültig; die Priorität eines
+Lernziels ist `high`, `medium`, `low` oder leer; die Note ist höchstens 10 Zeichen lang; die
+Ergebnis-Notiz eines Lernziels und die Notiz einer Lernsession sind höchstens 500 Zeichen lang;
+das Jahr einer Planung liegt zwischen 2020 und 2100, der Monat zwischen 1 und 12, der Tag muss zur
+Länge des gewählten Monats passen; die Dauer liegt zwischen 5 und 480 Minuten; die Uhrzeit folgt
+dem Format `HH:MM`; eine Notiz ist höchstens 500 Zeichen lang. Abfrageparameter von `/api/plans`
+und `/api/sessions` (`goal_id`, `year`, `month`, `limit`) werden ebenso geprüft und mit HTTP 400
+abgelehnt, wenn sie keine Zahl im erlaubten Bereich sind. Das Frontend spiegelt dieselben Regeln in
 `frontend/src/app/core/validation.ts` und zeigt Verstöße direkt unter dem betroffenen Feld an.
 
 ---
@@ -325,11 +333,12 @@ SELECT * FROM users;
 
 **Migrationen:** Schema-Änderungen laufen über
 [Flask-Migrate/Alembic](https://flask-migrate.readthedocs.io/). Das aktuelle Schema entsteht durch
-eine einzige Migration, `backend/migrations/versions/0001_ms4_initial_schema.py`, die alle vier
-Tabellen (`users`, `goals`, `plan_slots`, `study_sessions`) mit den Spalten anlegt, die die
-Modelle unter `backend/app/models/` beschreiben. Nach jedem `git pull` unbedingt in `backend/` bei
-aktivierter venv `flask db upgrade` ausführen, sonst passen Code und lokales Schema nicht mehr
-zusammen. Für ein neues Modell oder eine Schemaänderung:
+zwei Migrationen: `backend/migrations/versions/0001_ms4_initial_schema.py` legt alle vier Tabellen
+(`users`, `goals`, `plan_slots`, `study_sessions`) mit den Spalten an, die die Modelle unter
+`backend/app/models/` beschreiben; `backend/migrations/versions/0002_goal_prioritaet_ergebnis.py`
+ergänzt `goals` um die optionalen Spalten `priority`, `grade` und `result_note`. Nach jedem
+`git pull` unbedingt in `backend/` bei aktivierter venv `flask db upgrade` ausführen, sonst passen
+Code und lokales Schema nicht mehr zusammen. Für ein neues Modell oder eine Schemaänderung:
 
 ```powershell
 flask db migrate -m "beschreibung"   # Migration erzeugen (in backend/, venv aktiv)

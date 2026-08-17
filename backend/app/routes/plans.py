@@ -6,6 +6,7 @@ from ..models.goal import Goal
 from ..models.plan_slot import PlanSlot
 from ..validation import (
     optional_clock_time,
+    optional_int_arg,
     optional_text,
     require_day_of_month,
     require_int_in_range,
@@ -22,13 +23,17 @@ def _current_user_id() -> int:
 @jwt_required()
 def list_plans():
     uid = _current_user_id()
+    goal_id = optional_int_arg(request.args.get("goal_id"), "Lernziel", 1, 2_147_483_647)
+    year = optional_int_arg(request.args.get("year"), "Jahr", 2020, 2100)
+    month = optional_int_arg(request.args.get("month"), "Monat", 1, 12)
+
     q = PlanSlot.query.filter_by(user_id=uid)
-    if goal_id := request.args.get("goal_id"):
-        q = q.filter_by(goal_id=int(goal_id))
-    if year := request.args.get("year"):
-        q = q.filter_by(year=int(year))
-    if month := request.args.get("month"):
-        q = q.filter_by(month=int(month))
+    if goal_id is not None:
+        q = q.filter_by(goal_id=goal_id)
+    if year is not None:
+        q = q.filter_by(year=year)
+    if month is not None:
+        q = q.filter_by(month=month)
     slots = q.order_by(PlanSlot.year, PlanSlot.month, PlanSlot.day).all()
     return jsonify([s.to_dict() for s in slots]), 200
 

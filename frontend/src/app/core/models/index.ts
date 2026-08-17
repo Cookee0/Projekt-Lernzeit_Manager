@@ -11,6 +11,9 @@ export interface Goal {
   module_name: string;
   ects: number;
   status: 'open' | 'in_progress' | 'achieved';
+  priority: 'high' | 'medium' | 'low' | null;
+  grade: string | null;
+  result_note: string | null;
   target_date: string;
   created_at: string;
 }

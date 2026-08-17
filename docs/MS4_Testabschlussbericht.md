@@ -11,21 +11,22 @@
 
 | Testkategorie | Gesamt | Bestanden | Fehlgeschlagen |
 |---|---|---|---|
-| Backend Unit-Tests (pytest) | 57 | 57 | 0 |
-| Frontend Unit-Tests (Vitest) | 32 | 32 | 0 |
+| Backend Unit-Tests (pytest) | 86 | 86 | 0 |
+| Frontend Unit-Tests (Vitest) | 15 | 15 | 0 |
 | Playwright E2E-Tests | 13 | 13 | 0 |
 | Manueller Systemtest | 14 | 14 | 0 |
 
-Stand 2026-08-11, ermittelt durch `pytest -q` (Backend) und `ng test --watch=false` (Frontend) auf
-dem aktuellen Stand nach den Plänen P1 (Eingabevalidierung), P2 (Zeitzonen/Filter) und P3
-(Erinnerungen). Die Backend- und Frontend-Zahlen sind gegenüber dem ursprünglichen MS4-Stand (13
-bzw. 18) gestiegen, weil P1, P2 und P3 zusammen 44 neue Backend-Tests und 14 neue Frontend-Tests
-hinzugefügt haben; die Detailtabellen in Abschnitt 3 und 4 unten beschreiben noch den
+Stand 2026-08-17, ermittelt durch `pytest -q` (Backend) und `ng test --watch=false` (Frontend) nach
+Plan P4 (Defekte und Lücken). Gegenüber dem vorherigen Stand (57 Backend-/32 Frontend-Tests) ist
+die Backend-Zahl gestiegen, weil P4/M8 `backend/tests/test_sessions.py` und
+`backend/tests/test_plans.py` ergänzt hat — die Stoppuhr (Start, Pause, Fortsetzen, Stopp,
+Pausenrechnung nach FR-4.3) wird damit erstmals automatisiert im Backend geprüft. Die
+Frontend-Zahl ist gesunken, weil P4/M7 den seit dem MS4-Umbau nicht mehr eingebundenen Ordner
+`frontend/src/app/goals/` (17 Tests auf toten Code) entfernt hat; die verbleibenden Komponenten
+sind unverändert grün. Die Detailtabellen in Abschnitt 3 und 4 unten beschreiben noch den
 ursprünglichen MS4-Stand und wurden im Rahmen dieses Plans nicht im Detail nacherfasst — maßgeblich
-sind die hier genannten Gesamtzahlen. Von den 32 Frontend-Tests entfallen 15 auf Komponenten in
-`frontend/src/app/goals/`, die von der laufenden Anwendung nicht mehr eingebunden sind (siehe
-Abschnitt 4). Die Playwright-Zahl ist die letzte tatsächliche Ausführung vom 2026-08-11 gegen die
-Railway-Produktionsumgebung; sie wurde im Rahmen dieses Plans nicht erneut ausgeführt.
+sind die hier genannten Gesamtzahlen. Die Playwright-Zahl ist die letzte tatsächliche Ausführung;
+Details siehe Abschnitt 5.
 
 In der CI-Pipeline (`.github/workflows/ci.yml`) laufen bei jedem Push auf `main` sowie bei jedem
 Pull Request die Backend-Prüfungen (`ruff check .`, `pytest`) und die Frontend-Prüfungen
@@ -197,10 +198,32 @@ bis dahin bleiben die Tests bestehen.
 | T-E2E-12 | FR-4.1, FR-4.3 | Pause und Fortsetzen → Status wechselt korrekt | ✅ Bestanden |
 | T-E2E-13 | FR-4.1, FR-4.2 | Session stoppen → erscheint in "Zuletzt gelernt" | ✅ Bestanden |
 
-**Gesamtergebnis Playwright:** 13 von 13 Tests bestanden ✅
+**Gesamtergebnis Playwright (Railway-Produktionsumgebung, 2026-08-11):** 13 von 13 Tests bestanden ✅
 
 Diese Tests werden manuell gegen eine laufende Umgebung ausgeführt und sind **nicht** Bestandteil
 der GitHub-Actions-CI-Pipeline (siehe `.github/workflows/ci.yml` sowie den Hinweis in Abschnitt 1).
+
+**Nachtrag 2026-08-17 (Plan P4, M9):** Ein erneuter Lauf gegen die lokalen Dev-Server
+(`ng serve` + `flask run --debug`, nicht gegen Railway) zeigt nur noch 5 von 12 bestandene Tests
+(`auth.spec.ts` enthält inzwischen 3 statt 4 Tests). Ein Teil des Rückgangs ist durch P4 behoben
+worden: `frontend/e2e/goals.spec.ts` griff nach M5 wegen des neuen Bearbeiten-Formulars mit
+`page.getByLabel('Titel')` auf zwei Elemente zu (strict-mode violation); behoben durch Eingrenzung
+auf die Anlege-Karte (`page.locator('.card', { hasText: 'Neues Lernziel' })`). Die verbleibenden
+sieben Fehlschläge sind **keine Regression durch P4**: `RegisterComponent.submit()` navigiert nach
+erfolgreicher Registrierung nicht zuverlässig auf `/` (der Zugriffstoken wird korrekt in
+`localStorage` geschrieben, ein anschließender manueller Aufruf von `/` zeigt das Dashboard
+korrekt — nur die interne `Router.navigate(['/'])`-Weiterleitung im selben Seitenaufruf schlägt
+sporadisch fehl oder braucht länger als das 5-Sekunden-Timeout der Tests). Da praktisch jeder
+Playwright-Test über `registerAndLogin()`/`setup()` registriert, reißt dieser eine Defekt fast die
+ganze Suite mit. Zusätzlich bestehen in `planning.spec.ts` und `timer.spec.ts` vorbestehende
+strict-mode-Kollisionen zwischen `<option>`-Text und sichtbarem Text auf derselben Seite
+(`getByText('Planungs-Ziel')` bzw. `getByText('Timer-Ziel')` treffen sowohl das Auswahlfeld als
+auch die Anzeige). Keiner dieser drei Befunde gehört zu den in diesem Plan beschriebenen
+Meilensteinen; sie sind hier dokumentiert, weil `docs/PLANS.md` verlangt, Abweichungen von der
+Erwartung festzuhalten, nicht stillschweigend zu übergehen. Ob der Navigations-Defekt auch die
+Railway-Produktionsumgebung betrifft (unterschiedlicher Build, ggf. andere Zeitverhältnisse) ist
+ungeprüft — dafür fehlt in dieser Sitzung ein Railway-Deployment dieses Branches. Empfehlung: ein
+eigener Folge-Plan für `RegisterComponent`/`auth.guard.ts` sowie für die beiden Label-Kollisionen.
 
 ---
 

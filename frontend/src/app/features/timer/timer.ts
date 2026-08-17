@@ -41,6 +41,11 @@ import { SessionService } from '../../core/services/session.service';
             <div class="timer-status">
               {{ activeSession()!.status === 'paused' ? '⏸ Pausiert' : '▶ Läuft' }}
             </div>
+            <div class="form-group">
+              <label for="session-note">Notiz zur Session (optional)</label>
+              <input id="session-note" [(ngModel)]="sessionNote" name="session_note"
+                placeholder="z.B. Kapitel 3 wiederholt" />
+            </div>
             <div class="timer-buttons">
               @if (activeSession()!.status === 'active') {
                 <button class="btn btn-secondary" (click)="pause()" [disabled]="loading()">⏸ Pause</button>
@@ -64,6 +69,9 @@ import { SessionService } from '../../core/services/session.service';
               <span>{{ formatDuration(s.duration_seconds) }}</span>
               <span class="session-date">{{ formatDate(s.started_at) }}</span>
             </div>
+            @if (s.note) {
+              <p class="goal-note">📝 {{ s.note }}</p>
+            }
           }
         }
       </div>
@@ -82,6 +90,7 @@ export class TimerComponent implements OnInit, OnDestroy {
   loading = signal(false);
 
   selectedGoalId = 0;
+  sessionNote = '';
   private intervalId: ReturnType<typeof setInterval> | null = null;
 
   async ngOnInit(): Promise<void> {
@@ -181,10 +190,11 @@ export class TimerComponent implements OnInit, OnDestroy {
     if (!s) return;
     this.loading.set(true);
     try {
-      await this.sessionService.stop(s.id);
+      await this.sessionService.stop(s.id, this.sessionNote || undefined);
       this.clearInterval();
       this.activeSession.set(null);
       this.displayTime.set('00:00:00');
+      this.sessionNote = '';
       await this.loadSessions();
     } finally {
       this.loading.set(false);

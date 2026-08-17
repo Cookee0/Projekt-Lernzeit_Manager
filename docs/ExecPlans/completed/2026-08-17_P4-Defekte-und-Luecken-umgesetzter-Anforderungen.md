@@ -36,15 +36,15 @@ automatisierte Tests abgesichert. Bisher existiert im gesamten Backend **kein ei
 
 ## Progress
 
-- [ ] M1 — Ungültige Abfrageparameter liefern HTTP 400 statt HTTP 500
-- [ ] M2 — Ein Lernziel mit verstrichenem Zieldatum lässt sich bearbeiten
-- [ ] M3 — Migration 0002: Spalten `priority`, `grade`, `result_note` an `goals`
-- [ ] M4 — Backend akzeptiert und liefert Priorität, Note und Ergebnis-Notiz
-- [ ] M5 — Bearbeiten-Formular für Lernziele in der Oberfläche (FR-1.3, FR-1.4, FR-5.2)
-- [ ] M6 — Notiz beim Stoppen einer Lernsession (FR-5.2, zweiter Teil)
-- [ ] M7 — Stillgelegten Ordner `frontend/src/app/goals/` entfernen
-- [ ] M8 — Backend-Tests für `/api/sessions` und `/api/plans`
-- [ ] M9 — Ehrlicher Löschhinweis und Aktualisierung der Dokumentation
+- [x] (2026-08-17 00:00Z) M1 — Ungültige Abfrageparameter liefern HTTP 400 statt HTTP 500
+- [x] (2026-08-17 00:00Z) M2 — Ein Lernziel mit verstrichenem Zieldatum lässt sich bearbeiten
+- [x] (2026-08-17 00:00Z) M3 — Migration 0002: Spalten `priority`, `grade`, `result_note` an `goals`
+- [x] (2026-08-17 00:00Z) M4 — Backend akzeptiert und liefert Priorität, Note und Ergebnis-Notiz
+- [x] (2026-08-17 00:00Z) M5 — Bearbeiten-Formular für Lernziele in der Oberfläche (FR-1.3, FR-1.4, FR-5.2)
+- [x] (2026-08-17 00:00Z) M6 — Notiz beim Stoppen einer Lernsession (FR-5.2, zweiter Teil)
+- [x] (2026-08-17 00:00Z) M7 — Stillgelegten Ordner `frontend/src/app/goals/` entfernen (Frontend-Tests: 32 -> 15)
+- [x] (2026-08-17 00:00Z) M8 — Backend-Tests für `/api/sessions` und `/api/plans` (86 passed; Gegenprobe rot bestaetigt)
+- [x] (2026-08-17 00:00Z) M9 (erledigt: Löschhinweis, README.md, AGENTS.md, MS4_Testabschlussbericht.md, goals.spec.ts-Fix; offen: playwright insgesamt nicht gruen — siehe Surprises)
 
 Zeitstempel im Format `(JJJJ-MM-TT HH:MMZ)` beim Abhaken voranstellen, damit sich das
 Arbeitstempo später im Projektbericht belegen lässt. Beispiel für einen abgehakten Eintrag:
@@ -77,6 +77,17 @@ Ausgangsbefund; alles, was während der Umsetzung dazukommt, wird hier ergänzt.
   `/api/sessions/start` auf, und zwar um das Zeitformat zu prüfen. `pause`, `resume` und `stop`
   kommen in keiner Testdatei vor.
 
+- Beobachtung: Die im Plan vorgeschlagene Revision-ID `0002_goal_prioritaet_und_ergebnis` ist mit
+  33 Zeichen einen zu lang für die Standardspalte `alembic_version.version_num`
+  (`varchar(32)`); `flask db upgrade` brach mit `StringDataRightTruncation` ab (Transaktion rollte
+  sauber zurück, keine Daten betroffen). Behoben durch Kürzung auf `0002_goal_prioritaet_ergebnis`
+  (29 Zeichen), Datei entsprechend umbenannt.
+
+- Beobachtung: Lokal belegt bereits ein anderes Projekt (`bachelorarbeit`) Port 5432 mit einem
+  eigenen Postgres-Container. Die Migration wurde daher mit `POSTGRES_PORT=5433` (nur als
+  Umgebungsvariable, nicht in `.env` persistiert) gegen den `lernzeit-db`-Container auf Port 5433
+  gefahren.
+
 - Beobachtung: Die Tests laufen gegen SQLite im Arbeitsspeicher, nicht gegen PostgreSQL, und
   erzeugen das Schema mit `db.create_all()` statt über die Migrationen.
   Evidenz: `backend/app/config.py` setzt in `TestingConfig`
@@ -84,6 +95,24 @@ Ausgangsbefund; alles, was während der Umsetzung dazukommt, wird hier ergänzt.
   `_db.create_all()`. **Folge für diesen Plan: Ein grüner `pytest`-Lauf beweist nicht, dass die
   neue Migration funktioniert.** Die Migration muss zusätzlich von Hand gegen die
   PostgreSQL-Datenbank im Docker-Container geprüft werden (siehe M3).
+
+- Beobachtung (M9): Der lokale Playwright-Lauf gegen `ng serve`/`flask run --debug` zeigt nur 5 von
+  12 bestandenen Tests, nicht die vom Plan erwarteten 13. Der plan-vorgesehene Fix (Titel-Feld in
+  `goals.spec.ts` auf die Anlege-Karte eingrenzen, wegen der strict-mode-Kollision durch das neue
+  Bearbeiten-Formular aus M5) wurde angewendet und ist wirksam. Die verbleibenden sieben
+  Fehlschläge sind aber ein vorbestehender, von P4 unabhängiger Defekt: `RegisterComponent.submit()`
+  navigiert nach erfolgreicher Registrierung nicht zuverlässig per `Router.navigate(['/'])` — der
+  Zugriffstoken landet korrekt in `localStorage` (verifiziert per `localStorage.getItem('lm_token')`
+  direkt nach dem Klick), ein anschließender manueller Aufruf von `/` zeigt das Dashboard korrekt,
+  aber die interne SPA-Weiterleitung im selben Seitenaufruf bleibt sporadisch auf `/register`
+  stehen oder braucht länger als das 5-Sekunden-Timeout der Tests. Da fast jeder Playwright-Test
+  über `registerAndLogin()`/`setup()` registriert, reißt dieser eine Defekt einen Großteil der
+  Suite mit. Zusätzlich bestehen in `planning.spec.ts` und `timer.spec.ts` vorbestehende
+  strict-mode-Kollisionen zwischen `<option>`-Text und sichtbarem Seitentext
+  (`getByText('Planungs-Ziel')` / `getByText('Timer-Ziel')`). Keiner dieser Befunde gehört zu den
+  Meilensteinen dieses Plans; ob er auch die Railway-Produktionsumgebung betrifft, ist ungeprüft.
+  Details und Empfehlung stehen im Nachtrag vom 2026-08-17 in `docs/MS4_Testabschlussbericht.md`,
+  Abschnitt 5.
 
 ## Decision Log
 
@@ -122,10 +151,29 @@ Ausgangsbefund; alles, was während der Umsetzung dazukommt, wird hier ergänzt.
 
 ## Outcomes & Retrospective
 
-Noch nicht ausgefüllt — wird bei Abschluss des Plans geschrieben. Zu beantworten sind: Was ist
-jetzt möglich, was vorher nicht ging? Welche Anforderungen aus `docs/01_Funktionale_Anforderungen.md`
-gelten danach als vollständig umgesetzt? Was ist offen geblieben und warum? Welche Annahme dieses
-Plans hat sich als falsch erwiesen?
+Alle neun Meilensteine sind umgesetzt. Eine Nutzerin kann jetzt im Browser ein bestehendes
+Lernziel vollständig bearbeiten (Titel, Modul, ECTS, Zieldatum, Status, Priorität), zu einem
+erreichten Ziel eine Note und eine Ergebnis-Notiz hinterlegen und beim Stoppen einer Lernsession
+eine Notiz mitgeben — nichts davon war vorher über die Oberfläche erreichbar. Fehlerhafte
+Abfrageparameter an `/api/plans` und `/api/sessions` liefern HTTP 400 mit deutscher Meldung statt
+eines Serverabsturzes. Der Löschdialog für Lernziele nennt jetzt ausdrücklich die mitgelöschte
+Planung und Lernzeit. Damit gelten FR-1.3, FR-1.4 und FR-5.2 aus
+`docs/01_Funktionale_Anforderungen.md` als vollständig umgesetzt, nicht nur backend-seitig
+vorbereitet. Die Pausenrechnung des Timers (FR-4.3) ist erstmals durch Backend-Tests abgesichert
+(`backend/tests/test_sessions.py`), mit einer nachgewiesenen Gegenprobe.
+
+Offen geblieben: Der Playwright-Lauf gegen die lokalen Dev-Server ist nicht grün (5 von 12), weil
+ein vorbestehender, von diesem Plan unabhängiger Navigations-Defekt in `RegisterComponent`
+praktisch jeden E2E-Test mitreißt, der sich zu Beginn registriert. Der Plan-spezifische Teil
+(strict-mode-Kollision im neuen Bearbeiten-Formular) wurde behoben; der Rest braucht einen eigenen
+Plan. Details stehen im Nachtrag in `docs/MS4_Testabschlussbericht.md`, Abschnitt 5, und in den
+Surprises & Discoveries oben.
+
+Falsch erwiesen hat sich die Annahme, ein grüner `pytest`-Lauf und ein sauber geschriebenes
+`upgrade()`/`downgrade()`-Paar reichten für eine Migration aus: Die im Plan vorgeschlagene
+Revision-ID war mit 33 Zeichen einen zu lang für `alembic_version.version_num` (`varchar(32)`) und
+scheiterte erst beim tatsächlichen Lauf gegen PostgreSQL — genau der Fall, den M3 mit dem Hinweis
+auf `db.create_all()` in den Tests vorausgesehen hatte, nur an einer anderen Stelle als erwartet.
 
 ## Context and Orientation
 

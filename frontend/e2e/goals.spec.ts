@@ -20,8 +20,9 @@ test.describe('Lernziele (FR-1)', () => {
   });
 
   test('Lernziel anlegen', async ({ page }) => {
-    await page.getByLabel('Titel').fill('Mathematik I');
-    await page.getByLabel('Modul / Kurs').fill('DLBMAMATH01');
+    const anlegen = page.locator('.card', { hasText: 'Neues Lernziel' });
+    await anlegen.getByLabel('Titel').fill('Mathematik I');
+    await anlegen.getByLabel('Modul / Kurs').fill('DLBMAMATH01');
     await page.getByRole('button', { name: 'Ziel hinzufügen' }).click();
 
     await expect(page.getByText('Mathematik I')).toBeVisible();
@@ -30,8 +31,9 @@ test.describe('Lernziele (FR-1)', () => {
 
   test('Lernziel als In Arbeit markieren', async ({ page }) => {
     // Ziel anlegen
-    await page.getByLabel('Titel').fill('Statistik');
-    await page.getByLabel('Modul / Kurs').fill('STAT01');
+    const anlegen = page.locator('.card', { hasText: 'Neues Lernziel' });
+    await anlegen.getByLabel('Titel').fill('Statistik');
+    await anlegen.getByLabel('Modul / Kurs').fill('STAT01');
     await page.getByRole('button', { name: 'Ziel hinzufügen' }).click();
     await expect(page.getByText('Statistik')).toBeVisible();
 
@@ -41,8 +43,9 @@ test.describe('Lernziele (FR-1)', () => {
   });
 
   test('Lernziel als Erreicht markieren', async ({ page }) => {
-    await page.getByLabel('Titel').fill('Englisch B2');
-    await page.getByLabel('Modul / Kurs').fill('ENG01');
+    const anlegen = page.locator('.card', { hasText: 'Neues Lernziel' });
+    await anlegen.getByLabel('Titel').fill('Englisch B2');
+    await anlegen.getByLabel('Modul / Kurs').fill('ENG01');
     await page.getByRole('button', { name: 'Ziel hinzufügen' }).click();
     await expect(page.getByText('Englisch B2')).toBeVisible();
 
@@ -51,8 +54,9 @@ test.describe('Lernziele (FR-1)', () => {
   });
 
   test('Lernziel löschen', async ({ page }) => {
-    await page.getByLabel('Titel').fill('Lösch-Test');
-    await page.getByLabel('Modul / Kurs').fill('DEL01');
+    const anlegen = page.locator('.card', { hasText: 'Neues Lernziel' });
+    await anlegen.getByLabel('Titel').fill('Lösch-Test');
+    await anlegen.getByLabel('Modul / Kurs').fill('DEL01');
     await page.getByRole('button', { name: 'Ziel hinzufügen' }).click();
     await expect(page.getByText('Lösch-Test')).toBeVisible();
 

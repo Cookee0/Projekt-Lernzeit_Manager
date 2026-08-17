@@ -160,6 +160,36 @@ def test_create_plan_rejects_invalid_time(client, auth_header, goal_id, clock):
     assert resp.status_code == 400
 
 
+def test_update_goal_keeps_past_target_date(client, auth_header, goal_id):
+    """Ein Ziel mit verstrichenem Termin muss umbenennbar bleiben (FR-1.3)."""
+    from app.extensions import db
+    from app.models.goal import Goal
+
+    gestern = date.today() - timedelta(days=1)
+    ziel = db.session.get(Goal, goal_id)
+    ziel.target_date = gestern
+    db.session.commit()
+
+    resp = client.put(
+        f"{GOALS_URL}/{goal_id}",
+        json={"title": "Neuer Titel", "target_date": gestern.isoformat()},
+        headers=auth_header,
+    )
+    assert resp.status_code == 200
+    assert resp.get_json()["title"] == "Neuer Titel"
+
+
+def test_update_goal_rejects_moving_into_the_past(client, auth_header, goal_id):
+    """Ein echtes Verschieben in die Vergangenheit bleibt verboten."""
+    vorgestern = (date.today() - timedelta(days=2)).isoformat()
+    resp = client.put(
+        f"{GOALS_URL}/{goal_id}",
+        json={"target_date": vorgestern},
+        headers=auth_header,
+    )
+    assert resp.status_code == 400
+
+
 def test_create_plan_accepts_valid_values(client, auth_header, goal_id):
     resp = client.post(
         PLANS_URL,
