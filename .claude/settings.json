@@ -5,5 +5,10 @@
       "Bash(python -m ruff check . --fix)",
       "Bash(python -m ruff check .)"
     ]
+  },
+  "attribution": {
+    "commit": "",
+    "pr": "",
+    "sessionUrl": false
   }
 }
