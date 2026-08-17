@@ -34,11 +34,11 @@ Dieser Plan schreibt **kein** Anwendungscode. Er ändert keine Datei unter `back
 
 ## Progress
 
-- [ ] M1 — Ist-Stand der Anwendung nachprüfen und die Befundtabelle bestätigen
-- [ ] M2 — Grundgerüst des Dokuments mit den sechs Entwurfsabschnitten
-- [ ] M3 — Abschnitt „Entwurfsinhalte ohne Anforderung"
-- [ ] M4 — Abschnitt „Bekannte Abweichungen" und Empfehlung zur Restarbeit
-- [ ] M5 — Verlinkung aus `README.md` und Endkontrolle
+- [x] (2026-08-17 00:00Z) M1 — Ist-Stand der Anwendung nachprüfen und die Befundtabelle bestätigen
+- [x] (2026-08-17 00:00Z) M2 — Grundgerüst des Dokuments mit den sechs Entwurfsabschnitten
+- [x] (2026-08-17 00:00Z) M3 — Abschnitt „Entwurfsinhalte ohne Anforderung"
+- [x] (2026-08-17 00:00Z) M4 — Abschnitt „Bekannte Abweichungen" und Empfehlung zur Restarbeit
+- [x] (2026-08-17 00:00Z) M5 — Verlinkung aus `README.md` und Endkontrolle
 
 Zeitstempel im Format `(JJJJ-MM-TT HH:MMZ)` beim Abhaken voranstellen.
 
@@ -83,9 +83,22 @@ Zeitstempel im Format `(JJJJ-MM-TT HH:MMZ)` beim Abhaken voranstellen.
 
 ## Outcomes & Retrospective
 
-Noch nicht ausgefüllt — wird bei Abschluss geschrieben. Zu beantworten sind: Hat die Nachprüfung in
-M1 Abweichungen von der hier hinterlegten Befundtabelle ergeben? Welche Lücke war größer oder
-kleiner als angenommen?
+Die Nachprüfung in M1 hat keine Abweichung von der hier hinterlegten Befundtabelle ergeben: P4 und
+P5 lagen zum Zeitpunkt der Umsetzung bereits vollständig unter `docs/ExecPlans/completed/`, der
+ECTS-Faktor (30 Stunden im Code, 25 Stunden in den Entwürfen), das Fehlen einer `modules`-Tabelle,
+die vier gebauten Seiten und alle im Plan zitierten Codestellen und Entwurfszitate wurden per
+gezielter Suche im Repository bestätigt, nicht nur übernommen. Keine Lücke war größer oder kleiner
+als angenommen — der vorbereitete Befund war bereits nach dem Abschluss von P4 und P5 zutreffend,
+weil beide Pläne genau die Punkte adressiert hatten, die dieses Dokument als „umgesetzt" markiert
+(FR-1.3, FR-1.4, FR-5.2 durch P4; FR-3.2 durch P5).
+
+`docs/Anforderungsabgleich_Mockups.md` existiert jetzt mit sechs Entwurfsabschnitten, einer
+Übersichtstabelle offener Anforderungen, einem Abschnitt zu sieben Entwurfsinhalten ohne
+Anforderungsbezug, zwei bekannten Abweichungen (ECTS-Faktor, zurückgestellte Optik) und einer
+begründeten Reihenfolge für die Restarbeit (zuerst FR-2.1, dann das Should-Bündel FR-6.3/7.2/7.3,
+zuletzt die Could-Anforderungen). `README.md` verlinkt es an zwei Stellen. Kein Anwendungscode
+wurde verändert — `git status --short` zeigt ausschließlich `README.md` und die beiden
+Dokumentationsdateien dieses Plans.
 
 ## Context and Orientation
 

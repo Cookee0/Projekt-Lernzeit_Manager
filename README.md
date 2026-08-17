@@ -70,13 +70,16 @@ Abgabeziel: **31.08.2026**.
 | [`AGENTS.md`](AGENTS.md) | Gemeinsamer Kontext für alle KI-Tools |
 | [`docs/ExecPlans/`](docs/ExecPlans/) | `active/` = laufende Pläne, `completed/` = abgeschlossene |
 | [`docs/design-reference/`](docs/design-reference/) | Gestaltungsentwürfe aller sechs Bildschirme (je `.html` + `.png`) |
+| [`docs/Anforderungsabgleich_Mockups.md`](docs/Anforderungsabgleich_Mockups.md) | Abgleich der Gestaltungsentwürfe mit Anforderungen und Umsetzung; was fehlt und warum |
 
 **Zu den Gestaltungsentwürfen:** `docs/design-reference/` enthält Entwürfe für Übersicht,
 Lernziele, Grobplanung, Detailplanung, Auswertung und Erinnerungen. Sie sind **verbindlich für
 Felder, Beschriftungen und Reihenfolge**, aber die visuelle Umsetzung (Farben, Schriften,
 Navigationsleiste) ist bewusst zurückgestellt, bis die Funktionen stehen – Teambeschluss vom
 04.08.2026. Die Entwürfe zeigen außerdem den Endausbau: Fortschrittsbalken, ECTS-Workload und
-Noten gehören zu FR-2, FR-5 und FR-6, nicht zu FR-1.
+Noten gehören zu FR-2, FR-5 und FR-6, nicht zu FR-1. Welches Entwurfselement bereits umgesetzt
+ist, welches einer noch offenen Anforderung entspricht und welches nie Anforderung war, steht in
+[`docs/Anforderungsabgleich_Mockups.md`](docs/Anforderungsabgleich_Mockups.md).
 
 **System of Record bleibt Redmine** (https://redmine-se.iubh.de/). Eine Aufgabe gilt erst als
 geliefert, wenn das Redmine-Ticket steht – nicht, weil hier etwas gemerged wurde. GitHub Projects
