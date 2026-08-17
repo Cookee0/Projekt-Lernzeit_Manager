@@ -305,7 +305,12 @@ export class GoalsComponent implements OnInit {
   }
 
   async remove(goal: Goal): Promise<void> {
-    if (!confirm(`Lernziel "${goal.title}" wirklich löschen?`)) return;
+    const frage =
+      `Lernziel "${goal.title}" wirklich löschen?\n\n` +
+      'Damit werden auch alle geplanten Lernzeiten und alle bereits erfassten ' +
+      'Lernsessions dieses Ziels gelöscht. Die erfasste Lernzeit verschwindet ' +
+      'dadurch rückwirkend aus dem Dashboard.';
+    if (!confirm(frage)) return;
     await this.goalService.delete(goal.id);
     this.goals.update(gs => gs.filter(g => g.id !== goal.id));
   }

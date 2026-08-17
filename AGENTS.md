@@ -13,16 +13,18 @@ study-time planning and tracking app (see `Projektbericht_Themen_ISEF01.md`, sec
 
 ## Current phase
 
-Per `docs/06_Zeitplanung_Projektablauf.md`, the project moves through milestones MS0-MS6. MS0
-(milestone plan) and MS1 (project configuration) are delivered, and the repository bootstrap is
-done: a Flask backend with a health endpoint, an Angular frontend, PostgreSQL via Docker Compose,
-Flask-Migrate, and a green GitHub Actions pipeline all exist. No feature code exists yet — there
-are no database tables and no application screens. The next work is FR-1 (Lernziele festlegen)
-from `docs/01_Funktionale_Anforderungen.md`.
+Per `docs/06_Zeitplanung_Projektablauf.md`, the project moves through milestones MS0-MS6. As of
+this writing the application is functionally complete for MS4: it has user accounts (registration
+and login via a JWT access token, `flask-jwt-extended`), four database tables (`users`, `goals`,
+`plan_slots`, `study_sessions`), and six application screens (login, registration, dashboard,
+goals, planning, timer). Every endpoint except `/api/health`, `/api/auth/register`, and
+`/api/auth/login` requires the token. Implemented so far: goals (create, edit, delete, optional
+priority, grade and result note), coarse and detailed time planning, a timer with start/pause/
+resume/stop and an optional session note, a dashboard with progress, and a reminder for missed
+study time (FR-7.1). See `README.md` for the authoritative, up-to-date status.
 
 The tech stack is decided (Angular, Flask, PostgreSQL, Docker, Railway, GitHub Actions; pytest and
-vitest for tests). Authentication is still open — see `docs/04_Tech-Stack_und_Tools.md`. Until it
-is decided, the application has no user accounts and no protected endpoints.
+vitest for tests). Authentication is implemented — see `README.md` for details.
 
 **Read `README.md` before making any change**, and update it in the same change whenever something
 you do makes a statement in it wrong or incomplete. The README is the description of the current
