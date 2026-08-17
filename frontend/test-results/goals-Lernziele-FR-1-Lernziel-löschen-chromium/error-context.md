@@ -7,7 +7,7 @@
 # Test info
 
 - Name: goals.spec.ts >> Lernziele (FR-1) >> Lernziel löschen
-- Location: e2e\goals.spec.ts:53:7
+- Location: e2e\goals.spec.ts:56:7
 
 # Error details
 
@@ -20,7 +20,7 @@ Timeout:  5000ms
 
 Call log:
   - Expect "toHaveURL" with timeout 5000ms
-    13 × locator resolved to <html lang="de">…</html>
+    14 × locator resolved to <html lang="de">…</html>
        - unexpected value "http://localhost:4200/register"
 
 ```
@@ -31,14 +31,14 @@ Call log:
     - /url: /
 - heading "Lernzeit-Manager" [level=1]
 - heading "Registrieren" [level=2]
-- text: Registrierung fehlgeschlagen. Name
+- text: E-Mail bereits registriert Name
 - textbox "Name":
   - /placeholder: Dein Name
-  - text: Goals Tester 1786434949524
+  - text: Goals Tester 1787001269696
 - text: E-Mail
 - textbox "E-Mail":
   - /placeholder: name@beispiel.de
-  - text: goals-1786434949524@playwright.local
+  - text: goals-1787001269696@playwright.local
 - text: Passwort
 - textbox "Passwort":
   - /placeholder: Mindestens 6 Zeichen
@@ -76,47 +76,51 @@ Call log:
   20 |   });
   21 | 
   22 |   test('Lernziel anlegen', async ({ page }) => {
-  23 |     await page.getByLabel('Titel').fill('Mathematik I');
-  24 |     await page.getByLabel('Modul / Kurs').fill('DLBMAMATH01');
-  25 |     await page.getByRole('button', { name: 'Ziel hinzufügen' }).click();
-  26 | 
-  27 |     await expect(page.getByText('Mathematik I')).toBeVisible();
-  28 |     await expect(page.getByText('DLBMAMATH01')).toBeVisible();
-  29 |   });
-  30 | 
-  31 |   test('Lernziel als In Arbeit markieren', async ({ page }) => {
-  32 |     // Ziel anlegen
-  33 |     await page.getByLabel('Titel').fill('Statistik');
-  34 |     await page.getByLabel('Modul / Kurs').fill('STAT01');
-  35 |     await page.getByRole('button', { name: 'Ziel hinzufügen' }).click();
-  36 |     await expect(page.getByText('Statistik')).toBeVisible();
-  37 | 
-  38 |     // Status auf In Arbeit setzen
-  39 |     await page.getByRole('button', { name: '▶ In Arbeit' }).first().click();
-  40 |     await expect(page.getByText('In Arbeit')).toBeVisible();
-  41 |   });
-  42 | 
-  43 |   test('Lernziel als Erreicht markieren', async ({ page }) => {
-  44 |     await page.getByLabel('Titel').fill('Englisch B2');
-  45 |     await page.getByLabel('Modul / Kurs').fill('ENG01');
-  46 |     await page.getByRole('button', { name: 'Ziel hinzufügen' }).click();
-  47 |     await expect(page.getByText('Englisch B2')).toBeVisible();
-  48 | 
-  49 |     await page.getByRole('button', { name: '✓ Erreicht' }).first().click();
-  50 |     await expect(page.getByText('Erreicht')).toBeVisible();
-  51 |   });
-  52 | 
-  53 |   test('Lernziel löschen', async ({ page }) => {
-  54 |     await page.getByLabel('Titel').fill('Lösch-Test');
-  55 |     await page.getByLabel('Modul / Kurs').fill('DEL01');
-  56 |     await page.getByRole('button', { name: 'Ziel hinzufügen' }).click();
-  57 |     await expect(page.getByText('Lösch-Test')).toBeVisible();
-  58 | 
-  59 |     page.on('dialog', dialog => dialog.accept());
-  60 |     await page.getByRole('button', { name: '🗑 Löschen' }).first().click();
-  61 | 
-  62 |     await expect(page.getByText('Lösch-Test')).not.toBeVisible();
-  63 |   });
-  64 | });
+  23 |     const anlegen = page.locator('.card', { hasText: 'Neues Lernziel' });
+  24 |     await anlegen.getByLabel('Titel').fill('Mathematik I');
+  25 |     await anlegen.getByLabel('Modul / Kurs').fill('DLBMAMATH01');
+  26 |     await page.getByRole('button', { name: 'Ziel hinzufügen' }).click();
+  27 | 
+  28 |     await expect(page.getByText('Mathematik I')).toBeVisible();
+  29 |     await expect(page.getByText('DLBMAMATH01')).toBeVisible();
+  30 |   });
+  31 | 
+  32 |   test('Lernziel als In Arbeit markieren', async ({ page }) => {
+  33 |     // Ziel anlegen
+  34 |     const anlegen = page.locator('.card', { hasText: 'Neues Lernziel' });
+  35 |     await anlegen.getByLabel('Titel').fill('Statistik');
+  36 |     await anlegen.getByLabel('Modul / Kurs').fill('STAT01');
+  37 |     await page.getByRole('button', { name: 'Ziel hinzufügen' }).click();
+  38 |     await expect(page.getByText('Statistik')).toBeVisible();
+  39 | 
+  40 |     // Status auf In Arbeit setzen
+  41 |     await page.getByRole('button', { name: '▶ In Arbeit' }).first().click();
+  42 |     await expect(page.getByText('In Arbeit')).toBeVisible();
+  43 |   });
+  44 | 
+  45 |   test('Lernziel als Erreicht markieren', async ({ page }) => {
+  46 |     const anlegen = page.locator('.card', { hasText: 'Neues Lernziel' });
+  47 |     await anlegen.getByLabel('Titel').fill('Englisch B2');
+  48 |     await anlegen.getByLabel('Modul / Kurs').fill('ENG01');
+  49 |     await page.getByRole('button', { name: 'Ziel hinzufügen' }).click();
+  50 |     await expect(page.getByText('Englisch B2')).toBeVisible();
+  51 | 
+  52 |     await page.getByRole('button', { name: '✓ Erreicht' }).first().click();
+  53 |     await expect(page.getByText('Erreicht')).toBeVisible();
+  54 |   });
+  55 | 
+  56 |   test('Lernziel löschen', async ({ page }) => {
+  57 |     const anlegen = page.locator('.card', { hasText: 'Neues Lernziel' });
+  58 |     await anlegen.getByLabel('Titel').fill('Lösch-Test');
+  59 |     await anlegen.getByLabel('Modul / Kurs').fill('DEL01');
+  60 |     await page.getByRole('button', { name: 'Ziel hinzufügen' }).click();
+  61 |     await expect(page.getByText('Lösch-Test')).toBeVisible();
+  62 | 
+  63 |     page.on('dialog', dialog => dialog.accept());
+  64 |     await page.getByRole('button', { name: '🗑 Löschen' }).first().click();
   65 | 
+  66 |     await expect(page.getByText('Lösch-Test')).not.toBeVisible();
+  67 |   });
+  68 | });
+  69 | 
 ```

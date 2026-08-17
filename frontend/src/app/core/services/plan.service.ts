@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { firstValueFrom } from 'rxjs';
-import { PlanSlot } from '../models';
+import { PlanProposal, PlanSlot } from '../models';
 
 const API = '/api/plans';
 
@@ -15,6 +15,13 @@ export class PlanService {
     if (filters.year) params = params.set('year', filters.year);
     if (filters.month) params = params.set('month', filters.month);
     return firstValueFrom(this.http.get<PlanSlot[]>(API, { params }));
+  }
+
+  /** Grobplanungs-Vorschlag fuer einen Monat; ohne Angabe gilt der laufende Monat. */
+  proposal(year?: number, month?: number): Promise<PlanProposal> {
+    let params = new HttpParams();
+    if (year && month) params = params.set('year', year).set('month', month);
+    return firstValueFrom(this.http.get<PlanProposal>(`${API}/proposal`, { params }));
   }
 
   create(payload: Partial<PlanSlot>): Promise<PlanSlot> {

@@ -12,42 +12,125 @@
 # Error details
 
 ```
-Error: expect(page).toHaveURL(expected) failed
+Error: expect(locator).toBeVisible() failed
 
-Expected: "http://localhost:4200/"
-Received: "http://localhost:4200/register"
-Timeout:  5000ms
+Locator: getByText('Planungs-Ziel')
+Expected: visible
+Error: strict mode violation: getByText('Planungs-Ziel') resolved to 3 elements:
+    1) <option value="26">Planungs-Ziel</option> aka getByLabel('Lernziel', { exact: true })
+    2) <option value="26">Planungs-Ziel</option> aka getByLabel('Lernziel *')
+    3) <span>Planungs-Ziel</span> aka locator('span').filter({ hasText: 'Planungs-Ziel' })
 
 Call log:
-  - Expect "toHaveURL" with timeout 5000ms
-    14 × locator resolved to <html lang="de">…</html>
-       - unexpected value "http://localhost:4200/register"
+  - Expect "toBeVisible" with timeout 5000ms
+  - waiting for getByText('Planungs-Ziel')
 
 ```
 
+# Page snapshot
+
 ```yaml
-- navigation:
-  - link "📚 Lernzeit-Manager":
-    - /url: /
-- heading "Lernzeit-Manager" [level=1]
-- heading "Registrieren" [level=2]
-- text: Registrierung fehlgeschlagen. Name
-- textbox "Name":
-  - /placeholder: Dein Name
-  - text: Planning Tester 1786434928232
-- text: E-Mail
-- textbox "E-Mail":
-  - /placeholder: name@beispiel.de
-  - text: planning-1786434928232@playwright.local
-- text: Passwort
-- textbox "Passwort":
-  - /placeholder: Mindestens 6 Zeichen
-  - text: Sicher123
-- button "Konto erstellen"
-- paragraph:
-  - text: Bereits registriert?
-  - link "Anmelden":
-    - /url: /login
+- generic [ref=f2e2]:
+  - navigation [ref=f2e4]:
+    - link "📚 Lernzeit-Manager" [ref=f2e6] [cursor=pointer]:
+      - /url: /
+    - list [ref=f2e7]:
+      - listitem [ref=f2e8]:
+        - link "Dashboard" [ref=f2e9] [cursor=pointer]:
+          - /url: /
+      - listitem [ref=f2e10]:
+        - link "Lernziele" [ref=f2e11] [cursor=pointer]:
+          - /url: /goals
+      - listitem [ref=f2e12]:
+        - link "Planung" [ref=f2e13] [cursor=pointer]:
+          - /url: /planning
+      - listitem [ref=f2e14]:
+        - link "Timer" [ref=f2e15] [cursor=pointer]:
+          - /url: /timer
+    - generic [ref=f2e16]:
+      - generic [ref=f2e17]: Planning Tester 1787001262273
+      - button "Abmelden" [ref=f2e18] [cursor=pointer]
+  - generic [ref=f2e20]:
+    - heading "Planung" [level=2] [ref=f2e21]
+    - generic [ref=f2e22]:
+      - heading "Filter" [level=3] [ref=f2e23]
+      - generic [ref=f2e24]:
+        - generic [ref=f2e25]:
+          - generic [ref=f2e26]: Lernziel
+          - combobox "Lernziel" [ref=f2e27]:
+            - option "Alle Ziele" [selected]
+            - option "Planungs-Ziel"
+        - generic [ref=f2e28]:
+          - generic [ref=f2e29]: Monat
+          - combobox "Monat" [ref=f2e30]:
+            - option "Alle Monate"
+            - option "Jul 2026"
+            - option "Aug 2026" [selected]
+            - option "Sep 2026"
+            - option "Okt 2026"
+            - option "Nov 2026"
+            - option "Dez 2026"
+            - option "Jan 2027"
+            - option "Feb 2027"
+            - option "Mär 2027"
+    - generic [ref=f2e31]:
+      - heading "Lernzeit einplanen" [level=3] [ref=f2e32]
+      - generic [ref=f2e33]:
+        - generic [ref=f2e34]:
+          - generic [ref=f2e35]:
+            - generic [ref=f2e36]: Lernziel *
+            - combobox "Lernziel *" [ref=f2e37]:
+              - option "Ziel wählen" [disabled] [selected]
+              - option "Planungs-Ziel"
+          - generic [ref=f2e38]:
+            - generic [ref=f2e39]: Monat *
+            - combobox "Monat *" [ref=f2e40]:
+              - option "Jul 2026"
+              - option "Aug 2026" [selected]
+              - option "Sep 2026"
+              - option "Okt 2026"
+              - option "Nov 2026"
+              - option "Dez 2026"
+              - option "Jan 2027"
+              - option "Feb 2027"
+              - option "Mär 2027"
+          - generic [ref=f2e41]:
+            - generic [ref=f2e42]: Tag des Monats (optional)
+            - spinbutton "Tag des Monats (optional)" [ref=f2e43]
+        - generic [ref=f2e44]:
+          - generic [ref=f2e45]:
+            - generic [ref=f2e46]: Uhrzeit (optional)
+            - textbox "Uhrzeit (optional)" [ref=f2e47]
+          - generic [ref=f2e48]:
+            - generic [ref=f2e49]: Wie lange? (Minuten)
+            - spinbutton "Wie lange? (Minuten)" [ref=f2e50]: "60"
+        - generic [ref=f2e51]:
+          - generic [ref=f2e52]: Notiz (optional)
+          - textbox "Notiz (optional)" [ref=f2e53]:
+            - /placeholder: z.B. Kapitel 3 lesen
+        - button "Lernzeit speichern" [ref=f2e54] [cursor=pointer]
+    - generic [ref=f2e55]:
+      - heading "Geplante Lernzeiten" [level=3] [ref=f2e56]
+      - generic [ref=f2e57]:
+        - generic [ref=f2e58]:
+          - generic [ref=f2e59]: Planungs-Ziel
+          - generic [ref=f2e60]: 90 min
+        - generic [ref=f2e61]: 📆 Aug 2026
+        - button "Löschen" [ref=f2e63] [cursor=pointer]
+    - generic [ref=f2e64]:
+      - generic [ref=f2e65]:
+        - heading "Zwischenziele Aug 2026" [level=3] [ref=f2e66]
+        - generic [ref=f2e67]: 0 / 0
+      - paragraph [ref=f2e68]: Für diesen Monat ist noch kein Zwischenziel festgelegt.
+      - generic [ref=f2e69]:
+        - generic [ref=f2e70]:
+          - generic [ref=f2e71]: Neues Zwischenziel
+          - textbox "Neues Zwischenziel" [ref=f2e72]:
+            - /placeholder: z.B. Kapitel 3 abschließen
+        - generic [ref=f2e73]:
+          - generic [ref=f2e74]: Bis Tag (optional)
+          - spinbutton "Bis Tag (optional)" [ref=f2e75]
+      - button "+ Zwischenziel" [ref=f2e76] [cursor=pointer]
 ```
 
 # Test source
@@ -66,8 +149,7 @@ Call log:
   11 |   await page.getByLabel('E-Mail').fill(email);
   12 |   await page.getByLabel('Passwort').fill(password);
   13 |   await page.getByRole('button', { name: 'Konto erstellen' }).click();
-> 14 |   await expect(page).toHaveURL('/');
-     |                      ^ Error: expect(page).toHaveURL(expected) failed
+  14 |   await expect(page).toHaveURL('/');
   15 | 
   16 |   // Lernziel anlegen (Voraussetzung für Planung)
   17 |   await page.goto('/goals');
@@ -95,7 +177,8 @@ Call log:
   39 | 
   40 |     // In der Liste erscheinen
   41 |     await expect(page.getByText('90 min')).toBeVisible();
-  42 |     await expect(page.getByText('Planungs-Ziel')).toBeVisible();
+> 42 |     await expect(page.getByText('Planungs-Ziel')).toBeVisible();
+     |                                                   ^ Error: expect(locator).toBeVisible() failed
   43 |   });
   44 | 
   45 |   test('Geplante Lernzeit löschen', async ({ page }) => {

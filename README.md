@@ -23,7 +23,18 @@ Abgabeziel: **31.08.2026**.
 > Ergebnis-Notiz hinterlegen. Auf der Planungsseite lassen sich pro Monat außerdem **Zwischenziele**
 > festlegen (FR-3.2) — kurze Arbeitspakete wie „Kapitel 3 abschließen", optional mit einem Tag im
 > Monat und optional einem Lernziel zugeordnet, abhakbar und löschbar; ein Zähler der Form „1 / 4"
-> erscheint sowohl auf der Planungsseite als auch als Kachel auf dem Dashboard. Die Eingaben
+> erscheint sowohl auf der Planungsseite als auch als Kachel auf dem Dashboard. Seit Plan P7 ist
+> außerdem die **Grobplanung** vollständig (FR-2.1, FR-2.2, FR-3.3): Die Planungsseite zeigt je
+> Lernziel ein aus dem ECTS-Workload (30 Stunden je ECTS-Punkt) abgeleitetes Wochenbudget, einen
+> automatischen Monatsvorschlag (Restaufwand gleichmäßig auf die Monate bis zum Zieldatum
+> verteilt, Endpunkt `GET /api/plans/proposal`) und die Abweichung zur bereits geplanten Zeit des
+> gewählten Monats; Slots legt der Vorschlag bewusst nicht selbst an. Das Dashboard weist die
+> Pausenzeit des Monats als eigene Kennzahl aus (FR-4.3 — die gezählte Lernzeit ist immer schon
+> die ungestörte Zeit ohne Pausen), zeigt ein Balkendiagramm der Lernzeit der letzten acht
+> Kalenderwochen (FR-6.3, als eigenes SVG ohne Diagrammbibliothek), warnt bei Lernzielen mit
+> Zieldatum in höchstens 14 Tagen und weniger als 50 % Fortschritt (FR-7.3) und erinnert an einen
+> heute in der nächsten Stunde beginnenden geplanten Slot (FR-7.2; diese Rechnung läuft im
+> Browser, weil die Slot-Uhrzeit eine Ortszeit-Angabe ist). Die Eingaben
 > (E-Mail, ECTS, Datum, Tag, Dauer, Uhrzeit, Priorität, Note, Notizen, Zwischenziel-Titel) werden
 > serverseitig geprüft und im Formular direkt unter dem betroffenen Feld angezeigt; siehe den
 > Abschnitt „Geltende Wertebereiche der API" weiter unten. Alle ausgelieferten Zeitstempel sind als
@@ -70,13 +81,16 @@ Abgabeziel: **31.08.2026**.
 | [`AGENTS.md`](AGENTS.md) | Gemeinsamer Kontext für alle KI-Tools |
 | [`docs/ExecPlans/`](docs/ExecPlans/) | `active/` = laufende Pläne, `completed/` = abgeschlossene |
 | [`docs/design-reference/`](docs/design-reference/) | Gestaltungsentwürfe aller sechs Bildschirme (je `.html` + `.png`) |
+| [`docs/Anforderungsabgleich_Mockups.md`](docs/Anforderungsabgleich_Mockups.md) | Abgleich der Gestaltungsentwürfe mit Anforderungen und Umsetzung; was fehlt und warum |
 
 **Zu den Gestaltungsentwürfen:** `docs/design-reference/` enthält Entwürfe für Übersicht,
 Lernziele, Grobplanung, Detailplanung, Auswertung und Erinnerungen. Sie sind **verbindlich für
 Felder, Beschriftungen und Reihenfolge**, aber die visuelle Umsetzung (Farben, Schriften,
 Navigationsleiste) ist bewusst zurückgestellt, bis die Funktionen stehen – Teambeschluss vom
 04.08.2026. Die Entwürfe zeigen außerdem den Endausbau: Fortschrittsbalken, ECTS-Workload und
-Noten gehören zu FR-2, FR-5 und FR-6, nicht zu FR-1.
+Noten gehören zu FR-2, FR-5 und FR-6, nicht zu FR-1. Welches Entwurfselement bereits umgesetzt
+ist, welches einer noch offenen Anforderung entspricht und welches nie Anforderung war, steht in
+[`docs/Anforderungsabgleich_Mockups.md`](docs/Anforderungsabgleich_Mockups.md).
 
 **System of Record bleibt Redmine** (https://redmine-se.iubh.de/). Eine Aufgabe gilt erst als
 geliefert, wenn das Redmine-Ticket steht – nicht, weil hier etwas gemerged wurde. GitHub Projects
@@ -96,8 +110,10 @@ das Jahr einer Planung liegt zwischen 2020 und 2100, der Monat zwischen 1 und 12
 Länge des gewählten Monats passen; die Dauer liegt zwischen 5 und 480 Minuten; die Uhrzeit folgt
 dem Format `HH:MM`; eine Notiz ist höchstens 500 Zeichen lang. Der Titel eines Zwischenziels ist 1
 bis 200 Zeichen lang; sein optionaler Tag muss zur Länge des gewählten Monats passen, geprüft mit
-derselben Regel wie bei der Planung. Abfrageparameter von `/api/plans`, `/api/sessions` und
-`/api/milestones` (`goal_id`, `year`, `month`, `limit`) werden ebenso geprüft und mit HTTP 400
+derselben Regel wie bei der Planung. Abfrageparameter von `/api/plans`, `/api/plans/proposal`,
+`/api/sessions` und `/api/milestones` (`goal_id`, `year`, `month`, `limit`) werden ebenso geprüft
+— bei `/api/plans/proposal` müssen `year` und `month` zusammen angegeben werden oder beide
+fehlen (dann gilt der laufende Monat) — und mit HTTP 400
 abgelehnt, wenn sie keine Zahl im erlaubten Bereich sind. Das Frontend spiegelt dieselben Regeln in
 `frontend/src/app/core/validation.ts` und zeigt Verstöße direkt unter dem betroffenen Feld an.
 

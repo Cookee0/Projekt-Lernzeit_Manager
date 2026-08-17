@@ -1,16 +1,22 @@
+from datetime import date
+
 from flask import Blueprint, jsonify, request
 from flask_jwt_extended import get_jwt_identity, jwt_required
+from sqlalchemy import func
 
 from ..extensions import db
 from ..models.goal import Goal
 from ..models.plan_slot import PlanSlot
+from ..models.study_session import StudySession
 from ..validation import (
+    ValidationError,
     optional_clock_time,
     optional_int_arg,
     optional_text,
     require_day_of_month,
     require_int_in_range,
 )
+from ..workload import months_until, remaining_minutes, weekly_budget_minutes
 
 plans_bp = Blueprint("plans", __name__)
 
@@ -36,6 +42,70 @@ def list_plans():
         q = q.filter_by(month=month)
     slots = q.order_by(PlanSlot.year, PlanSlot.month, PlanSlot.day).all()
     return jsonify([s.to_dict() for s in slots]), 200
+
+
+@plans_bp.get("/api/plans/proposal")
+@jwt_required()
+def plan_proposal():
+    """Grobplanung (FR-2.1, FR-2.2, FR-3.3): Wochenbudget je Modul, Monatsvorschlag
+    und Abweichung zur bereits geplanten Zeit im angefragten Monat.
+
+    Der Vorschlag verteilt den Restaufwand (ECTS-Workload minus gelernte Zeit)
+    gleichmaessig auf die Kalendermonate bis zum Zieldatum. Slots legt er
+    bewusst nicht an - die Nutzerin plant selbst (manuell anpassbar).
+    """
+    uid = _current_user_id()
+    year = optional_int_arg(request.args.get("year"), "Jahr", 2020, 2100)
+    month = optional_int_arg(request.args.get("month"), "Monat", 1, 12)
+    if (year is None) != (month is None):
+        raise ValidationError("Jahr und Monat gehören zusammen")
+    if year is None:
+        today = date.today()
+        year, month = today.year, today.month
+    else:
+        today = date.today()
+    month_first = date(year, month, 1)
+
+    goals = (
+        Goal.query.filter(
+            Goal.user_id == uid,
+            Goal.status != "achieved",
+            Goal.target_date >= month_first,
+        )
+        .order_by(Goal.target_date)
+        .all()
+    )
+
+    result = []
+    for goal in goals:
+        actual_sec = (
+            db.session.query(func.coalesce(func.sum(StudySession.duration_seconds), 0))
+            .filter_by(user_id=uid, goal_id=goal.id, status="completed")
+            .scalar()
+        )
+        actual_minutes = actual_sec // 60
+        rest = remaining_minutes(goal.ects, actual_minutes)
+        suggested = round(rest / months_until(goal.target_date, year, month))
+        planned = (
+            db.session.query(func.coalesce(func.sum(PlanSlot.duration_minutes), 0))
+            .filter_by(user_id=uid, goal_id=goal.id, year=year, month=month)
+            .scalar()
+        )
+        result.append(
+            {
+                "goal_id": goal.id,
+                "title": goal.title,
+                "module_name": goal.module_name,
+                "weekly_budget_minutes": weekly_budget_minutes(
+                    goal.ects, actual_minutes, goal.target_date, today, goal.status
+                ),
+                "suggested_month_minutes": suggested,
+                "planned_minutes": planned,
+                "deviation_minutes": planned - suggested,
+            }
+        )
+
+    return jsonify({"year": year, "month": month, "goals": result}), 200
 
 
 @plans_bp.post("/api/plans")
