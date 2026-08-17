@@ -37,7 +37,7 @@ def create_app(config_name: str = "development") -> Flask:
     migrate.init_app(app, db)
     jwt.init_app(app)
 
-    from .models import Goal, PlanSlot, StudySession, User  # noqa: F401
+    from .models import Goal, Milestone, PlanSlot, StudySession, User  # noqa: F401
     from .routes.auth import auth_bp
     from .routes.dashboard import dashboard_bp
     from .routes.goals import goals_bp

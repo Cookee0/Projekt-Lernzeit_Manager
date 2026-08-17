@@ -15,6 +15,7 @@ class User(db.Model):
     study_sessions = db.relationship(
         "StudySession", back_populates="user", cascade="all, delete-orphan"
     )
+    milestones = db.relationship("Milestone", back_populates="user", cascade="all, delete-orphan")
 
     def set_password(self, password: str) -> None:
         self.password_hash = generate_password_hash(password)

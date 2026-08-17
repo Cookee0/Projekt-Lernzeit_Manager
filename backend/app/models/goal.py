@@ -27,6 +27,7 @@ class Goal(db.Model):
     study_sessions = db.relationship(
         "StudySession", back_populates="goal", cascade="all, delete-orphan"
     )
+    milestones = db.relationship("Milestone", back_populates="goal")
 
     def to_dict(self) -> dict:
         return {
