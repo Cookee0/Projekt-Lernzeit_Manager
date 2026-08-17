@@ -29,6 +29,17 @@ export interface PlanSlot {
   note: string | null;
 }
 
+export interface Milestone {
+  id: number;
+  goal_id: number | null;
+  title: string;
+  year: number;
+  month: number;
+  due_day: number | null;
+  done: boolean;
+  created_at: string;
+}
+
 export interface StudySession {
   id: number;
   goal_id: number;
