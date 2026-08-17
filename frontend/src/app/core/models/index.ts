@@ -81,6 +81,8 @@ export interface ActiveSession {
 export interface GoalStats extends Goal {
   total_actual_minutes: number;
   planned_ects_minutes: number;
+  /** Restaufwand je verbleibender Woche bis zum Zieldatum (FR-2.1). */
+  weekly_budget_minutes: number;
 }
 
 export interface CurrentMonth {
@@ -88,11 +90,30 @@ export interface CurrentMonth {
   month: number;
   planned_minutes: number;
   actual_minutes: number;
+  /** Pausenzeit des Monats (FR-4.3); actual_minutes zaehlt Pausen nie mit. */
+  paused_minutes: number;
+}
+
+/** Lernzeit einer Kalenderwoche fuer die Trendauswertung (FR-6.3). */
+export interface WeekPoint {
+  week_start: string;
+  minutes: number;
+}
+
+/** Warnung bei nahendem Zieltermin ohne Fortschritt (FR-7.3). */
+export interface DeadlineWarning {
+  goal_id: number;
+  title: string;
+  target_date: string;
+  days_left: number;
+  progress_pct: number;
 }
 
 export interface DashboardData {
   current_month: CurrentMonth;
   goals: GoalStats[];
+  weekly_history: WeekPoint[];
+  deadline_warnings: DeadlineWarning[];
   milestones: { done: number; total: number };
   inactivity_warning: boolean;
   reminder_text: string | null;
