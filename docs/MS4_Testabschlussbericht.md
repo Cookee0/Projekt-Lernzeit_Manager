@@ -11,22 +11,23 @@
 
 | Testkategorie | Gesamt | Bestanden | Fehlgeschlagen |
 |---|---|---|---|
-| Backend Unit-Tests (pytest) | 86 | 86 | 0 |
+| Backend Unit-Tests (pytest) | 101 | 101 | 0 |
 | Frontend Unit-Tests (Vitest) | 15 | 15 | 0 |
 | Playwright E2E-Tests | 13 | 13 | 0 |
 | Manueller Systemtest | 14 | 14 | 0 |
 
 Stand 2026-08-17, ermittelt durch `pytest -q` (Backend) und `ng test --watch=false` (Frontend) nach
-Plan P4 (Defekte und Lücken). Gegenüber dem vorherigen Stand (57 Backend-/32 Frontend-Tests) ist
-die Backend-Zahl gestiegen, weil P4/M8 `backend/tests/test_sessions.py` und
-`backend/tests/test_plans.py` ergänzt hat — die Stoppuhr (Start, Pause, Fortsetzen, Stopp,
-Pausenrechnung nach FR-4.3) wird damit erstmals automatisiert im Backend geprüft. Die
-Frontend-Zahl ist gesunken, weil P4/M7 den seit dem MS4-Umbau nicht mehr eingebundenen Ordner
-`frontend/src/app/goals/` (17 Tests auf toten Code) entfernt hat; die verbleibenden Komponenten
-sind unverändert grün. Die Detailtabellen in Abschnitt 3 und 4 unten beschreiben noch den
-ursprünglichen MS4-Stand und wurden im Rahmen dieses Plans nicht im Detail nacherfasst — maßgeblich
-sind die hier genannten Gesamtzahlen. Die Playwright-Zahl ist die letzte tatsächliche Ausführung;
-Details siehe Abschnitt 5.
+den Plänen P4 (Defekte und Lücken) und P5 (FR-3.2 Zwischenziele). Gegenüber dem vorherigen Stand
+(57 Backend-/32 Frontend-Tests) ist die Backend-Zahl gestiegen, weil P4/M8
+`backend/tests/test_sessions.py` und `backend/tests/test_plans.py` ergänzt hat — die Stoppuhr
+(Start, Pause, Fortsetzen, Stopp, Pausenrechnung nach FR-4.3) wird damit erstmals automatisiert im
+Backend geprüft — und weil P5/M4 und P5/M7 `backend/tests/test_milestones.py` mit 15 Tests für
+FR-3.2 ergänzt haben. Die Frontend-Zahl ist gesunken, weil P4/M7 den seit dem MS4-Umbau nicht mehr
+eingebundenen Ordner `frontend/src/app/goals/` (17 Tests auf toten Code) entfernt hat; die
+verbleibenden Komponenten sind unverändert grün. Die Detailtabellen in Abschnitt 3 und 4 unten
+beschreiben noch den ursprünglichen MS4-Stand und wurden im Rahmen dieser Pläne nicht im Detail
+nacherfasst — maßgeblich sind die hier genannten Gesamtzahlen. Die Playwright-Zahl ist die letzte
+tatsächliche Ausführung; Details siehe Abschnitt 5.
 
 In der CI-Pipeline (`.github/workflows/ci.yml`) laufen bei jedem Push auf `main` sowie bei jedem
 Pull Request die Backend-Prüfungen (`ruff check .`, `pytest`) und die Frontend-Prüfungen
@@ -274,14 +275,16 @@ behoben.
 | FR-4.1 | Timer starten, pausieren, beenden | T-E2E-11–13, MS-08–11 |
 | FR-4.2 | Session Lernziel zuordnen und persistieren | T-BE-09, MS-11 |
 | FR-4.3 | Pausen werden nicht als Lernzeit gezählt | T-E2E-12, MS-10 |
+| FR-3.2 | Monatliche Zwischenziele (eigene Tabelle `milestones`, optional an ein Lernziel gebunden, abhakbar) | `backend/tests/test_milestones.py` (Plan P5) |
 | FR-5.1 | Lernziel als erreicht markieren | T-BE-11, T-E2E-07, MS-13 |
+| FR-5.2 | Note und Ergebnis-Notiz an Lernzielen, Notiz beim Stoppen einer Session | `backend/tests/test_goals.py`, `backend/tests/test_sessions.py` (Plan P4) |
 | FR-6.1 | Dashboard: Lernzeit vs. geplante Zeit | MS-12 |
 | FR-6.2 | Fortschrittsbalken pro Ziel | MS-12 |
 | FR-7.1 | Inaktivitäts-Erinnerung | MS-07 |
 
-**Hinweis zur Tabelle:** FR-1.3 und FR-4.3 haben laut Anforderungsdokument Priorität "Should" und wurden ebenfalls implementiert; sie sind hier aufgeführt, weil sie vollständig getestet sind. FR-3.2 (Must, Zwischenziele) ist als eigenständige Entität nicht implementiert — das Notiz-Feld von PlanSlot deckt den Anwendungsfall ab (siehe Abschnitt 8).
+**Hinweis zur Tabelle:** FR-1.3 und FR-4.3 haben laut Anforderungsdokument Priorität "Should" und wurden ebenfalls implementiert; sie sind hier aufgeführt, weil sie vollständig getestet sind. FR-3.2 (Must, Zwischenziele) und FR-5.2 (Should, Notizen) waren zum Zeitpunkt der MS4-Auslieferung nicht umgesetzt (siehe historische Fassung des Abschnitts 8); sie sind seit den Plänen P5 bzw. P4 vollständig implementiert und getestet.
 
-**Alle Must-Anforderungen mit Ausnahme von FR-3.2 sind vollständig implementiert und getestet.**
+**Alle Must-Anforderungen sind vollständig implementiert und getestet.**
 
 ---
 
@@ -292,9 +295,16 @@ zurückgestellt oder durch eine Behelfslösung abgedeckt.
 
 | Anforderung | Priorität | Begründung |
 |---|---|---|
-| FR-3.2 Zwischenziele pro Monat | Must | Kein eigenständiges Modell; das Notiz-Feld eines PlanSlots kann als Zwischenziel genutzt werden |
 | FR-2.2 Automatische Wochenplanung | Should | Nicht im MS4-Scope |
 | FR-4.4 Manuelle Nacherfassung | Could | Nicht im MS4-Scope |
-| FR-5.2 Notizen zu erreichten Zielen | Should | Nicht im MS4-Scope |
 | FR-7.2 Erinnerung vor geplanter Lernzeit | Should | Nicht im MS4-Scope |
 | FR-7.3 Erinnerung bei nahendem Zieldatum | Should | Nicht im MS4-Scope |
+
+**Nachtrag 2026-08-17 (Plan P5):** FR-3.2 (Zwischenziele pro Monat, Must) stand hier ursprünglich
+als „kein eigenständiges Modell; das Notiz-Feld eines PlanSlots kann als Zwischenziel genutzt
+werden". Das war eine Umgehung, keine Umsetzung: Ein Zwischenziel ohne eigenen Erledigt-Zustand
+ist keins. FR-3.2 ist jetzt als eigene Tabelle `milestones` umgesetzt (Migration
+`0003_milestones.py`) und steht deshalb nicht mehr in dieser Tabelle; siehe Abschnitt 7 sowie
+`docs/MS4_Fachliche_Dokumentation.md`. FR-5.2 (Notizen zu erreichten Zielen, Should) stand hier
+ebenfalls und ist seit Plan P4 umgesetzt (Note und Ergebnis-Notiz an Lernzielen, Notiz beim
+Stoppen einer Session).

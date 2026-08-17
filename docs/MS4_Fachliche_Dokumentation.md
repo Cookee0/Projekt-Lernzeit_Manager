@@ -165,11 +165,12 @@ Die folgende Tabelle listet Anforderungen, die bewusst nicht umgesetzt wurden (P
 | Anforderung | Priorität | Begründung der Nicht-Umsetzung |
 |---|---|---|
 | FR-2.2: Automatische Herunterrechnung der Grobplanung auf Wochen | Should | Aufwand übersteigt MS4-Zeitbudget; manuelle Planung pro Monat reicht für Kern-Usecase |
-| FR-3.2: Zwischenziele pro Monat | Must* | *In Notiz-Feld von PlanSlot abbildbar; eigenständige Entität nicht implementiert |
 | FR-4.4: Manuelle Nacherfassung | Could | Nicht implementiert |
-| FR-5.2: Notizen zu erreichten Zielen | Should | Nicht implementiert |
 | FR-7.2: Erinnerung vor geplanter Lernzeit | Should | Nicht implementiert |
 | FR-7.3: Erinnerung bei nahendem Zieldatum | Should | Nicht implementiert |
 
-*FR-3.2 wird als abgedeckt betrachtet, da das Notiz-Feld eines Planungseintrags für Zwischenziele
-genutzt werden kann.
+FR-3.2 (Zwischenziele pro Monat, Must) ist seit Plan P5 als eigene Tabelle `milestones` umgesetzt:
+Zwischenziele hängen an Jahr und Monat, optional an einem Lernziel, tragen einen optionalen Termin
+innerhalb des Monats und lassen sich abhaken. FR-5.2 (Notizen zu erreichten Zielen, Should) ist seit
+Plan P4 umgesetzt: Ein Lernziel kann eine Note und eine Ergebnis-Notiz tragen, eine Lernsession kann
+beim Stoppen eine Notiz erhalten. Beide stehen deshalb nicht mehr in dieser Tabelle.

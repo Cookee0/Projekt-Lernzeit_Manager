@@ -294,6 +294,19 @@ und Priorität und erscheinen in der Historie. Die beiden nicht zu verschmelzen 
 und FR-1.x sind getrennte Anforderungen mit getrennten Oberflächen. Zusammen bilden sie die einzige
 Zerlegungshierarchie des Modells – Modul, Lernziel, Zwischenziel (Leitentscheidung 3).
 
+**Abweichung der tatsächlichen Umsetzung (Plan P5, 2026-08-17):** Die Tabelle `modules` aus diesem
+Zielbild wurde nie gebaut; `goals` trägt das Modul stattdessen als Freitext in der Spalte
+`module_name`. Die umgesetzte Tabelle `milestones` verweist deshalb nicht auf `module_id`, sondern
+optional auf `goal_id` (FK → `goals.id`, `ON DELETE SET NULL`) — das Lernziel ist die
+nächstliegende vorhandene Entsprechung und bereits auf dieselbe Weise mit `plan_slots` und
+`study_sessions` verknüpft; optional bleibt die Verknüpfung, weil die Entwürfe auch
+modulunabhängige Einträge zeigen. Statt eines einzelnen `month`-Datums speichert die Tabelle `year`
+und `month` als zwei ganze Zahlen, wie es `plan_slots` bereits tut, und statt eines vollen
+`due_date` nur den Tag im Monat (`due_day`), der gegen die Länge genau dieses Monats geprüft wird
+und deshalb gar nicht aus dem Monat herausfallen kann — inhaltlich dieselbe Garantie wie der oben
+beschriebene `CHECK`. Details und Begründung stehen im Decision Log von
+`docs/ExecPlans/completed/2026-08-17_P5-FR-3.2-Zwischenziele.md`.
+
 ### 3.7 `sessions` – erfasste Lernzeit
 
 Ergebnis der Stoppuhr (FR-4.1, FR-4.2, FR-4.4).

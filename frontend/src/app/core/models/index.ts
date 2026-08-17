@@ -29,6 +29,17 @@ export interface PlanSlot {
   note: string | null;
 }
 
+export interface Milestone {
+  id: number;
+  goal_id: number | null;
+  title: string;
+  year: number;
+  month: number;
+  due_day: number | null;
+  done: boolean;
+  created_at: string;
+}
+
 export interface StudySession {
   id: number;
   goal_id: number;
@@ -65,6 +76,7 @@ export interface CurrentMonth {
 export interface DashboardData {
   current_month: CurrentMonth;
   goals: GoalStats[];
+  milestones: { done: number; total: number };
   inactivity_warning: boolean;
   reminder_text: string | null;
   active_session: ActiveSession | null;
