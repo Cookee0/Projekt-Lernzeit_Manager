@@ -169,3 +169,56 @@ def delete_plan(slot_id: int):
     db.session.delete(slot)
     db.session.commit()
     return "", 204
+
+
+@plans_bp.post("/api/plans/series")
+@jwt_required()
+def create_plan_series():
+    """Legt mehrere Lernzeit-Slots in einer Transaktion an (FR-3.3).
+
+    Serientermine wie „jeden Mittwoch im September 90 Minuten Mathe".
+    """
+    uid = _current_user_id()
+    data = request.get_json(silent=True) or {}
+
+    goal_id = require_int_in_range(data.get("goal_id"), "Lernziel", 1, 2_147_483_647)
+    year = require_int_in_range(data.get("year"), "Jahr", 2020, 2100)
+    month = require_int_in_range(data.get("month"), "Monat", 1, 12)
+
+    days = data.get("days")
+    if not isinstance(days, list) or not 1 <= len(days) <= 31:
+        raise ValidationError("Tage müssen eine Liste mit 1 bis 31 Einträgen sein")
+    if any(d is None for d in days):
+        raise ValidationError("Tage müssen eine Liste mit 1 bis 31 Einträgen sein")
+
+    checked = [require_day_of_month(d, year, month) for d in days]
+    if len(set(checked)) != len(checked):
+        raise ValidationError("Tage dürfen sich nicht wiederholen")
+
+    duration_minutes = require_int_in_range(
+        data.get("duration_minutes"), "Dauer in Minuten", 5, 480, default=60
+    )
+    planned_time = optional_clock_time(data.get("planned_time"))
+    note = optional_text(data.get("note"), "Notiz", 500)
+
+    # Ziel laden und prüfen, dass es dem aktuellen User gehört
+    Goal.query.filter_by(id=goal_id, user_id=uid).first_or_404()
+
+    # Slots anlegen: für jeden Tag ein PlanSlot-Objekt
+    slots = []
+    for day in sorted(checked):
+        slot = PlanSlot(
+            user_id=uid,
+            goal_id=goal_id,
+            year=year,
+            month=month,
+            day=day,
+            planned_time=planned_time,
+            duration_minutes=duration_minutes,
+            note=note,
+        )
+        slots.append(slot)
+        db.session.add(slot)
+
+    db.session.commit()
+    return jsonify([s.to_dict() for s in slots]), 201
