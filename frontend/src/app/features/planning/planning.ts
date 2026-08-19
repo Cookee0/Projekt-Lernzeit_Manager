@@ -155,7 +155,7 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
                   <strong>{{ group.title }}</strong>
                   <span class="module-tag">{{ group.module_name }}</span>
                 </div>
-                <span class="slot-duration">insgesamt {{ formatTotalMinutes(group.totalMinutes) }} geplant</span>
+                <span class="slot-duration">insgesamt {{ formatMinutes(group.totalMinutes) }} geplant</span>
               </div>
               @for (slot of group.slots; track slot.id) {
                 <div class="card slot-card">
@@ -419,15 +419,6 @@ export class PlanningComponent implements OnInit {
       };
     });
     return groups.sort((a, b) => a.title.localeCompare(b.title, 'de'));
-  }
-
-  /** Lesbare Zeitsumme fuer eine Zielgruppe, z. B. "4h 30min", "45min", "3h" oder "0min". */
-  formatTotalMinutes(minutes: number): string {
-    const h = Math.floor(minutes / 60);
-    const m = minutes % 60;
-    if (h === 0) return `${m}min`;
-    if (m === 0) return `${h}h`;
-    return `${h}h ${m}min`;
   }
 
   /** Beschriftung fuer eine geplante Lernzeit, z. B. "15. Aug 2026" oder "Aug 2026". */
