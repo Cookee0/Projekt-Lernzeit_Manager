@@ -3,6 +3,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Goal } from '../../core/models';
+import { goalDeleteConfirmText } from '../../core/goal-delete-confirm';
 import { GoalService } from '../../core/services/goal.service';
 import { validateEcts, validateRequiredText, validateTargetDate } from '../../core/validation';
 
@@ -311,12 +312,7 @@ export class GoalsComponent implements OnInit {
   }
 
   async remove(goal: Goal): Promise<void> {
-    const frage =
-      `Lernziel "${goal.title}" wirklich löschen?\n\n` +
-      'Damit werden auch alle geplanten Lernzeiten und alle bereits erfassten ' +
-      'Lernsessions dieses Ziels gelöscht. Die erfasste Lernzeit verschwindet ' +
-      'dadurch rückwirkend aus dem Dashboard.';
-    if (!confirm(frage)) return;
+    if (!confirm(goalDeleteConfirmText(goal.title))) return;
     await this.goalService.delete(goal.id);
     this.goals.update(gs => gs.filter(g => g.id !== goal.id));
   }

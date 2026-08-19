@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { DashboardData, DeadlineWarning, GoalStats, Milestone } from '../../core/models';
+import { goalDeleteConfirmText } from '../../core/goal-delete-confirm';
 import { DashboardService } from '../../core/services/dashboard.service';
 import { GoalService } from '../../core/services/goal.service';
 import { MilestoneService } from '../../core/services/milestone.service';
@@ -261,12 +262,7 @@ export class DashboardComponent implements OnInit {
   }
 
   async remove(goal: GoalStats): Promise<void> {
-    const frage =
-      `Lernziel "${goal.title}" wirklich löschen?\n\n` +
-      'Damit werden auch alle geplanten Lernzeiten und alle bereits erfassten ' +
-      'Lernsessions dieses Ziels gelöscht. Die erfasste Lernzeit verschwindet ' +
-      'dadurch rückwirkend aus dem Dashboard.';
-    if (!confirm(frage)) return;
+    if (!confirm(goalDeleteConfirmText(goal.title))) return;
     await this.goalService.delete(goal.id);
     await this.reload();
   }
