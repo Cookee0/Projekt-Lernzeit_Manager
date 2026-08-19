@@ -17,6 +17,7 @@ import { AuthService } from '../../core/services/auth.service';
           <li><a routerLink="/planning" routerLinkActive="active">Planung</a></li>
           <li><a routerLink="/timer" routerLinkActive="active">Timer</a></li>
           <li><a routerLink="/calendar" routerLinkActive="active">Kalender</a></li>
+          <li><a routerLink="/stats" routerLinkActive="active">Auswertung</a></li>
         </ul>
         <div class="navbar-user">
           <span>{{ auth.currentUser()?.name }}</span>
