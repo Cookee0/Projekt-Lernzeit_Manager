@@ -30,5 +30,10 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () => import('./features/timer/timer').then(m => m.TimerComponent),
   },
+  {
+    path: 'calendar',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/calendar/calendar').then(m => m.CalendarComponent),
+  },
   { path: '**', redirectTo: '/' },
 ];
