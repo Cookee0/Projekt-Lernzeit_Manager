@@ -89,7 +89,7 @@ Zwischenziele des Monats.
 | Liste der geplanten Lernzeiten | Ja | FR-3.1 | |
 | Monatsfilter | Ja | FR-3.1 | |
 | Block „Zwischenziele" mit Zähler und Abhaken | Ja | FR-3.2 | Seit Plan P5 |
-| Kalenderdarstellung als Monatsraster | Nein | — | Keine Anforderung; die Liste erfüllt FR-3.1 vollständig |
+| Kalenderdarstellung als Monatsraster | Ja | — | Keine Anforderung, die Liste erfüllte FR-3.1 bereits vollständig; seit Plan P10 zusätzlich als eigener Tab „Kalender" (Nutzer-Testfeedback vom 2026-08-19) |
 | Abweichung zur Grobplanung | Ja | FR-3.3 (Should) | Seit Plan P7: Abweichung geplant gegen Monatsvorschlag je Ziel auf der Planungsseite; die Aufschlüsselung je Kalenderwoche des Entwurfs ist Darstellungsform |
 | Knopf „Aus Grobplanung füllen" | Nein | — | Folge von FR-2.2, nicht implementiert |
 | Kennzeichnung von Feiertagen | Nein | FR-2.3 (Could) | Nicht implementiert |
@@ -156,8 +156,12 @@ verlangt — das lässt sich an der Anforderungsdatei selbst nachprüfen.
   existiert. Hinweis: `docs/05_Datenmodell.md` beschreibt noch eine Tabelle `modules`; das ist
   Zielbild, nicht Ist-Stand.
 - **Kalenderraster** (Wochenraster in `2a-dashboard.html`, Monatsraster in
-  `2d-detailplanung.html`). FR-3.1 verlangt, dass sich Slots mit Tag, Uhrzeit, Dauer und Modul
-  planen lassen — nicht, in welcher Form sie angezeigt werden. Die Liste erfüllt die Anforderung.
+  `2d-detailplanung.html`). FR-3.1 verlangt nur, dass sich Slots mit Tag, Uhrzeit, Dauer und Modul
+  planen lassen — nicht, in welcher Form sie angezeigt werden; das gilt weiterhin für das
+  Wochenraster aus `2a-dashboard.html`, das nicht gebaut ist. Das Monatsraster aus
+  `2d-detailplanung.html` ist seit Plan P10 (2026-08-19) als eigener Tab „Kalender" umgesetzt —
+  ausgelöst durch Nutzer-Testfeedback, nicht durch eine Anforderung; die Liste auf der
+  Planungsseite erfüllte FR-3.1 bereits zuvor vollständig.
 - **Exportfunktion** („Export" in `2e-auswertung.html`). Kommt in keiner Anforderung vor. Die
   offene Frage am Ende von `docs/01_Funktionale_Anforderungen.md` nach einer Kalenderkopplung
   (iCal) ist bis heute unbeantwortet und wurde nicht zur Anforderung erhoben.
