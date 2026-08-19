@@ -37,8 +37,8 @@ Dropdown listet die beiden Erinnerungen, und http://localhost:4200/stats zeigt d
 - [x] Milestone 2 (2026-08-19): Tab „Auswertung" (`/stats`) zeigt alle sechs Blöcke;
       Wochendiagramm als geteilte `WeekChartComponent` aus dem Dashboard wiederverwendet
       (Commits 709e3c1, 0d1f971).
-- [ ] Milestone 3: Erinnerungs-Hub in der Navbar (Glocke, Badge, Dropdown); Dashboard-Balken
-      für FR-7.1/7.2/7.3 entfernt; Tests und Lint grün.
+- [x] Milestone 3 (2026-08-19): Erinnerungs-Hub in der Navbar (Glocke, Badge, Dropdown);
+      Dashboard-Balken für FR-7.1/7.2/7.3 entfernt; Tests und Lint grün (Commit b2ed44a).
 - [ ] README im selben Zug aktualisiert.
 
 
