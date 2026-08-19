@@ -111,6 +111,13 @@ export interface DeadlineWarning {
   progress_pct: number;
 }
 
+/** Ein Eintrag im Erinnerungs-Hub der Navbar (FR-7.1, FR-7.2, FR-7.3). */
+export interface Reminder {
+  icon: string;
+  text: string;
+  link: string;
+}
+
 export interface DashboardData {
   current_month: CurrentMonth;
   goals: GoalStats[];

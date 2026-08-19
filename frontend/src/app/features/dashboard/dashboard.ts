@@ -2,13 +2,11 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-import { DashboardData, DeadlineWarning, GoalStats, Milestone } from '../../core/models';
+import { DashboardData, GoalStats, Milestone } from '../../core/models';
 import { goalDeleteConfirmText } from '../../core/goal-delete-confirm';
 import { DashboardService } from '../../core/services/dashboard.service';
 import { GoalService } from '../../core/services/goal.service';
 import { MilestoneService } from '../../core/services/milestone.service';
-import { PlanService } from '../../core/services/plan.service';
-import { upcomingSlotReminder } from '../../core/upcoming-slot';
 import { validateDayOfMonth } from '../../core/validation';
 import { WeekChartComponent } from '../../shared/week-chart';
 
@@ -25,27 +23,6 @@ const MONTH_NAMES = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
       @if (loading()) {
         <p class="loading">Lädt…</p>
       } @else if (data()) {
-        @if (data()!.reminder_text) {
-          <div class="alert alert-warning">
-            ⚠️ {{ data()!.reminder_text }}
-            <a routerLink="/timer" class="btn btn-sm btn-primary" style="margin-left:1rem">Timer starten</a>
-          </div>
-        }
-
-        @for (warning of data()!.deadline_warnings; track warning.goal_id) {
-          <div class="alert alert-warning">
-            ⏰ {{ deadlineLabel(warning) }}
-            <a routerLink="/timer" class="btn btn-sm btn-primary" style="margin-left:1rem">Timer starten</a>
-          </div>
-        }
-
-        @if (upcomingReminder()) {
-          <div class="alert alert-info">
-            🔔 {{ upcomingReminder() }}
-            <a routerLink="/timer" class="btn btn-sm btn-primary" style="margin-left:1rem">Timer starten</a>
-          </div>
-        }
-
         @if (data()!.active_session) {
           <div class="alert alert-info">
             ▶ Aktive Session: <strong>{{ data()!.active_session!.goal_title }}</strong> läuft gerade.
@@ -189,13 +166,11 @@ const MONTH_NAMES = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
 })
 export class DashboardComponent implements OnInit {
   private dashboardService = inject(DashboardService);
-  private planService = inject(PlanService);
   private goalService = inject(GoalService);
   private milestoneService = inject(MilestoneService);
 
   data = signal<DashboardData | null>(null);
   loading = signal(true);
-  upcomingReminder = signal<string | null>(null);
   protected Math = Math;
 
   /** id des Ziels, dessen "+ Unterziel"-Formular gerade offen ist; null heisst: keins. */
@@ -212,7 +187,6 @@ export class DashboardComponent implements OnInit {
     try {
       const data = await this.dashboardService.get();
       this.data.set(data);
-      await this.loadUpcomingReminder(data);
     } finally {
       this.loading.set(false);
     }
@@ -334,28 +308,6 @@ export class DashboardComponent implements OnInit {
       const msg = err instanceof HttpErrorResponse ? err.error?.error : undefined;
       this.subgoalErrors.set({ general: msg ?? 'Fehler beim Speichern.' });
     }
-  }
-
-  /** FR-7.2: Hinweis auf einen heute in der naechsten Stunde beginnenden Slot.
-   *  Laeuft im Browser, weil planned_time eine Ortszeit-Angabe ist. */
-  private async loadUpcomingReminder(data: DashboardData): Promise<void> {
-    const now = new Date();
-    const slots = await this.planService.list({
-      year: now.getFullYear(),
-      month: now.getMonth() + 1,
-    });
-    const titles = new Map(data.goals.map((g) => [g.id, g.title]));
-    this.upcomingReminder.set(upcomingSlotReminder(slots, titles, now));
-  }
-
-  deadlineLabel(warning: DeadlineWarning): string {
-    const when =
-      warning.days_left === 0
-        ? 'heute'
-        : warning.days_left === 1
-          ? 'morgen'
-          : `in ${warning.days_left} Tagen`;
-    return `„${warning.title}": Zieldatum ${when}, Fortschritt erst ${warning.progress_pct} %.`;
   }
 
   monthLabel(): string {
