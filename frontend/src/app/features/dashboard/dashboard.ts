@@ -2,6 +2,7 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { DashboardData, DeadlineWarning, GoalStats } from '../../core/models';
 import { DashboardService } from '../../core/services/dashboard.service';
+import { GoalService } from '../../core/services/goal.service';
 import { PlanService } from '../../core/services/plan.service';
 import { upcomingSlotReminder } from '../../core/upcoming-slot';
 
@@ -149,6 +150,16 @@ const MONTH_NAMES = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
               @if (goal.weekly_budget_minutes > 0) {
                 <div class="progress-label">Budget: {{ formatMinutes(goal.weekly_budget_minutes) }}/Woche</div>
               }
+              <div class="goal-actions">
+                <a class="btn btn-sm btn-secondary" [routerLink]="['/goals']" [queryParams]="{ edit: goal.id }">✎ Bearbeiten</a>
+                @if (goal.status !== 'achieved') {
+                  <button class="btn btn-sm btn-success" (click)="markAchieved(goal)">✓ Erreicht</button>
+                  @if (goal.status === 'open') {
+                    <button class="btn btn-sm btn-secondary" (click)="markInProgress(goal)">▶ In Arbeit</button>
+                  }
+                }
+                <button class="btn btn-sm btn-danger" (click)="remove(goal)">🗑 Löschen</button>
+              </div>
             </div>
           }
         </div>
@@ -159,6 +170,7 @@ const MONTH_NAMES = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
 export class DashboardComponent implements OnInit {
   private dashboardService = inject(DashboardService);
   private planService = inject(PlanService);
+  private goalService = inject(GoalService);
 
   data = signal<DashboardData | null>(null);
   loading = signal(true);
@@ -166,6 +178,10 @@ export class DashboardComponent implements OnInit {
   protected Math = Math;
 
   async ngOnInit(): Promise<void> {
+    await this.reload();
+  }
+
+  private async reload(): Promise<void> {
     try {
       const data = await this.dashboardService.get();
       this.data.set(data);
@@ -173,6 +189,27 @@ export class DashboardComponent implements OnInit {
     } finally {
       this.loading.set(false);
     }
+  }
+
+  async markAchieved(goal: GoalStats): Promise<void> {
+    await this.goalService.update(goal.id, { status: 'achieved' });
+    await this.reload();
+  }
+
+  async markInProgress(goal: GoalStats): Promise<void> {
+    await this.goalService.update(goal.id, { status: 'in_progress' });
+    await this.reload();
+  }
+
+  async remove(goal: GoalStats): Promise<void> {
+    const frage =
+      `Lernziel "${goal.title}" wirklich löschen?\n\n` +
+      'Damit werden auch alle geplanten Lernzeiten und alle bereits erfassten ' +
+      'Lernsessions dieses Ziels gelöscht. Die erfasste Lernzeit verschwindet ' +
+      'dadurch rückwirkend aus dem Dashboard.';
+    if (!confirm(frage)) return;
+    await this.goalService.delete(goal.id);
+    await this.reload();
   }
 
   /** FR-7.2: Hinweis auf einen heute in der naechsten Stunde beginnenden Slot.

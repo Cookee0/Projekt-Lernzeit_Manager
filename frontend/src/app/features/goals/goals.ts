@@ -1,5 +1,6 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { Goal } from '../../core/models';
 import { GoalService } from '../../core/services/goal.service';
@@ -207,6 +208,7 @@ function defaultTargetDate(): string {
 })
 export class GoalsComponent implements OnInit {
   private goalService = inject(GoalService);
+  private route = inject(ActivatedRoute);
 
   goals = signal<Goal[]>([]);
   loading = signal(true);
@@ -260,6 +262,10 @@ export class GoalsComponent implements OnInit {
     } finally {
       this.loading.set(false);
     }
+
+    const editId = Number(this.route.snapshot.queryParamMap.get('edit'));
+    const goal = this.goals().find(g => g.id === editId);
+    if (goal) this.startEdit(goal);
   }
 
   async create(): Promise<void> {
