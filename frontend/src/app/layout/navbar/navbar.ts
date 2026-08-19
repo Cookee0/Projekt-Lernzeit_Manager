@@ -71,13 +71,17 @@ export class NavbarComponent {
     effect(() => {
       if (this.auth.isLoggedIn()) {
         this.refreshReminders();
+      } else {
+        this.reminderService.clear();
       }
     });
   }
 
   toggleReminders(): void {
     this.remindersOpen.update((open) => !open);
-    this.refreshReminders();
+    if (this.remindersOpen()) {
+      this.refreshReminders();
+    }
   }
 
   /** Aktualisiert die Erinnerungen im Hintergrund; ein Fehler bleibt lokal

@@ -50,6 +50,13 @@ export class ReminderService {
 
     this._reminders.set(reminders);
   }
+
+  /** Setzt die Erinnerungen zurueck (z. B. beim Abmelden, damit auf einem
+   *  geteilten Browser keine Erinnerungstexte des vorherigen Nutzers
+   *  sichtbar bleiben). */
+  clear(): void {
+    this._reminders.set([]);
+  }
 }
 
 /** FR-7.3: Text zu einer Zieldatum-Warnung (aus dashboard.ts hierher verschoben). */

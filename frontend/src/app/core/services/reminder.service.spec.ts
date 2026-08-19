@@ -119,4 +119,22 @@ describe('ReminderService.refresh', () => {
 
     expect(service.reminders()).toEqual([]);
   });
+
+  it('clear() setzt die Erinnerungen zurueck (z. B. beim Abmelden)', async () => {
+    const refreshPromise = service.refresh();
+
+    const dashboardReq = httpMock.expectOne('/api/dashboard');
+    dashboardReq.flush(makeDashboardData({ reminder_text: 'Heute noch nicht gelernt.' }));
+    await tick();
+
+    const plansReq = httpMock.expectOne((r) => r.url === '/api/plans');
+    plansReq.flush([]);
+
+    await refreshPromise;
+    expect(service.reminders().length).toBe(1);
+
+    service.clear();
+
+    expect(service.reminders()).toEqual([]);
+  });
 });
