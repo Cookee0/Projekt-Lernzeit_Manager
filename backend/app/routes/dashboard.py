@@ -81,6 +81,18 @@ def dashboard():
     paused_minutes = paused_seconds // 60
 
     goals = Goal.query.filter_by(user_id=uid).order_by(Goal.target_date).all()
+
+    # Zwischenziele des laufenden Monats laden und nach goal_id gruppieren (FR-3.2).
+    month_milestones = (
+        Milestone.query.filter_by(user_id=uid, year=year, month=month)
+        .order_by(Milestone.due_day, Milestone.id)
+        .all()
+    )
+    milestones_by_goal: dict[int, list] = {}
+    for m in month_milestones:
+        if m.goal_id is not None:
+            milestones_by_goal.setdefault(m.goal_id, []).append(m.to_dict())
+
     goals_data = []
     deadline_warnings = []
     for goal in goals:
@@ -98,6 +110,7 @@ def dashboard():
                 "weekly_budget_minutes": weekly_budget_minutes(
                     goal.ects, actual_goal_minutes, goal.target_date, today, goal.status
                 ),
+                "milestones": milestones_by_goal.get(goal.id, []),
             }
         )
 
@@ -146,10 +159,8 @@ def dashboard():
         for monday, minutes in minutes_per_week.items()
     ]
 
-    milestones_total = Milestone.query.filter_by(user_id=uid, year=year, month=month).count()
-    milestones_done = Milestone.query.filter_by(
-        user_id=uid, year=year, month=month, done=True
-    ).count()
+    milestones_total = len(month_milestones)
+    milestones_done = sum(1 for m in month_milestones if m.done)
 
     today_slots = (
         PlanSlot.query.filter_by(user_id=uid, year=year, month=month, day=today.day).count()

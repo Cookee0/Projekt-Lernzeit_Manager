@@ -28,7 +28,11 @@ Abgabeziel: **31.08.2026**.
 > Lernziel ein aus dem ECTS-Workload (30 Stunden je ECTS-Punkt) abgeleitetes Wochenbudget, einen
 > automatischen Monatsvorschlag (Restaufwand gleichmäßig auf die Monate bis zum Zieldatum
 > verteilt, Endpunkt `GET /api/plans/proposal`) und die Abweichung zur bereits geplanten Zeit des
-> gewählten Monats; Slots legt der Vorschlag bewusst nicht selbst an. Das Dashboard weist die
+> gewählten Monats; Slots legt der Vorschlag bewusst nicht selbst an. Jede Lernziel-Kachel auf dem
+> Dashboard lässt sich zum Bearbeiten in den Lernziele-Tab öffnen und direkt auf „Erreicht" oder
+> „In Arbeit" setzen sowie löschen; darunter erscheinen die Zwischenziele des laufenden Monats für dieses Ziel — abhakbar,
+> löschbar und über ein Inline-Formular „+ Unterziel" anlegbar, jeweils mit sofortiger Auswirkung
+> auf die Zwischenziele-Kachel oben auf dem Dashboard. Das Dashboard weist die
 > Pausenzeit des Monats als eigene Kennzahl aus (FR-4.3 — die gezählte Lernzeit ist immer schon
 > die ungestörte Zeit ohne Pausen), zeigt ein Balkendiagramm der Lernzeit der letzten acht
 > Kalenderwochen (FR-6.3, als eigenes SVG ohne Diagrammbibliothek), warnt bei Lernzielen mit
