@@ -97,6 +97,30 @@ Dropdown listet die beiden Erinnerungen, und http://localhost:4200/stats zeigt d
   Rationale: Genau das beschreibt das Testfeedback („kein separater Tab, sondern Hub neben dem
   Nutzernamen"); die aktive Session ist keine Erinnerung, sondern Zustand.
   Date/Author: 2026-08-19 / Claude.
+- Decision: `by_daytime` bleibt bei naiv-UTC gebuckelten Stunden ohne Umrechnung in Ortszeit, wie
+  in Milestone 1 spezifiziert; die Beschriftungen „Morgen/Mittag/Abend/Nacht" sind also nur für
+  Nutzerinnen in UTC exakt, für andere Zeitzonen (z. B. MESZ) tendenziell um die
+  UTC-Verschiebung versetzt.
+  Rationale: Eine korrekte Umrechnung bräuchte entweder eine neue, feinere Antwortform (z. B.
+  ein 24-Stunden-Array) und eine Bucket-Bildung im Browser (wie bereits bei FR-7.2, wo die
+  Slot-Uhrzeit aus demselben Grund im Browser ausgewertet wird) oder eine Zeitzonen-Angabe pro
+  Nutzerin — beides ist ein größerer Umbau, als der ursprüngliche Testwunsch verlangt hat. Der
+  Entwurf selbst nennt diese Auswertung „bewusst grob" (Tendenzen, keine exakte Uhrzeit-Analyse).
+  Erkannt in der finalen Ganzzweig-Review vom 2026-08-19; bewusst nicht behoben, um den Umfang
+  dieses Plans nicht zu sprengen — Kandidat für einen künftigen Plan, falls das in der Praxis
+  stört.
+  Date/Author: 2026-08-19 / Claude (Ruling nach Review-Fund).
+- Decision: `per_month` bleibt ein rückblickendes 6-Monats-Fenster (die letzten sechs
+  Kalendermonate einschließlich des laufenden), wie in Milestone 1 spezifiziert — zukünftig
+  geplante Monate erscheinen nicht in der Tabelle „Plan vs. Ist je Monat".
+  Rationale: Das entspricht wörtlich der Spezifikation in Milestone 1 des Plans. Für Nutzerinnen,
+  die weit im Voraus planen, zeigt die Tabelle dadurch überwiegend leere vergangene Monate, bis
+  genug Historie vorliegt — ein echter, aber kleiner UX-Nachteil bei einer Could-Anforderung
+  (FR-6.4). Ein vorausschauendes oder symmetrisches Fenster wäre eine Umfangserweiterung über den
+  ursprünglichen Testwunsch hinaus.
+  Erkannt in der finalen Ganzzweig-Review vom 2026-08-19; bewusst nicht behoben — Kandidat für
+  einen künftigen Plan.
+  Date/Author: 2026-08-19 / Claude (Ruling nach Review-Fund).
 
 
 ## Outcomes & Retrospective
