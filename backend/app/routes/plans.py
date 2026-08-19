@@ -174,7 +174,7 @@ def delete_plan(slot_id: int):
 @plans_bp.post("/api/plans/series")
 @jwt_required()
 def create_plan_series():
-    """Legt mehrere Lernzeit-Slots in einer Transaktion an (FR-3.3).
+    """Legt mehrere Lernzeit-Slots in einer Transaktion an (FR-3.1).
 
     Serientermine wie „jeden Mittwoch im September 90 Minuten Mathe".
     """

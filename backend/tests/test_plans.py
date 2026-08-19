@@ -112,7 +112,7 @@ def test_foreign_slot_is_not_reachable(client, auth_header, goal_id):
     assert client.delete(f"{PLANS_URL}/{sid}", headers=fremd_header).status_code == 404
 
 
-# Tests für Serientermine (FR-3.3, P9 M1)
+# Tests für Serientermine (FR-3.1, P9 M1)
 def test_series_creates_multiple_slots(client, auth_header, goal_id):
     """(a) Gültige Serie: mehrere Slots an verschiedenen Tagen in einem Monat."""
     resp = client.post(

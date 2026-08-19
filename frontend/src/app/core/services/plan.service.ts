@@ -28,7 +28,7 @@ export class PlanService {
     return firstValueFrom(this.http.post<PlanSlot>(API, payload));
   }
 
-  /** Legt fuer mehrere Tage eines Monats je einen Slot in einer Transaktion an (FR-3.3). */
+  /** Legt fuer mehrere Tage eines Monats je einen Slot in einer Transaktion an (FR-3.1). */
   createSeries(payload: {
     goal_id: number;
     year: number;

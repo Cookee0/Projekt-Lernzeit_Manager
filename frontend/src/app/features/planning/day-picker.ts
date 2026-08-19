@@ -5,7 +5,7 @@ const WEEKDAY_LABELS = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
 const LAST_WORKDAY_INDEX = 4;
 
 /**
- * Anklickbares Monatsraster zur Mehrfachauswahl von Tagen (FR-3.3).
+ * Anklickbares Monatsraster zur Mehrfachauswahl von Tagen (FR-3.1).
  * Reine Praesentationskomponente: haelt keinen eigenen Auswahlzustand,
  * sondern spiegelt `selected` und meldet Aenderungen ueber `selectedChange`.
  */
