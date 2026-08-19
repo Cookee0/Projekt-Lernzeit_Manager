@@ -83,6 +83,8 @@ export interface GoalStats extends Goal {
   planned_ects_minutes: number;
   /** Restaufwand je verbleibender Woche bis zum Zieldatum (FR-2.1). */
   weekly_budget_minutes: number;
+  /** Zwischenziele (FR-3.2) dieses Ziels im laufenden Monat. */
+  milestones: Milestone[];
 }
 
 export interface CurrentMonth {
