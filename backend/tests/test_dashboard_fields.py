@@ -107,3 +107,69 @@ def test_no_deadline_warning_for_achieved_or_distant_goal(client, auth_header, g
     db.session.commit()
     data = client.get(DASHBOARD_URL, headers=auth_header).get_json()
     assert data["deadline_warnings"] == []
+
+
+def test_dashboard_includes_milestones_per_goal(client, auth_header):
+    """Testet, dass GET /api/dashboard je Lernziel Zwischenziele im
+    laufenden Monat ausgibt (FR-3.2).
+
+    - Zwischenziele mit goal_id erscheinen in goal["milestones"]
+    - Zwischenziele ohne goal_id zählen in data["milestones"]["total"],
+      nicht aber in goal["milestones"]
+    """
+    today = date.today()
+    year, month = today.year, today.month
+
+    # Lernziel anlegen
+    resp = client.post(
+        "/api/goals",
+        json={
+            "title": "Test Goal",
+            "module_name": "TEST01",
+            "target_date": (date.today() + timedelta(days=200)).isoformat(),
+        },
+        headers=auth_header,
+    )
+    assert resp.status_code == 201
+    goal_id = resp.get_json()["id"]
+
+    # Zwischenziel MIT goal_id anlegen
+    resp = client.post(
+        "/api/milestones",
+        json={
+            "title": "Kapitel 3 abschließen",
+            "year": year,
+            "month": month,
+            "goal_id": goal_id,
+        },
+        headers=auth_header,
+    )
+    assert resp.status_code == 201
+
+    # Zwischenziel OHNE goal_id anlegen
+    resp = client.post(
+        "/api/milestones",
+        json={
+            "title": "Allgemeines Zwischenziel",
+            "year": year,
+            "month": month,
+        },
+        headers=auth_header,
+    )
+    assert resp.status_code == 201
+
+    # Dashboard abrufen
+    data = client.get(DASHBOARD_URL, headers=auth_header).get_json()
+
+    # Ziel finden
+    goal = next(g for g in data["goals"] if g["id"] == goal_id)
+
+    # Prüfe: goal["milestones"] enthält nur das Zwischenziel mit goal_id
+    assert "milestones" in goal
+    assert len(goal["milestones"]) == 1
+    assert goal["milestones"][0]["title"] == "Kapitel 3 abschließen"
+    assert goal["milestones"][0]["done"] is False
+
+    # Prüfe: Gesamtzähler zählt beide Zwischenziele
+    assert data["milestones"]["total"] == 2
+    assert data["milestones"]["done"] == 0
