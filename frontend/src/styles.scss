@@ -251,6 +251,8 @@ input, select, textarea, button { font: inherit; }
 
 /* ===== Planning ===== */
 .slots-list h3 { margin-bottom: 0.75rem; }
+.slot-group { margin-bottom: 1.5rem; }
+.slot-group-header { margin-bottom: 0.75rem; }
 .slot-card { padding: 0.875rem 1.25rem; }
 .slot-header { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 0.3rem; }
 .slot-duration { color: var(--primary); }

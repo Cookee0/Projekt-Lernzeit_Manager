@@ -148,18 +148,28 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
         } @else if (slots().length === 0) {
           <p class="empty">Für diese Auswahl ist noch nichts geplant.</p>
         } @else {
-          @for (slot of slots(); track slot.id) {
-            <div class="card slot-card">
-              <div class="slot-header">
-                <span>{{ goalName(slot.goal_id) }}</span>
-                <span class="slot-duration">{{ slot.duration_minutes }} min</span>
+          @for (group of groupedSlots(); track group.goal_id) {
+            <div class="slot-group">
+              <div class="slot-group-header goal-header">
+                <div>
+                  <strong>{{ group.title }}</strong>
+                  <span class="module-tag">{{ group.module_name }}</span>
+                </div>
+                <span class="slot-duration">insgesamt {{ formatTotalMinutes(group.totalMinutes) }} geplant</span>
               </div>
-              <div class="slot-meta">
-                <span>📆 {{ slotDate(slot) }}</span>
-                @if (slot.planned_time) { <span>🕐 {{ slot.planned_time }}</span> }
-                @if (slot.note) { <span>📝 {{ slot.note }}</span> }
-              </div>
-              <button class="btn btn-sm btn-danger" (click)="removeSlot(slot)">Löschen</button>
+              @for (slot of group.slots; track slot.id) {
+                <div class="card slot-card">
+                  <div class="slot-header">
+                    <span>📆 {{ slotDate(slot) }}</span>
+                    <span class="slot-duration">{{ slot.duration_minutes }} min</span>
+                  </div>
+                  <div class="slot-meta">
+                    @if (slot.planned_time) { <span>🕐 {{ slot.planned_time }}</span> }
+                    @if (slot.note) { <span>📝 {{ slot.note }}</span> }
+                  </div>
+                  <button class="btn btn-sm btn-danger" (click)="removeSlot(slot)">Löschen</button>
+                </div>
+              }
             </div>
           }
         }
@@ -386,8 +396,38 @@ export class PlanningComponent implements OnInit {
     await this.loadProposal();
   }
 
-  goalName(id: number): string {
-    return this.goals().find(g => g.id === id)?.title ?? `Ziel ${id}`;
+  /** Gruppiert die geladenen Slots nach Lernziel, aufsteigend nach Zieltitel sortiert;
+   *  innerhalb einer Gruppe bleibt die von der API gelieferte Datumsreihenfolge erhalten. */
+  groupedSlots(): { goal_id: number; title: string; module_name: string; totalMinutes: number; slots: PlanSlot[] }[] {
+    const byGoal = new Map<number, PlanSlot[]>();
+    for (const slot of this.slots()) {
+      const list = byGoal.get(slot.goal_id);
+      if (list) {
+        list.push(slot);
+      } else {
+        byGoal.set(slot.goal_id, [slot]);
+      }
+    }
+    const groups = Array.from(byGoal.entries()).map(([goalId, slotsForGoal]) => {
+      const goal = this.goals().find(g => g.id === goalId);
+      return {
+        goal_id: goalId,
+        title: goal?.title ?? `Ziel ${goalId}`,
+        module_name: goal?.module_name ?? '',
+        totalMinutes: slotsForGoal.reduce((sum, s) => sum + s.duration_minutes, 0),
+        slots: slotsForGoal,
+      };
+    });
+    return groups.sort((a, b) => a.title.localeCompare(b.title, 'de'));
+  }
+
+  /** Lesbare Zeitsumme fuer eine Zielgruppe, z. B. "4h 30min", "45min", "3h" oder "0min". */
+  formatTotalMinutes(minutes: number): string {
+    const h = Math.floor(minutes / 60);
+    const m = minutes % 60;
+    if (h === 0) return `${m}min`;
+    if (m === 0) return `${h}h`;
+    return `${h}h ${m}min`;
   }
 
   /** Beschriftung fuer eine geplante Lernzeit, z. B. "15. Aug 2026" oder "Aug 2026". */
