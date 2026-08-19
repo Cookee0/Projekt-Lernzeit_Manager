@@ -99,16 +99,19 @@ Zwischenziele des Monats.
 Der Entwurf zeigt eine eigene Seite mit Kennzahlen, einem Balkendiagramm „Lernzeit pro Woche" mit
 Plan-Linie, einer Tabelle „Plan vs. Ist je Modul" mit Ampelstatus, einer Aufstellung „Plan vs. Ist
 je Monat" über sechs Monate, den erreichten Zielen mit Noten und einer Auswertung nach Tageszeit.
+Seit Plan P11 existieren diese Inhalte auch in der Anwendung, nicht mehr nur im Entwurf, als
+eigener Tab „Auswertung" (`/stats`).
 
 | Element im Entwurf | umgesetzt? | Anforderung | Bemerkung |
 |---|---|---|---|
 | Vergleich geplant gegen erfasst (laufender Monat) | Ja | FR-6.1 | Auf dem Dashboard, nicht auf eigener Seite |
 | Fortschritt je Lernziel mit Ampelfarben | Ja | FR-6.2 | Auf dem Dashboard |
 | Diagramm über den Zeitverlauf | Ja | FR-6.3 (Should) | Seit Plan P7: Balkendiagramm „Lernzeit der letzten 8 Wochen" auf dem Dashboard, eigenes SVG ohne Diagrammbibliothek |
-| Vergleich Plan gegen Ist über volle sechs Monate | Nein | FR-6.4 (Could) | Nicht implementiert |
-| Eigene Auswertungsseite | Nein | — | Keine Anforderung — FR-6.1 verlangt „Dashboard/Übersicht" |
+| Vergleich Plan gegen Ist über volle sechs Monate | Ja | FR-6.4 (Could) | Seit Plan P11: Tabelle „Plan vs. Ist je Monat" auf der neuen Auswertungsseite (`GET /api/stats`) |
+| Eigene Auswertungsseite | Ja | — | Seit Plan P11 als eigener Tab „Auswertung" (`/stats`), ausgelöst durch Nutzer-Testfeedback vom 2026-08-19, nicht durch eine Anforderung — die einzelnen Inhalte bleiben den jeweiligen Anforderungen zugeordnet |
 | Exportfunktion | Nein | — | Keine Anforderung |
-| Auswertung nach Tageszeit / Fokusquote | Nein | — | Keine Anforderung |
+| Auswertung nach Tageszeit | Ja | — | Seit Plan P11 als Block „Wann lernst du?" auf der Auswertungsseite; keine Anforderung, aber Teil der Kernmetriken des Entwurfs (siehe Decision Log des Plans) |
+| Fokusquote | Nein | — | Keine Anforderung, nicht übernommen |
 
 ## Erinnerungen (`2f-erinnerungen.html`)
 
@@ -118,13 +121,13 @@ Vorschau.
 
 | Element im Entwurf | umgesetzt? | Anforderung | Bemerkung |
 |---|---|---|---|
-| Erinnerung bei versäumter Lernzeit | Ja | FR-7.1 (Must) | Zwei Auslöser: heute geplant/nicht gelernt, 3 Tage Inaktivität; als Hinweis auf dem Dashboard |
-| Erinnerung vor einem geplanten Slot | Ja | FR-7.2 (Should) | Seit Plan P7: Hinweis auf dem Dashboard ab 60 Minuten vor Beginn; im Browser berechnet, weil die Slot-Uhrzeit Ortszeit ist |
-| Erinnerung bei nahendem Zieltermin ohne Fortschritt | Ja | FR-7.3 (Should) | Seit Plan P7: Warnung bei Zieldatum in ≤ 14 Tagen und Fortschritt < 50 % |
+| Erinnerung bei versäumter Lernzeit | Ja | FR-7.1 (Must) | Zwei Auslöser: heute geplant/nicht gelernt, 3 Tage Inaktivität; als Eintrag im Glocken-Symbol-Dropdown der Navigationsleiste (seit Plan P11; vorher als Hinweis auf dem Dashboard) |
+| Erinnerung vor einem geplanten Slot | Ja | FR-7.2 (Should) | Seit Plan P7: ab 60 Minuten vor Beginn; im Browser berechnet, weil die Slot-Uhrzeit Ortszeit ist; als Eintrag im Glocken-Symbol-Dropdown der Navigationsleiste (seit Plan P11; vorher als Hinweis auf dem Dashboard) |
+| Erinnerung bei nahendem Zieltermin ohne Fortschritt | Ja | FR-7.3 (Should) | Seit Plan P7: Warnung bei Zieldatum in ≤ 14 Tagen und Fortschritt < 50 %; als Eintrag im Glocken-Symbol-Dropdown der Navigationsleiste (seit Plan P11; vorher als Hinweis auf dem Dashboard) |
 | Konfigurierbare Kanäle | Nein | FR-7.4 (Could) | Nicht implementiert |
 | Einstellbare Schwellen | Nein | FR-7.4 (Could) | Nicht implementiert |
 | Ruhezeiten und Wochenrückblick | Nein | — | Keine Anforderung |
-| Eigene Erinnerungsseite | Nein | — | Keine Anforderung — FR-7.1 verlangt nur, dass die Nutzerin eine Erinnerung erhält |
+| Eigene Erinnerungsseite | Nein | — | Keine Anforderung — FR-7.1 verlangt nur, dass die Nutzerin eine Erinnerung erhält; seit Plan P11 erfüllt stattdessen ein Glocken-Dropdown in der Navigationsleiste denselben Zweck, ohne eine eigene Seite zu sein |
 
 ## Übersicht: Was noch fehlt
 
@@ -136,7 +139,6 @@ Could-Anforderungen — bewusst zurückgestellt, nicht vergessen:
 | Urlaub und Feiertage aus dem Budget rechnen | 2c, 2d | FR-2.3 | Could |
 | Nacherfassen einer Lernzeit ohne Timer | 2a, 2f | FR-4.4 | Could |
 | Historie aller erreichten Ziele als eigene Ansicht | 2b, 2e | FR-5.3 | Could |
-| Plan gegen Ist über die vollen sechs Monate | 2c, 2e | FR-6.4 | Could |
 | Konfigurierbare Kanäle und Schwellen | 2f | FR-7.4 | Could |
 
 ## Entwurfsinhalte ohne Anforderung

@@ -45,7 +45,18 @@ Abgabeziel: **31.08.2026**.
 > Zieldaten der Lernziele anzeigt, den heutigen Tag hervorhebt, erreichte Lernziele gedämpft und
 > durchgestrichen darstellt und unter rund 800 px Fensterbreite auf eine gescrollte Liste der Tage
 > mit Einträgen umschaltet; Lernzeiten ohne festen Tag erscheinen gesondert unter „Ohne festen
-> Tag". Die Eingaben
+> Tag". Seit Plan P11 gibt es einen sechsten Tab **„Auswertung"** (Route `/stats`, FR-6.4,
+> FR-5.3): eine Kennzahlenreihe (geplant, ungestört gelernt, Pausen, Erfüllungsgrad des laufenden
+> Monats), das aus dem Dashboard bekannte Wochendiagramm (jetzt als geteilte
+> `WeekChartComponent`), eine Tabelle „Plan vs. Ist je Modul" mit Ampelstatus, eine Aufstellung
+> „Plan vs. Ist je Monat" über die letzten sechs Kalendermonate (Endpunkt `GET /api/stats`, setzt
+> FR-6.4 um), die Liste der erreichten Ziele mit Noten (setzt FR-5.3 um) und eine Auswertung
+> „Wann lernst du?" nach Tageszeit. Die bisherigen Erinnerungs-Balken (FR-7.1 „heute geplant und
+> nicht gelernt" oder „drei Tage ohne Session", FR-7.2 „Slot beginnt in der nächsten Stunde",
+> FR-7.3 „Zieldatum in ≤ 14 Tagen, Fortschritt < 50 %") erscheinen seit Plan P11 nicht mehr auf
+> dem Dashboard, sondern in einem Glocken-Symbol-Dropdown neben dem Nutzernamen in der
+> Navigationsleiste (ein Zähler-Badge zeigt die Anzahl aktiver Erinnerungen); der Hinweis auf eine
+> laufende Session bleibt auf dem Dashboard. Die Eingaben
 > (E-Mail, ECTS, Datum, Tag, Dauer, Uhrzeit, Priorität, Note, Notizen, Zwischenziel-Titel) werden
 > serverseitig geprüft und im Formular direkt unter dem betroffenen Feld angezeigt; siehe den
 > Abschnitt „Geltende Wertebereiche der API" weiter unten. Alle ausgelieferten Zeitstempel sind als
