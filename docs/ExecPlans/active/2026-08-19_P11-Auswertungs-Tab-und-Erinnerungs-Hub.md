@@ -39,7 +39,7 @@ Dropdown listet die beiden Erinnerungen, und http://localhost:4200/stats zeigt d
       (Commits 709e3c1, 0d1f971).
 - [x] Milestone 3 (2026-08-19): Erinnerungs-Hub in der Navbar (Glocke, Badge, Dropdown);
       Dashboard-Balken für FR-7.1/7.2/7.3 entfernt; Tests und Lint grün (Commit b2ed44a).
-- [ ] README im selben Zug aktualisiert.
+- [x] README im selben Zug aktualisiert (2026-08-19, Commit 01a912c).
 
 
 ## Surprises & Discoveries
@@ -49,6 +49,21 @@ Dropdown listet die beiden Erinnerungen, und http://localhost:4200/stats zeigt d
   `frontend/src/styles.scss`. Dieser Plan (P11) selbst nennt keine konkrete CSS-Datei, ist also
   nicht betroffen; für P12 (das `styles.css` explizit benennt) ist das relevant und wird dort
   vermerkt.
+- 2026-08-19: Beim manuellen Test (Concrete Step 6) zwei Umgebungsprobleme entdeckt, die nichts
+  mit diesem Plan zu tun haben, aber für zukünftige manuelle Tests relevant sind: (1) Diese
+  Shell-Sitzung hatte geerbte Umgebungsvariablen (`DATABASE_URL`, `POSTGRES_PORT=5432` usw.), die
+  die lokale `.env` (Port 5433, gewählt um einem fremden, bereits laufenden
+  Postgres-Container „bachelorarbeit" auf Port 5432 auszuweichen) überschrieben haben — sowohl
+  `docker compose` als auch `flask db upgrade` griffen dadurch zunächst auf den falschen
+  Container zu. Abhilfe: die betroffenen Variablen vor jedem Befehl in dieser Sitzung per
+  `unset` entfernen. (2) Login/Registrierung über die UI-Formulare ließ sich mit den verfügbaren
+  Browser-Automatisierungswerkzeugen in dieser Umgebung nicht zuverlässig auslösen (Klicks auf
+  „Anmelden"/„Konto erstellen" lösten das Angular-`ngSubmit` nicht aus, vermutlich ein
+  Zusammenspiel aus schwankender Viewport-Größe zwischen Aufrufen und synthetischen Events, die
+  Angulars Change Detection nicht zuverlässig erreichten) — nicht auf eine Änderung dieses Plans
+  zurückzuführen, da `login.ts`/`register.ts` von keinem P11-Task berührt wurden. Umgangen durch
+  Registrierung/Anmeldung per direktem `fetch`-Aufruf und Ablage des Tokens unter dem Schlüssel
+  `lm_token` in `localStorage` — demselben Mechanismus, den die Anwendung selbst nutzt.
 
 
 ## Decision Log
