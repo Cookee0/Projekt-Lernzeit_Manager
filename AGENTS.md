@@ -16,8 +16,8 @@ study-time planning and tracking app (see `Projektbericht_Themen_ISEF01.md`, sec
 Per `docs/06_Zeitplanung_Projektablauf.md`, the project moves through milestones MS0-MS6. As of
 this writing the application is functionally complete for MS4: it has user accounts (registration
 and login via a JWT access token, `flask-jwt-extended`), four database tables (`users`, `goals`,
-`plan_slots`, `study_sessions`), and six application screens (login, registration, dashboard,
-goals, planning, timer). Every endpoint except `/api/health`, `/api/auth/register`, and
+`plan_slots`, `study_sessions`), and seven application screens (login, registration, dashboard,
+goals, planning, timer, calendar). Every endpoint except `/api/health`, `/api/auth/register`, and
 `/api/auth/login` requires the token. Implemented so far: goals (create, edit, delete, optional
 priority, grade and result note), coarse and detailed time planning, a timer with start/pause/
 resume/stop and an optional session note, a dashboard with progress, and a reminder for missed
