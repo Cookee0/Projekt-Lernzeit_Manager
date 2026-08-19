@@ -34,8 +34,9 @@ Dropdown listet die beiden Erinnerungen, und http://localhost:4200/stats zeigt d
 - [x] Milestone 1 (2026-08-19): Backend-Endpunkt `GET /api/stats` liefert Modul-, Monats-,
       Tageszeit- und Erreicht-Auswertung; Tests in `backend/tests/test_stats.py` grün
       (Commit d006e89).
-- [ ] Milestone 2: Tab „Auswertung" (`/stats`) zeigt alle Blöcke; Wochendiagramm als geteilte
-      Komponente aus dem Dashboard wiederverwendet.
+- [x] Milestone 2 (2026-08-19): Tab „Auswertung" (`/stats`) zeigt alle sechs Blöcke;
+      Wochendiagramm als geteilte `WeekChartComponent` aus dem Dashboard wiederverwendet
+      (Commits 709e3c1, 0d1f971).
 - [ ] Milestone 3: Erinnerungs-Hub in der Navbar (Glocke, Badge, Dropdown); Dashboard-Balken
       für FR-7.1/7.2/7.3 entfernt; Tests und Lint grün.
 - [ ] README im selben Zug aktualisiert.
