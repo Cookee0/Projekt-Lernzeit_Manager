@@ -111,6 +111,13 @@ export interface DeadlineWarning {
   progress_pct: number;
 }
 
+/** Ein Eintrag im Erinnerungs-Hub der Navbar (FR-7.1, FR-7.2, FR-7.3). */
+export interface Reminder {
+  icon: string;
+  text: string;
+  link: string;
+}
+
 export interface DashboardData {
   current_month: CurrentMonth;
   goals: GoalStats[];
@@ -120,4 +127,48 @@ export interface DashboardData {
   inactivity_warning: boolean;
   reminder_text: string | null;
   active_session: ActiveSession | null;
+}
+
+/** Fortschritt eines Lernziels ueber den gesamten Zeitraum (Auswertung, FR-6.4). */
+export interface StatsPerGoal {
+  goal_id: number;
+  title: string;
+  module_name: string;
+  planned_ects_minutes: number;
+  total_actual_minutes: number;
+  progress_pct: number;
+  ampel: 'gruen' | 'gelb' | 'rot';
+}
+
+/** Geplante vs. tatsaechliche Lernzeit eines Kalendermonats (Auswertung, FR-6.4). */
+export interface StatsPerMonth {
+  year: number;
+  month: number;
+  planned_minutes: number;
+  actual_minutes: number;
+}
+
+/** Verteilung der Lernzeit nach Tageszeit (Auswertung, FR-6.4). */
+export interface StatsByDaytime {
+  morning_minutes: number;
+  afternoon_minutes: number;
+  evening_minutes: number;
+  night_minutes: number;
+}
+
+/** Erreichtes Lernziel mit Note und Ergebnis-Notiz (Auswertung, FR-6.4, FR-5.3). */
+export interface StatsAchievedGoal {
+  goal_id: number;
+  title: string;
+  module_name: string;
+  grade: string | null;
+  result_note: string | null;
+  target_date: string;
+}
+
+export interface StatsData {
+  per_goal: StatsPerGoal[];
+  per_month: StatsPerMonth[];
+  by_daytime: StatsByDaytime;
+  achieved_goals: StatsAchievedGoal[];
 }

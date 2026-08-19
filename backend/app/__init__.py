@@ -45,6 +45,7 @@ def create_app(config_name: str = "development") -> Flask:
     from .routes.milestones import milestones_bp
     from .routes.plans import plans_bp
     from .routes.sessions import sessions_bp
+    from .routes.stats import stats_bp
 
     app.register_blueprint(health_bp)
     app.register_blueprint(auth_bp)
@@ -53,6 +54,7 @@ def create_app(config_name: str = "development") -> Flask:
     app.register_blueprint(milestones_bp)
     app.register_blueprint(sessions_bp)
     app.register_blueprint(dashboard_bp)
+    app.register_blueprint(stats_bp)
 
     if config_name == "production":
         if not os.environ.get("SECRET_KEY"):
