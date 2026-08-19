@@ -125,7 +125,47 @@ Dropdown listet die beiden Erinnerungen, und http://localhost:4200/stats zeigt d
 
 ## Outcomes & Retrospective
 
-(am Ende füllen)
+Alle vier Milestones sind umgesetzt, committet und geprüft. Backend, Frontend und Dokumentation
+wurden in fünf Aufgaben getrennt implementiert und einzeln gegen ihre Spezifikation geprüft
+(jeweils Spec-Compliance ✅, 0 Critical, 0 Important; nur Minor-Funde, protokolliert im
+Decision Log bzw. unten). Die manuelle Prüfung aus Concrete Step 6 lief nach Abschluss von
+Milestone 3 gegen eine laufende lokale Umgebung (Docker-Postgres, Flask, `ng serve`) mit einem
+eigens angelegten Testkonto: Die Glocke zeigte korrekt „1" für ein Ziel mit geplanter, aber noch
+nicht gelernter Zeit, der Dropdown-Text entsprach wortgleich dem früheren Dashboard-Balken, die
+Auswertungsseite zeigte alle sechs Blöcke korrekt (inklusive Ampelfarben, Sechs-Monats-Tabelle
+mit korrekter Differenzspalte und leeren Anfangszuständen), und das Markieren eines Ziels als
+erreicht ließ es sofort unter „Erreichte Ziele" mit Modul, Zieldatum und Note erscheinen.
+
+Eine abschließende Ganzzweig-Review (auf dem leistungsfähigsten verfügbaren Modell) deckte vier
+echte, aufgabenübergreifende Probleme auf, die keine der fünf Einzel-Reviews sehen konnte, weil
+sie erst im Zusammenspiel mehrerer Aufgaben entstanden: (1) ein sich selbst widersprechender
+README-Absatz (ein älterer Satz beschrieb noch die von Task 4 entfernten Dashboard-Balken), (2)
+zwei liegen gebliebene FR-5.3-Stellen und ein widersprüchlicher Zusammenfassungssatz in
+`docs/Anforderungsabgleich_Mockups.md` (Task 5 hatte laut Plan-Text FR-6.4 UND FR-5.3 aktualisieren
+sollen, aber nur die FR-6.4-Zeile angefasst), (3) naive-UTC-Stundenbucket im Backend versus
+Ortszeit-Beschriftung im Frontend beim Block „Wann lernst du?" — als bewusste, im Plan bereits
+vorgegebene Design-Entscheidung erkannt und im Decision Log nachträglich explizit begründet statt
+stillschweigend belassen, und (4) ein echter aufgabenübergreifender Fehler: Der
+Erinnerungs-Zustand im neuen `ReminderService` wurde beim Abmelden nie geleert, wodurch auf einem
+geteilten Browser kurzzeitig die Zielnamen des vorherigen Kontos im Glocken-Dropdown hätten
+erscheinen können. Ein einziger Fix-Durchlauf behob (1), (2) und (4) sowie zwei triviale
+Ein-Zeilen-Funde (fehlender Zeilenumbruch am `.gitignore`-Ende, unnötiger Netzwerk-Aufruf beim
+Schließen des Dropdowns); eine gezielte Nachprüfung bestätigte alle neun Teil-Funde als behoben
+ohne neue Regressionen, bei weiterhin grüner Test-Suite (42/42).
+
+Gelernt für künftige Pläne: Ein Dokumentations-Schritt, der „aktualisiere die Zeilen zu X und Y"
+sagt, wird leicht nur teilweise befolgt, wenn dieselbe Tatsache an mehreren Stellen im Dokument
+auftaucht (Tabellenzeile, Fließtext-Zusammenfassung, weiterer Tabellen-Abschnitt); ein Hinweis
+„durchsuche das Dokument nach der FR-Nummer und stimme jeden Treffer ab" wäre robuster gewesen.
+Ebenso lohnt sich bei mehrteiligen Plänen eine kurze aufgabenübergreifende Prüfliste („welche
+Invarianten betreffen mehr als eine Aufgabe?") vor Beginn — im vorliegenden Fall hätte sie die
+UTC-Zeitzonen-Frage und die Abmelde-Bereinigung schon während der Ausführung sichtbar gemacht statt
+erst in der Abschlussprüfung.
+
+Die zwei verbleibenden, bewusst nicht behobenen Erkenntnisse aus der Abschlussprüfung — die
+naive-UTC-Tageszeit-Auswertung und das rückblickende (statt vorausschauende) Sechs-Monats-Fenster
+für „Plan vs. Ist je Monat" — sind beide im Decision Log oben mit Begründung festgehalten und als
+Kandidaten für einen künftigen Plan markiert, falls sie sich in der Praxis als störend erweisen.
 
 
 ## Context and Orientation
@@ -272,7 +312,23 @@ Jeder Milestone ist einzeln committbar und lauffähig.
 
 ## Artifacts and Notes
 
-(Testtranskripte beim Umsetzen ergänzen)
+Manueller Testdurchlauf (Concrete Step 6, 2026-08-19) gegen eine lokal laufende Umgebung mit
+einem eigens angelegten Testkonto (`p11-test@beispiel.de`, keine echten personenbezogenen Daten):
+Ein Lernziel „P11 Testziel" mit einem für den laufenden Tag geplanten Slot ohne zugehörige
+Session ließ die Glocke „1" anzeigen; das Dropdown zeigte „⚠️ Du hast heute Lernzeit geplant,
+aber noch keine Session gestartet. Jetzt loslegen?" — wortgleich mit dem früheren
+Dashboard-Balken. `/stats` zeigte alle sechs Blöcke (Kennzahlen, leeres Wochendiagramm, Tabelle
+„Plan vs. Ist je Modul" mit rotem Ampelpunkt „Rückstand", Tabelle „Plan vs. Ist je Monat" mit
+sechs Zeilen und korrekter Differenzspalte, leerer Zustand „Erreichte Ziele", leerer Zustand
+„Wann lernst du?"). Nach Markieren des Ziels als erreicht (Note 1,7) erschien es unter
+„Erreichte Ziele" mit Modul-Tag, Zieldatum und Note. Das Dashboard zeigte keine gelben
+Erinnerungs-Balken mehr. Details und zwei umgebungsbedingte Randnotizen (Docker-Port-Konflikt,
+UI-Formular-Interaktion in der Browser-Automatisierung) stehen unter Surprises & Discoveries.
+
+Aufgabenaufteilung und Review-Historie (SDD-Ledger, nicht Teil des Repos):
+`.superpowers/sdd/2026-08-19_P11-Auswertungs-Tab-und-Erinnerungs-Hub/progress.md` — fünf Aufgaben,
+je ein Einzel-Review, ein abschließendes Ganzzweig-Review mit einem Fix-Durchlauf und einer
+gezielten Nachprüfung, alle grün.
 
 
 ## Interfaces and Dependencies
