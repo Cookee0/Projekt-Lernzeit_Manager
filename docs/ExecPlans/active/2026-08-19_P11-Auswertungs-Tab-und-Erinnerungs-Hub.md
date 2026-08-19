@@ -31,8 +31,9 @@ Dropdown listet die beiden Erinnerungen, und http://localhost:4200/stats zeigt d
 
 ## Progress
 
-- [ ] Milestone 1: Backend-Endpunkt `GET /api/stats` liefert Modul-, Monats-, Tageszeit- und
-      Erreicht-Auswertung; Tests in `backend/tests/test_stats.py` grün.
+- [x] Milestone 1 (2026-08-19): Backend-Endpunkt `GET /api/stats` liefert Modul-, Monats-,
+      Tageszeit- und Erreicht-Auswertung; Tests in `backend/tests/test_stats.py` grün
+      (Commit d006e89).
 - [ ] Milestone 2: Tab „Auswertung" (`/stats`) zeigt alle Blöcke; Wochendiagramm als geteilte
       Komponente aus dem Dashboard wiederverwendet.
 - [ ] Milestone 3: Erinnerungs-Hub in der Navbar (Glocke, Badge, Dropdown); Dashboard-Balken
