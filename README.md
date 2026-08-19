@@ -34,7 +34,13 @@ Abgabeziel: **31.08.2026**.
 > Kalenderwochen (FR-6.3, als eigenes SVG ohne Diagrammbibliothek), warnt bei Lernzielen mit
 > Zieldatum in höchstens 14 Tagen und weniger als 50 % Fortschritt (FR-7.3) und erinnert an einen
 > heute in der nächsten Stunde beginnenden geplanten Slot (FR-7.2; diese Rechnung läuft im
-> Browser, weil die Slot-Uhrzeit eine Ortszeit-Angabe ist). Die Eingaben
+> Browser, weil die Slot-Uhrzeit eine Ortszeit-Angabe ist). Seit Plan P10 gibt es außerdem einen
+> fünften Tab **„Kalender"** (FR-3, FR-6): ein monatliches Raster, das je Tag die geplanten
+> Lernzeiten (mit Uhrzeit, sofern gesetzt), Zwischenziele mit gesetztem Fälligkeitstag und die
+> Zieldaten der Lernziele anzeigt, den heutigen Tag hervorhebt, erreichte Lernziele gedämpft und
+> durchgestrichen darstellt und unter rund 800 px Fensterbreite auf eine gescrollte Liste der Tage
+> mit Einträgen umschaltet; Lernzeiten ohne festen Tag erscheinen gesondert unter „Ohne festen
+> Tag". Die Eingaben
 > (E-Mail, ECTS, Datum, Tag, Dauer, Uhrzeit, Priorität, Note, Notizen, Zwischenziel-Titel) werden
 > serverseitig geprüft und im Formular direkt unter dem betroffenen Feld angezeigt; siehe den
 > Abschnitt „Geltende Wertebereiche der API" weiter unten. Alle ausgelieferten Zeitstempel sind als
