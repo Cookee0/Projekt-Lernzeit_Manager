@@ -188,8 +188,10 @@ def create_plan_series():
     days = data.get("days")
     if not isinstance(days, list) or not 1 <= len(days) <= 31:
         raise ValidationError("Tage müssen eine Liste mit 1 bis 31 Einträgen sein")
-    if any(d is None for d in days):
-        raise ValidationError("Tage müssen eine Liste mit 1 bis 31 Einträgen sein")
+    # Prüfe auf fehlende Einträge: None oder leere Strings (wie _is_missing in validation.py)
+    for d in days:
+        if d is None or (isinstance(d, str) and d.strip() == ""):
+            raise ValidationError("Tage müssen eine Liste mit 1 bis 31 Einträgen sein")
 
     checked = [require_day_of_month(d, year, month) for d in days]
     if len(set(checked)) != len(checked):

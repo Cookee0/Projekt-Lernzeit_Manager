@@ -216,3 +216,54 @@ def test_series_unknown_goal_returns_404_and_creates_no_slots(client, auth_heade
     # Prüfe, dass keine Slots erstellt wurden
     liste = client.get(PLANS_URL, headers=auth_header)
     assert len(liste.get_json()) == 0
+
+
+def test_series_non_list_days_returns_400(client, auth_header, goal_id):
+    """Test für nicht-Liste days (z. B. String statt List)."""
+    resp = client.post(
+        f"{PLANS_URL}/series",
+        json={
+            "goal_id": goal_id,
+            "year": HEUTE.year,
+            "month": HEUTE.month,
+            "days": "5",  # String statt Liste
+            "duration_minutes": 90,
+        },
+        headers=auth_header,
+    )
+    assert resp.status_code == 400
+    assert "error" in resp.get_json()
+
+
+def test_series_empty_string_in_days_returns_400(client, auth_header, goal_id):
+    """Test für leerer String in der days-Liste."""
+    resp = client.post(
+        f"{PLANS_URL}/series",
+        json={
+            "goal_id": goal_id,
+            "year": HEUTE.year,
+            "month": HEUTE.month,
+            "days": [5, ""],  # Leerer String in der Liste
+            "duration_minutes": 90,
+        },
+        headers=auth_header,
+    )
+    assert resp.status_code == 400
+    assert "error" in resp.get_json()
+
+
+def test_series_none_in_days_returns_400(client, auth_header, goal_id):
+    """Test für explizites None in der days-Liste."""
+    resp = client.post(
+        f"{PLANS_URL}/series",
+        json={
+            "goal_id": goal_id,
+            "year": HEUTE.year,
+            "month": HEUTE.month,
+            "days": [5, None],  # None in der Liste
+            "duration_minutes": 90,
+        },
+        headers=auth_header,
+    )
+    assert resp.status_code == 400
+    assert "error" in resp.get_json()
