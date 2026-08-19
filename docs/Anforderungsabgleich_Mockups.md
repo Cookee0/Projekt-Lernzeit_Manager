@@ -167,9 +167,12 @@ verlangt — das lässt sich an der Anforderungsdatei selbst nachprüfen.
 - **Exportfunktion** („Export" in `2e-auswertung.html`). Kommt in keiner Anforderung vor. Die
   offene Frage am Ende von `docs/01_Funktionale_Anforderungen.md` nach einer Kalenderkopplung
   (iCal) ist bis heute unbeantwortet und wurde nicht zur Anforderung erhoben.
-- **Auswertung nach Tageszeit und Fokusquote** („Wann lernst du?", „93 % Fokusquote" in
-  `2e-auswertung.html`). FR-6.3 verlangt eine Auswertung über den Zeitverlauf, um Trends zu
-  erkennen — eine Aufschlüsselung nach Tageszeit ist etwas anderes und nicht gefordert.
+- **Fokusquote** („93 % Fokusquote" in `2e-auswertung.html`). Keine Anforderung verlangt eine
+  solche Kennzahl; sie kommt in `backend/app/routes/stats.py` und `stats.ts` nicht vor.
+  Die **Auswertung nach Tageszeit** aus demselben Entwurf („Wann lernst du?") ist dagegen seit
+  Plan P11 als eigener Block auf der Auswertungsseite umgesetzt, obwohl auch dafür keine
+  Anforderung besteht — FR-6.3 verlangt nur eine Auswertung über den Zeitverlauf, keine
+  Aufschlüsselung nach Tageszeit.
 - **Ruhezeiten, Wochenrückblick, Urlaubsaussetzung** (`2f-erinnerungen.html`). FR-7.4 nennt
   ausschließlich konfigurierbare **Kanäle** (In-App, E-Mail) und hat die Priorität Could.
 - **Puffertage** („Puffertag" im Wochenkalender von `2a-dashboard.html`). Keine Anforderung.
@@ -197,6 +200,6 @@ ohne neue Tabelle und ohne Migration aus; das Diagramm für FR-6.3 brauchte entg
 ursprünglichen Vermutung keine Diagrammbibliothek, sondern ist ein eigenes SVG (Begründung im
 Decision Log von `ExecPlans/completed/2026-08-17_P7-Restarbeit-Must-und-Should-Anforderungen.md`).
 
-Die **Could-Anforderungen** FR-2.3, FR-4.4, FR-5.3, FR-6.4 und FR-7.4 bleiben offen. Sie sind laut
+Die **Could-Anforderungen** FR-2.3, FR-4.4, FR-5.3 und FR-7.4 bleiben offen. Sie sind laut
 der im Kickoff abgenommenen Priorisierung nicht abgabekritisch. Im Projektbericht werden sie als
 bewusst zurückgestellt begründet, nicht als vergessen.
