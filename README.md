@@ -28,11 +28,12 @@ Abgabeziel: **31.08.2026**.
 > Lernziel ein aus dem ECTS-Workload (30 Stunden je ECTS-Punkt) abgeleitetes Wochenbudget, einen
 > automatischen Monatsvorschlag (Restaufwand gleichmäßig auf die Monate bis zum Zieldatum
 > verteilt, Endpunkt `GET /api/plans/proposal`) und die Abweichung zur bereits geplanten Zeit des
-> gewählten Monats; Slots legt der Vorschlag bewusst nicht selbst an. Jede Lernziel-Kachel auf dem
-> Dashboard lässt sich zum Bearbeiten in den Lernziele-Tab öffnen und direkt auf „Erreicht" oder
-> „In Arbeit" setzen sowie löschen; darunter erscheinen die Zwischenziele des laufenden Monats für dieses Ziel — abhakbar,
-> löschbar und über ein Inline-Formular „+ Unterziel" anlegbar, jeweils mit sofortiger Auswirkung
-> auf die Zwischenziele-Kachel oben auf dem Dashboard. Das Dashboard weist die
+> gewählten Monats; Slots legt der Vorschlag bewusst nicht selbst an. Seit Plan P9 lassen sich
+> Lernzeiten auf der Planungsseite außerdem als Serientermine anlegen (Endpunkt
+> `POST /api/plans/series`) — über ein Tages-Raster mit Mehrfachauswahl und Schnellwahl für
+> Werktage oder einzelne Wochentage eines Monats, z. B. „jeden Mittwoch" —, und die Liste
+> „Geplante Lernzeiten" erscheint je Lernziel gruppiert mit Titel, Modul und der insgesamt für
+> dieses Ziel geplanten Zeit. Das Dashboard weist die
 > Pausenzeit des Monats als eigene Kennzahl aus (FR-4.3 — die gezählte Lernzeit ist immer schon
 > die ungestörte Zeit ohne Pausen), zeigt ein Balkendiagramm der Lernzeit der letzten acht
 > Kalenderwochen (FR-6.3, als eigenes SVG ohne Diagrammbibliothek), warnt bei Lernzielen mit
@@ -114,7 +115,9 @@ das Jahr einer Planung liegt zwischen 2020 und 2100, der Monat zwischen 1 und 12
 Länge des gewählten Monats passen; die Dauer liegt zwischen 5 und 480 Minuten; die Uhrzeit folgt
 dem Format `HH:MM`; eine Notiz ist höchstens 500 Zeichen lang. Der Titel eines Zwischenziels ist 1
 bis 200 Zeichen lang; sein optionaler Tag muss zur Länge des gewählten Monats passen, geprüft mit
-derselben Regel wie bei der Planung. Abfrageparameter von `/api/plans`, `/api/plans/proposal`,
+derselben Regel wie bei der Planung. Der Endpunkt `POST /api/plans/series` erwartet zusätzlich das
+Feld `days` — eine Liste mit 1 bis 31 eindeutigen Tagen, geprüft mit derselben Tages-Regel wie bei
+der bestehenden Planung. Abfrageparameter von `/api/plans`, `/api/plans/proposal`,
 `/api/sessions` und `/api/milestones` (`goal_id`, `year`, `month`, `limit`) werden ebenso geprüft
 — bei `/api/plans/proposal` müssen `year` und `month` zusammen angegeben werden oder beide
 fehlen (dann gilt der laufende Monat) — und mit HTTP 400

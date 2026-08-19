@@ -6,12 +6,13 @@ import { GoalService } from '../../core/services/goal.service';
 import { MilestoneService } from '../../core/services/milestone.service';
 import { PlanService } from '../../core/services/plan.service';
 import { validateClockTime, validateDayOfMonth, validateDuration } from '../../core/validation';
+import { DayPickerComponent } from './day-picker';
 
 const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'];
 
 @Component({
   selector: 'app-planning',
-  imports: [FormsModule],
+  imports: [FormsModule, DayPickerComponent],
   template: `
     <div class="page">
       <h2>Planung</h2>
@@ -58,21 +59,22 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
             </div>
             <div class="form-group">
               <label for="slot-month">Monat *</label>
-              <select id="slot-month" [(ngModel)]="newSlotMonth" name="slot_month" required>
+              <select id="slot-month" [ngModel]="newSlotMonth" (ngModelChange)="onSlotMonthChange($event)"
+                name="slot_month" required>
                 @for (m of availableMonths(); track m.key) {
                   <option [value]="m.key">{{ m.label }}</option>
                 }
               </select>
             </div>
-            <div class="form-group">
-              <label for="slot-day">Tag des Monats (optional)</label>
-              <input id="slot-day" type="number" [(ngModel)]="newSlot.day" name="day" min="1" max="31"
-                (ngModelChange)="clearFieldError('day')"
-                [class.input-error]="fieldErrors()['day']" placeholder="z.B. 15" />
-              @if (fieldErrors()['day']) {
-                <p class="field-error">{{ fieldErrors()['day'] }}</p>
-              }
-            </div>
+          </div>
+          <div class="form-group">
+            <span class="form-label" id="slot-days-label">Tage auswählen (optional)</span>
+            <app-day-picker [year]="newSlotYear" [month]="newSlotMonthNum" [selected]="newSlotDays"
+              (selectedChange)="onDaysChange($event)" aria-labelledby="slot-days-label"></app-day-picker>
+            @if (fieldErrors()['days']) {
+              <p class="field-error">{{ fieldErrors()['days'] }}</p>
+            }
+            <p class="hint">{{ daySelectionHint() }}</p>
           </div>
           <div class="form-row">
             <div class="form-group">
@@ -146,18 +148,28 @@ const MONTH_NAMES = ['Jan', 'Feb', 'Mär', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'S
         } @else if (slots().length === 0) {
           <p class="empty">Für diese Auswahl ist noch nichts geplant.</p>
         } @else {
-          @for (slot of slots(); track slot.id) {
-            <div class="card slot-card">
-              <div class="slot-header">
-                <span>{{ goalName(slot.goal_id) }}</span>
-                <span class="slot-duration">{{ slot.duration_minutes }} min</span>
+          @for (group of groupedSlots(); track group.goal_id) {
+            <div class="slot-group">
+              <div class="slot-group-header goal-header">
+                <div>
+                  <strong>{{ group.title }}</strong>
+                  <span class="module-tag">{{ group.module_name }}</span>
+                </div>
+                <span class="slot-duration">insgesamt {{ formatMinutes(group.totalMinutes) }} geplant</span>
               </div>
-              <div class="slot-meta">
-                <span>📆 {{ slotDate(slot) }}</span>
-                @if (slot.planned_time) { <span>🕐 {{ slot.planned_time }}</span> }
-                @if (slot.note) { <span>📝 {{ slot.note }}</span> }
-              </div>
-              <button class="btn btn-sm btn-danger" (click)="removeSlot(slot)">Löschen</button>
+              @for (slot of group.slots; track slot.id) {
+                <div class="card slot-card">
+                  <div class="slot-header">
+                    <span>📆 {{ slotDate(slot) }}</span>
+                    <span class="slot-duration">{{ slot.duration_minutes }} min</span>
+                  </div>
+                  <div class="slot-meta">
+                    @if (slot.planned_time) { <span>🕐 {{ slot.planned_time }}</span> }
+                    @if (slot.note) { <span>📝 {{ slot.note }}</span> }
+                  </div>
+                  <button class="btn btn-sm btn-danger" (click)="removeSlot(slot)">Löschen</button>
+                </div>
+              }
             </div>
           }
         }
@@ -244,16 +256,46 @@ export class PlanningComponent implements OnInit {
 
   newSlot = {
     goal_id: 0,
-    day: null as number | null,
     planned_time: '',
     duration_minutes: 60,
     note: '',
   };
+  /** Im Raster gewaehlte Tage des newSlotMonth; leer heisst Monats-Slot ohne festen Tag. */
+  newSlotDays: number[] = [];
 
   constructor() {
     const now = new Date();
     this.newSlotMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
     this.selectedMonth = this.newSlotMonth;
+  }
+
+  /** Jahr des im Formular gewaehlten Monats, fuer das DayPicker-Raster. */
+  get newSlotYear(): number {
+    return Number(this.newSlotMonth.split('-')[0]);
+  }
+
+  /** Monat (1-12) des im Formular gewaehlten Monats, fuer das DayPicker-Raster. */
+  get newSlotMonthNum(): number {
+    return Number(this.newSlotMonth.split('-')[1]);
+  }
+
+  /** Wechselt der Formular-Monat, verliert eine bisherige Tagesauswahl ihre Gueltigkeit. */
+  onSlotMonthChange(value: string): void {
+    this.newSlotMonth = value;
+    this.newSlotDays = [];
+  }
+
+  onDaysChange(days: number[]): void {
+    this.newSlotDays = days;
+    this.clearFieldError('days');
+  }
+
+  /** Hinweistext unter dem Raster, der die Anzahl gewaehlter Tage nennt (Singular/Plural). */
+  daySelectionHint(): string {
+    const n = this.newSlotDays.length;
+    if (n === 0) return 'Kein fester Tag ausgewählt — es wird ein Monats-Slot ohne festen Tag angelegt.';
+    if (n === 1) return '1 Tag ausgewählt — es wird 1 Eintrag angelegt.';
+    return `${n} Tage ausgewählt — es werden ${n} Einträge angelegt.`;
   }
 
   availableMonths() {
@@ -302,10 +344,12 @@ export class PlanningComponent implements OnInit {
 
     const [jahr, monat] = this.newSlotMonth.split('-').map(Number);
     const errors: Record<string, string> = {};
-    const dayError = validateDayOfMonth(this.newSlot.day, jahr, monat);
+    const dayErrors = this.newSlotDays
+      .map((d) => validateDayOfMonth(d, jahr, monat))
+      .filter((e): e is string => e !== null);
     const durationError = validateDuration(this.newSlot.duration_minutes);
     const timeError = validateClockTime(this.newSlot.planned_time);
-    if (dayError) errors['day'] = dayError;
+    if (dayErrors.length > 0) errors['days'] = dayErrors[0];
     if (durationError) errors['duration'] = durationError;
     if (timeError) errors['time'] = timeError;
     this.fieldErrors.set(errors);
@@ -314,16 +358,29 @@ export class PlanningComponent implements OnInit {
     this.saving.set(true);
     try {
       const [year, month] = this.newSlotMonth.split('-').map(Number);
-      await this.planService.create({
-        goal_id: Number(this.newSlot.goal_id),
-        year,
-        month,
-        day: this.newSlot.day || undefined,
-        planned_time: this.newSlot.planned_time || undefined,
-        duration_minutes: this.newSlot.duration_minutes,
-        note: this.newSlot.note || undefined,
-      });
-      this.newSlot = { goal_id: 0, day: null, planned_time: '', duration_minutes: 60, note: '' };
+      if (this.newSlotDays.length > 1) {
+        await this.planService.createSeries({
+          goal_id: Number(this.newSlot.goal_id),
+          year,
+          month,
+          days: this.newSlotDays,
+          planned_time: this.newSlot.planned_time || undefined,
+          duration_minutes: this.newSlot.duration_minutes,
+          note: this.newSlot.note || undefined,
+        });
+      } else {
+        await this.planService.create({
+          goal_id: Number(this.newSlot.goal_id),
+          year,
+          month,
+          day: this.newSlotDays[0] ?? undefined,
+          planned_time: this.newSlot.planned_time || undefined,
+          duration_minutes: this.newSlot.duration_minutes,
+          note: this.newSlot.note || undefined,
+        });
+      }
+      this.newSlot = { goal_id: 0, planned_time: '', duration_minutes: 60, note: '' };
+      this.newSlotDays = [];
       await this.loadSlots();
     } catch (err) {
       const msg = err instanceof HttpErrorResponse ? err.error?.error : undefined;
@@ -339,8 +396,29 @@ export class PlanningComponent implements OnInit {
     await this.loadProposal();
   }
 
-  goalName(id: number): string {
-    return this.goals().find(g => g.id === id)?.title ?? `Ziel ${id}`;
+  /** Gruppiert die geladenen Slots nach Lernziel, aufsteigend nach Zieltitel sortiert;
+   *  innerhalb einer Gruppe bleibt die von der API gelieferte Datumsreihenfolge erhalten. */
+  groupedSlots(): { goal_id: number; title: string; module_name: string; totalMinutes: number; slots: PlanSlot[] }[] {
+    const byGoal = new Map<number, PlanSlot[]>();
+    for (const slot of this.slots()) {
+      const list = byGoal.get(slot.goal_id);
+      if (list) {
+        list.push(slot);
+      } else {
+        byGoal.set(slot.goal_id, [slot]);
+      }
+    }
+    const groups = Array.from(byGoal.entries()).map(([goalId, slotsForGoal]) => {
+      const goal = this.goals().find(g => g.id === goalId);
+      return {
+        goal_id: goalId,
+        title: goal?.title ?? `Ziel ${goalId}`,
+        module_name: goal?.module_name ?? '',
+        totalMinutes: slotsForGoal.reduce((sum, s) => sum + s.duration_minutes, 0),
+        slots: slotsForGoal,
+      };
+    });
+    return groups.sort((a, b) => a.title.localeCompare(b.title, 'de'));
   }
 
   /** Beschriftung fuer eine geplante Lernzeit, z. B. "15. Aug 2026" oder "Aug 2026". */

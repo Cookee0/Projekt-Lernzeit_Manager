@@ -28,6 +28,19 @@ export class PlanService {
     return firstValueFrom(this.http.post<PlanSlot>(API, payload));
   }
 
+  /** Legt fuer mehrere Tage eines Monats je einen Slot in einer Transaktion an (FR-3.1). */
+  createSeries(payload: {
+    goal_id: number;
+    year: number;
+    month: number;
+    days: number[];
+    planned_time?: string;
+    duration_minutes: number;
+    note?: string;
+  }): Promise<PlanSlot[]> {
+    return firstValueFrom(this.http.post<PlanSlot[]>(`${API}/series`, payload));
+  }
+
   update(id: number, payload: Partial<PlanSlot>): Promise<PlanSlot> {
     return firstValueFrom(this.http.put<PlanSlot>(`${API}/${id}`, payload));
   }
