@@ -43,7 +43,11 @@ Dropdown listet die beiden Erinnerungen, und http://localhost:4200/stats zeigt d
 
 ## Surprises & Discoveries
 
-(laufend füllen)
+- 2026-08-19: Die globalen Styles liegen entgegen der Vermutung in P12 nicht unter
+  `frontend/src/styles.css`, sondern seit dem ersten Angular-Skeleton-Commit (669b9de) unter
+  `frontend/src/styles.scss`. Dieser Plan (P11) selbst nennt keine konkrete CSS-Datei, ist also
+  nicht betroffen; für P12 (das `styles.css` explizit benennt) ist das relevant und wird dort
+  vermerkt.
 
 
 ## Decision Log
