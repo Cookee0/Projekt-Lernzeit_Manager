@@ -160,6 +160,18 @@ input, select, textarea, button { font: inherit; }
 }
 .page h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; }
 
+/* ===== Zwei-Spalten-Layout (P12) ===== */
+.layout-two-col {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 1000px) {
+  .layout-two-col { grid-template-columns: 1fr; }
+}
+.layout-main, .layout-side { min-width: 0; }
+
 /* ===== Cards ===== */
 .card {
   background: var(--card-bg);
@@ -420,20 +432,20 @@ input, select, textarea, button { font: inherit; }
 }
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
   margin-bottom: 1rem;
 }
 .stat-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.25rem;
+  padding: 1rem;
   box-shadow: var(--shadow);
   text-align: center;
 }
-.stat-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.5rem; }
-.stat-value { font-size: 2rem; font-weight: 800; color: var(--navbar-bg); }
+.stat-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.4rem; }
+.stat-value { font-size: 1.6rem; font-weight: 800; color: var(--navbar-bg); }
 
 /* ===== Progress Bars ===== */
 .progress-bar-wrap {
