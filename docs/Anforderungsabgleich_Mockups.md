@@ -8,12 +8,15 @@ Es beantwortet drei Fragen: Was zeigen die Entwürfe, das gebaut ist? Was zeigen
 fehlt und einer Anforderung entspricht? Und was zeigen sie, das nie Anforderung war und deshalb
 bewusst nicht gebaut wird?
 
-Zwei Vorbemerkungen sind für das Verständnis nötig. Erstens: Die Entwürfe sind laut Teambeschluss
-vom 04.08.2026 verbindlich für Felder, Beschriftungen und Reihenfolge, nicht für Farben, Schriften
-und Navigationsleiste. Eine Abweichung im Aussehen ist deshalb keine Lücke. Zweitens: Die Entwürfe
-zeigen den Endausbau über alle sieben Anforderungsgruppen hinweg, nicht den Prototyp für den
-Meilenstein MS4. Wer sie als Abnahmekriterium liest, misst gegen ein Ziel, das für MS4 nie gesetzt
-war.
+Zwei Vorbemerkungen sind für das Verständnis nötig. Erstens: Die Entwürfe sind verbindlich für
+Felder, Beschriftungen und Reihenfolge — für Farben gilt das weiterhin nicht (die Anwendung behält
+ihre eigene Farbwahl), für Layout, Abstände, Karten und Typografie dagegen seit Plan P12
+(2026-08-19) schon: Der Teambeschluss vom 04.08.2026, die visuelle Umsetzung bis zum Stehen der
+Funktionen zurückzustellen, wurde nach Nutzer-Testfeedback vom selben Tag aufgehoben, siehe
+Abschnitt „Bekannte Abweichungen". Eine Abweichung im Aussehen ist deshalb nur noch bei Farben,
+Schriftart und Navigationsleisten-Branding keine Lücke. Zweitens: Die Entwürfe zeigen den
+Endausbau über alle sieben Anforderungsgruppen hinweg, nicht den Prototyp für den Meilenstein MS4.
+Wer sie als Abnahmekriterium liest, misst gegen ein Ziel, das für MS4 nie gesetzt war.
 
 Der Stand, gegen den hier abgeglichen wird, ist der Stand **nach** Abschluss der Pläne
 [`P4`](ExecPlans/completed/2026-08-17_P4-Defekte-und-Luecken-umgesetzter-Anforderungen.md),
@@ -59,7 +62,7 @@ Status, einen Bearbeiten-Dialog mit Notiz-/Ergebnisfeld und eine Karte „Erreic
 | Statusfilter „Alle / Offen / In Arbeit / Erreicht" | Nein | — | Keine eigene Anforderung; FR-5.3 verlangt eine Historie, keine Filter |
 | Fortschrittswert je Ziel in dieser Tabelle | Nein | — | Steht bereits auf dem Dashboard (FR-6.2) |
 | Eigene Ansicht „Vollständige Historie über das gesamte Studium" | Nein | FR-5.3 (Could) | Nicht implementiert |
-| Darstellung als Tabelle statt als Karten | Nein | — | Reine Gestaltung, zurückgestellt laut Teambeschluss |
+| Darstellung als Tabelle statt als Karten | Nein | — | Reine Gestaltung; die Zielliste bleibt bei Karten, unabhängig vom aufgehobenen Teambeschluss zur visuellen Umsetzung |
 
 ## Grobplanung (`2c-grobplanung.html`)
 
@@ -187,9 +190,16 @@ verlangt — das lässt sich an der Anforderungsdatei selbst nachprüfen.
 entsprechen der an der IU üblichen Rechnung „5 ECTS = 150 Stunden". Teamentscheidung vom
 2026-08-17.
 
-**Die zurückgestellte visuelle Umsetzung.** Farben, Schriften und die Navigationsleiste der
-Entwürfe sind bewusst nicht übernommen. Teambeschluss vom 04.08.2026, festgehalten in `AGENTS.md`
-und `README.md`. Die Entwürfe bleiben verbindlich für Felder, Beschriftungen und Reihenfolge.
+**Die zurückgestellte visuelle Umsetzung.** Teambeschluss vom 04.08.2026: Farben, Schriften und die
+Navigationsleiste der Entwürfe werden bewusst nicht übernommen, bis die Funktionen stehen. Dieser
+Beschluss war mit Plan P7 (2026-08-17) erfüllt — alle Must- und Should-Anforderungen standen — und
+wurde nach einem Nutzer-Testdurchlauf am 2026-08-19 aufgehoben: Plan P12 richtet seither Layout,
+Abstände, Karten und Typografie an den Entwürfen aus (Zwei-Spalten-Dashboard, Lernziele-Seite mit
+Zielliste als Hauptspalte und Anlege-Formular als Seitenleiste, kompaktere Chips, einheitlichere
+Navigationsleiste). Nicht übernommen bleiben die Farben der Entwürfe — die Anwendung behält ihre
+eigene Farbwahl, ausdrücklicher Wunsch aus demselben Testfeedback — sowie Branding-Details der
+Navigationsleiste. Festgehalten in `AGENTS.md` und `README.md`. Die Entwürfe bleiben weiterhin
+verbindlich für Felder, Beschriftungen und Reihenfolge.
 
 ## Empfehlung für die Restarbeit
 

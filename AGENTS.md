@@ -47,10 +47,12 @@ state of the project; keeping it accurate is part of every task, not a follow-up
 - `docs/ExecPlans/active/` — plans currently being worked on; `docs/ExecPlans/completed/` — finished
   plans.
 - `docs/design-reference/html` — UI mockups for all six planned screens, each as `.html`.
-  Authoritative for fields, labels, and ordering. The visual layer (colors, fonts, nav bar) is
-  deliberately deferred until the features work — team decision of 2026-08-04 — so do not restyle
-  components to match the mockups yet. The mockups also show the finished product: progress bars,
-  ECTS workload, and grades belong to FR-2, FR-5, and FR-6, not FR-1.
+  Authoritative for fields, labels, and ordering. The team decision of 2026-08-04 to defer the
+  visual layer (colors, fonts, nav bar) until the features work was lifted on 2026-08-19 after
+  user test feedback, once all Must/Should requirements stood (Plan P12): layout, spacing, cards,
+  and typography now also follow the mockups' structure — the app's existing colors stay, not the
+  mockups' colors. The mockups also show the finished product: progress bars, ECTS workload, and
+  grades belong to FR-2, FR-5, and FR-6, not FR-1.
 
 ## System of record
 
