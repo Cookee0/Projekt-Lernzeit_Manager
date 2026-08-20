@@ -1,13 +1,14 @@
 import { test, expect, Page } from '@playwright/test';
 
-const timestamp = Date.now();
-const email = `goals-${timestamp}@playwright.local`;
 const password = 'Sicher123';
 
+// Jeder Testfall registriert ein eigenes Konto (eindeutige E-Mail je Aufruf), damit die Tests
+// unabhaengig von Ausfuehrungsreihenfolge und Parallelitaet sind.
 async function registerAndLogin(page: Page): Promise<void> {
+  const unique = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   await page.goto('/register');
-  await page.getByLabel('Name').fill(`Goals Tester ${timestamp}`);
-  await page.getByLabel('E-Mail').fill(email);
+  await page.getByLabel('Name').fill(`Goals Tester ${unique}`);
+  await page.getByLabel('E-Mail').fill(`goals-${unique}@playwright.local`);
   await page.getByLabel('Passwort').fill(password);
   await page.getByRole('button', { name: 'Konto erstellen' }).click();
   await expect(page).toHaveURL('/');

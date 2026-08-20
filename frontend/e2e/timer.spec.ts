@@ -1,13 +1,14 @@
 import { test, expect, Page } from '@playwright/test';
 
-const timestamp = Date.now();
-const email = `timer-${timestamp}@playwright.local`;
 const password = 'Sicher123';
 
+// Jeder Testfall registriert ein eigenes Konto (eindeutige E-Mail je Aufruf), damit die Tests
+// unabhaengig von Ausfuehrungsreihenfolge und Parallelitaet sind.
 async function setup(page: Page): Promise<void> {
+  const unique = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   await page.goto('/register');
-  await page.getByLabel('Name').fill(`Timer Tester ${timestamp}`);
-  await page.getByLabel('E-Mail').fill(email);
+  await page.getByLabel('Name').fill(`Timer Tester ${unique}`);
+  await page.getByLabel('E-Mail').fill(`timer-${unique}@playwright.local`);
   await page.getByLabel('Passwort').fill(password);
   await page.getByRole('button', { name: 'Konto erstellen' }).click();
   await expect(page).toHaveURL('/');
@@ -42,7 +43,7 @@ test.describe('Lernzeit-Timer (FR-4)', () => {
 
     // Pausieren
     await page.getByRole('button', { name: '⏸ Pause' }).click();
-    await expect(page.getByText('⏸ Pausiert')).toBeVisible();
+    await expect(page.locator('.timer-status')).toHaveText('⏸ Pausiert');
 
     // Fortsetzen
     await page.getByRole('button', { name: '▶ Weiter' }).click();
@@ -64,6 +65,6 @@ test.describe('Lernzeit-Timer (FR-4)', () => {
 
     // Session erscheint in Verlauf
     await expect(page.getByText('Zuletzt gelernt')).toBeVisible();
-    await expect(page.getByText('Timer-Ziel')).toBeVisible();
+    await expect(page.locator('.session-row', { hasText: 'Timer-Ziel' })).toBeVisible();
   });
 });

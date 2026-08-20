@@ -19,7 +19,7 @@ test.describe('Authentifizierung', () => {
 
     // Nach Registrierung auf Dashboard landen
     await expect(page).toHaveURL('/');
-    await expect(page.getByText('Dashboard')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
 
     // Abmelden
     await page.getByRole('button', { name: 'Abmelden' }).click();
@@ -31,7 +31,7 @@ test.describe('Authentifizierung', () => {
     await page.getByRole('button', { name: 'Anmelden' }).click();
 
     await expect(page).toHaveURL('/');
-    await expect(page.getByText('Dashboard')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Dashboard' })).toBeVisible();
   });
 
   test('Login mit falschen Daten zeigt Fehlermeldung', async ({ page }) => {
