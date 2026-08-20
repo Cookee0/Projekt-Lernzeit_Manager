@@ -53,7 +53,13 @@ Abgabeziel: **31.08.2026**.
 > FR-7.3 „Zieldatum in ≤ 14 Tagen, Fortschritt < 50 %") erscheinen seit Plan P11 nicht mehr auf
 > dem Dashboard, sondern in einem Glocken-Symbol-Dropdown neben dem Nutzernamen in der
 > Navigationsleiste (ein Zähler-Badge zeigt die Anzahl aktiver Erinnerungen); der Hinweis auf eine
-> laufende Session bleibt auf dem Dashboard. Die Eingaben
+> laufende Session bleibt auf dem Dashboard. Seit Plan P12 zeigt das Dashboard ab etwa 1000 px
+> Fensterbreite ein Zwei-Spalten-Layout (Kennzahlen, Monatsfortschritt und Wochendiagramm links,
+> die Lernziel-Karten rechts, sodass mindestens die erste Zielkarte ohne Scrollen sichtbar ist;
+> unterhalb der Breite bleibt es einspaltig), und die Lernziele-Seite stellt die Zielliste in die
+> Hauptspalte und das Anlege-Formular als schmale Seitenleiste daneben; die geteilten CSS-Klassen
+> dafür (`layout-two-col`, `layout-main`, `layout-side`, `form-stacked`) liegen in
+> `frontend/src/styles.scss`. Die Eingaben
 > (E-Mail, ECTS, Datum, Tag, Dauer, Uhrzeit, Priorität, Note, Notizen, Zwischenziel-Titel) werden
 > serverseitig geprüft und im Formular direkt unter dem betroffenen Feld angezeigt; siehe den
 > Abschnitt „Geltende Wertebereiche der API" weiter unten. Alle ausgelieferten Zeitstempel sind als
@@ -104,9 +110,11 @@ Abgabeziel: **31.08.2026**.
 
 **Zu den Gestaltungsentwürfen:** `docs/design-reference/` enthält Entwürfe für Übersicht,
 Lernziele, Grobplanung, Detailplanung, Auswertung und Erinnerungen. Sie sind **verbindlich für
-Felder, Beschriftungen und Reihenfolge**, aber die visuelle Umsetzung (Farben, Schriften,
-Navigationsleiste) ist bewusst zurückgestellt, bis die Funktionen stehen – Teambeschluss vom
-04.08.2026. Die Entwürfe zeigen außerdem den Endausbau: Fortschrittsbalken, ECTS-Workload und
+Felder, Beschriftungen und Reihenfolge**. Der Teambeschluss vom 04.08.2026, die visuelle Umsetzung
+(Farben, Schriften, Navigationsleiste) bis zum Stehen der Funktionen zurückzustellen, wurde am
+2026-08-19 nach Nutzer-Testfeedback aufgehoben (Plan P12): Layout, Abstände, Karten und Typografie
+richten sich seither ebenfalls nach den Entwürfen — die Farben bleiben aber die der Anwendung, nicht
+die der Entwürfe. Die Entwürfe zeigen außerdem den Endausbau: Fortschrittsbalken, ECTS-Workload und
 Noten gehören zu FR-2, FR-5 und FR-6, nicht zu FR-1. Welches Entwurfselement bereits umgesetzt
 ist, welches einer noch offenen Anforderung entspricht und welches nie Anforderung war, steht in
 [`docs/Anforderungsabgleich_Mockups.md`](docs/Anforderungsabgleich_Mockups.md).

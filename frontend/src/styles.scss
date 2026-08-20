@@ -13,7 +13,7 @@
   --border: #e2e8f0;
   --radius: 10px;
   --shadow: 0 2px 8px rgba(0,0,0,.08), 0 1px 3px rgba(0,0,0,.05);
-  --navbar-h: 64px;
+  --navbar-h: 68px;
   --navbar-bg: #1e3a5f;
   --navbar-accent: #f97316;
 }
@@ -160,6 +160,18 @@ input, select, textarea, button { font: inherit; }
 }
 .page h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1rem; }
 
+/* ===== Zwei-Spalten-Layout (P12) ===== */
+.layout-two-col {
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  gap: 1.5rem;
+  align-items: start;
+}
+@media (max-width: 1000px) {
+  .layout-two-col { grid-template-columns: 1fr; }
+}
+.layout-main, .layout-side { min-width: 0; }
+
 /* ===== Cards ===== */
 .card {
   background: var(--card-bg);
@@ -184,6 +196,7 @@ input, select, textarea, button { font: inherit; }
 .alert-error   { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
 .alert-warning { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
 .alert-info    { background: #eff6ff; border: 1px solid #bfdbfe; color: #1e40af; }
+.alert-action  { margin-left: 1rem; }
 
 /* ===== Forms ===== */
 .form-group {
@@ -221,6 +234,10 @@ input, select, textarea, button { font: inherit; }
   margin-top: 0.1rem;
 }
 .form-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.form-row.form-stacked { flex-direction: column; gap: 0.75rem; margin-bottom: 0.5rem; }
+.form-row.form-stacked .form-group { min-width: 0; }
+.goal-form-card { padding: 1.25rem; }
+.goal-form-card .form-group { margin-bottom: 0.5rem; }
 .goal-form .btn { margin-top: 0.5rem; }
 .goal-note { margin: 0.5rem 0 0; font-size: 0.9rem; color: #555; }
 .milestone-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.35rem 0; }
@@ -288,19 +305,19 @@ input, select, textarea, button { font: inherit; }
 .module-tag {
   display: inline-block;
   margin-left: 0.5rem;
-  padding: 0.125rem 0.5rem;
+  padding: 0.15rem 0.5rem;
   background: #eff6ff;
   color: var(--primary);
   border-radius: 99px;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
 }
 
 /* ===== Status badges ===== */
 .status-badge {
-  padding: 0.2rem 0.6rem;
+  padding: 0.15rem 0.55rem;
   border-radius: 99px;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   white-space: nowrap;
 }
@@ -420,20 +437,20 @@ input, select, textarea, button { font: inherit; }
 }
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
   margin-bottom: 1rem;
 }
 .stat-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.25rem;
+  padding: 1rem;
   box-shadow: var(--shadow);
   text-align: center;
 }
-.stat-label { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.5rem; }
-.stat-value { font-size: 2rem; font-weight: 800; color: var(--navbar-bg); }
+.stat-label { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.4rem; }
+.stat-value { font-size: 1.6rem; font-weight: 800; color: var(--navbar-bg); }
 
 /* ===== Progress Bars ===== */
 .progress-bar-wrap {

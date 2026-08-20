@@ -37,18 +37,50 @@ Fenster (dort bleibt alles einspaltig).
 
 ## Progress
 
-- [ ] Milestone 1: Dashboard-Zwei-Spalten-Layout (responsive), Lernziele beim ersten Laden
-      sichtbar.
-- [ ] Milestone 2: Lernziele-Seite mit Sidebar-Formular und prominenter Zielliste.
-- [ ] Milestone 3: Design-Angleichung von Navigationsleiste, Karten und Typografie an die
-      Entwürfe (Farben unverändert); Tests und Lint grün.
-- [ ] Milestone 4: Beschluss-Dokumentation aktualisiert (`AGENTS.md`, `README.md`,
-      `docs/Anforderungsabgleich_Mockups.md`).
+- [x] Milestone 1: Dashboard-Zwei-Spalten-Layout (responsive), Lernziele beim ersten Laden
+      sichtbar. (2026-08-20, Commit c1c4f05)
+- [x] Milestone 2: Lernziele-Seite mit Sidebar-Formular und prominenter Zielliste.
+      (2026-08-20, Commit 452c527)
+- [x] Milestone 3: Design-Angleichung von Navigationsleiste, Karten und Typografie an die
+      Entwürfe (Farben unverändert); Tests und Lint grün. (2026-08-20, Commit 729c3d2)
+- [x] Milestone 4: Beschluss-Dokumentation aktualisiert (`AGENTS.md`, `README.md`,
+      `docs/Anforderungsabgleich_Mockups.md`). (2026-08-20, Commit 04b8b90)
+- [x] Abschluss: Playwright-E2E-Lauf gegen laufende Umgebung, vorbestehende Selektor-/
+      Isolationsprobleme behoben. (2026-08-20, Commit 601ab09)
 
 
 ## Surprises & Discoveries
 
-(laufend füllen)
+- Die globalen Styles liegen entgegen dem im Plan genannten Pfad tatsächlich unter
+  `frontend/src/styles.scss`, nicht `styles.css` (die Datei ist reines CSS, nur mit der
+  `.scss`-Endung). Betrifft nur den Dateinamen, keine der Vorgaben im Plan.
+- Das lokale Docker Desktop lief zu Beginn der Umsetzung nicht; nach dem Start war die
+  Postgres-Datenbank unter dem in `.env` konfigurierten Port 5433 erreichbar (nicht dem
+  Standardport 5432) — `flask db upgrade` von `backend/` aus benötigt deshalb explizit
+  `DATABASE_URL` als Umgebungsvariable, weil `python-dotenv` die `.env` im Repo-Root nicht
+  automatisch lädt, wenn `flask` aus `backend/` heraus aufgerufen wird.
+- `mcp__claude-in-chrome__resize_window` hat in dieser Sandbox das tatsächliche Browserfenster
+  nicht verkleinert (`window.innerWidth` blieb bei voller Fenstergröße, unabhängig vom
+  angeforderten Wert). Das schmale Layout (≤ 1000 px) wurde stattdessen über ein eingebettetes
+  `<iframe style="width:800px">` verifiziert, dessen eigener `window.innerWidth` korrekt 800 px
+  meldete und dessen `getComputedStyle(...).gridTemplateColumns` den Umbruch auf eine Spalte
+  bestätigte — eine echte Layout-Berechnung bei 800 px, nicht nur eine Stilprüfung.
+  Screenshot des kollabierten Layouts liegt im Chat-Verlauf dieser Sitzung.
+- Der manuelle Playwright-Lauf (Schritt 5) zeigte anfangs 7 von 12 Tests rot — alle Ursachen
+  waren vorbestehende Probleme in `frontend/e2e/*.spec.ts`, unabhängig von den
+  Layout-Änderungen dieses Plans (siehe Commit 601ab09 für die Details: geteilte
+  E-Mail-Konstante je Testdatei führte zu Konto-Doppelregistrierungen, mehrere `getByText()`
+  trafen mehrdeutig auf Select-Optionen/Tabellenzellen/zweite Textvorkommen, ein Erwartungstext
+  war veraltet). Da „`npx playwright test` grün“ ausdrücklich Teil der Abnahmekriterien dieses
+  Plans ist, wurden diese Probleme behoben, obwohl sie nicht durch P12 verursacht wurden.
+- Der Plan nennt „13 Playwright-E2E-Tests"; `frontend/e2e/` enthält tatsächlich 12 Tests
+  (`auth.spec.ts`: 3, `goals.spec.ts`: 4, `planning.spec.ts`: 2, `timer.spec.ts`: 3). Vermutlich
+  ein Zähl- oder Rundungsfehler in einem früheren Plan; keine Aktion nötig, der README-Satz dazu
+  spricht ohnehin nur allgemein von „13 Playwright-E2E-Tests" und wurde in diesem Plan nicht
+  angefasst — künftige Pläne sollten die Zahl bei Gelegenheit korrigieren.
+- Für den visuellen Testdurchlauf wurde ein Wegwerf-Testkonto (`p12test3@beispiel.de`) auf der
+  lokalen Entwicklungsdatenbank angelegt und ein Beispielziel „Statistik II" erstellt; keine
+  echten personenbezogenen Daten, nur lokale Dev-DB.
 
 
 ## Decision Log
@@ -80,7 +112,33 @@ Fenster (dort bleibt alles einspaltig).
 
 ## Outcomes & Retrospective
 
-(am Ende füllen)
+Alle vier Milestones plus der Abschlussschritt (E2E-Verifikation) sind umgesetzt und manuell
+geprüft. Das Dashboard zeigt ab etwa 1000 px Fensterbreite zwei Spalten (Kennzahlen,
+Monatsfortschritt und Wochendiagramm links, Lernziel-Karten rechts) und fällt darunter auf eine
+Spalte zurück; verifiziert sowohl bei voller Fensterbreite (Chrome-Screenshot mit echtem
+Lernziel „Statistik II") als auch bei 800 px (Iframe-Viewport-Test, siehe Surprises &
+Discoveries). Die Lernziele-Seite zeigt die Zielliste zuerst im Dokumentfluss und das
+Anlege-Formular als kompakte Seitenleiste mit gestapelten Feldern; Anlegen und Bearbeiten wurden
+im Browser gegen die laufende Anwendung durchgespielt und funktionieren unverändert. Der
+Design-Feinschliff (Navbar-Höhe, kompaktere Chips, `alert-action`-Klasse statt Inline-Style)
+wurde auf allen sechs Tabs sowie im Erinnerungs-Dropdown sichtgeprüft; Kartenradius, Schatten und
+Überschriften-Hierarchie waren bereits einheitlich und mussten nicht angefasst werden. `ng lint`
+und `ng test` sind nach jedem Milestone grün geblieben; `npx playwright test` lief zum Schluss
+12 von 12 grün, nachdem sieben vorbestehende, plan-unabhängige Testprobleme behoben wurden.
+
+Größte Abweichung vom Plan: Die im „Plan of Work" beschriebene Reihenfolge (Layout-Klassen
+zuerst, dann Umbau) wurde beibehalten, aber zusätzlich zum vorgesehenen Umfang wurden die
+E2E-Tests selbst repariert statt nur „Selektoren nachgezogen" — nötig, weil die Fehlerursachen
+tiefer lagen (geteilte Modul-Konstanten, mehrdeutige Textmatcher) als reine
+Selektor-Anpassungen an geänderte Templates. Das war im Rahmen von Schritt 5 vorgesehen
+(„Fehlschläge analysieren und Selektoren nachziehen") und blieb surgical: nur Lokatoren und ein
+veralteter Erwartungstext wurden geändert, keine Testaussage abgeschwächt.
+
+Der Teambeschluss vom 04.08.2026 gilt hiermit als vollständig aufgehoben und in `AGENTS.md`,
+`README.md` und `docs/Anforderungsabgleich_Mockups.md` dokumentiert. Offen bleibt für ein
+künftiges, kleineres Follow-up: die im Plan als „später" markierte Frage, ob und wie der
+Kalender (Plan P10) ins Dashboard eingebettet wird — bewusst nicht Teil dieses Plans (siehe
+Decision Log).
 
 
 ## Context and Orientation

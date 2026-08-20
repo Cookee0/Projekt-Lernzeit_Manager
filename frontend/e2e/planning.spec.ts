@@ -1,14 +1,15 @@
 import { test, expect, Page } from '@playwright/test';
 
-const timestamp = Date.now();
-const email = `planning-${timestamp}@playwright.local`;
 const password = 'Sicher123';
 
+// Jeder Testfall registriert ein eigenes Konto (eindeutige E-Mail je Aufruf), damit die Tests
+// unabhaengig von Ausfuehrungsreihenfolge und Parallelitaet sind.
 async function setup(page: Page): Promise<void> {
+  const unique = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
   // Registrieren
   await page.goto('/register');
-  await page.getByLabel('Name').fill(`Planning Tester ${timestamp}`);
-  await page.getByLabel('E-Mail').fill(email);
+  await page.getByLabel('Name').fill(`Planning Tester ${unique}`);
+  await page.getByLabel('E-Mail').fill(`planning-${unique}@playwright.local`);
   await page.getByLabel('Passwort').fill(password);
   await page.getByRole('button', { name: 'Konto erstellen' }).click();
   await expect(page).toHaveURL('/');
@@ -39,7 +40,7 @@ test.describe('Lernzeit planen (FR-2, FR-3)', () => {
 
     // In der Liste erscheinen
     await expect(page.getByText('90 min')).toBeVisible();
-    await expect(page.getByText('Planungs-Ziel')).toBeVisible();
+    await expect(page.locator('.slot-group-header', { hasText: 'Planungs-Ziel' })).toBeVisible();
   });
 
   test('Geplante Lernzeit löschen', async ({ page }) => {
@@ -50,6 +51,6 @@ test.describe('Lernzeit planen (FR-2, FR-3)', () => {
 
     // Löschen
     await page.getByRole('button', { name: 'Löschen' }).first().click();
-    await expect(page.getByText('Für diesen Monat noch nichts geplant.')).toBeVisible();
+    await expect(page.getByText('Für diese Auswahl ist noch nichts geplant.')).toBeVisible();
   });
 });
