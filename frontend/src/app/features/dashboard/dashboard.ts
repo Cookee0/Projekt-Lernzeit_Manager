@@ -26,7 +26,7 @@ const MONTH_NAMES = ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni',
         @if (data()!.active_session) {
           <div class="alert alert-info">
             ▶ Aktive Session: <strong>{{ data()!.active_session!.goal_title }}</strong> läuft gerade.
-            <a routerLink="/timer" class="btn btn-sm btn-secondary" style="margin-left:1rem">Zum Timer</a>
+            <a routerLink="/timer" class="btn btn-sm btn-secondary alert-action">Zum Timer</a>
           </div>
         }
 
