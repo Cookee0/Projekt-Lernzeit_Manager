@@ -443,15 +443,19 @@ Merge erst bei grüner Pipeline.
 ## Deployment auf Railway
 
 Railway baut aus dem GitHub-Repo und hostet die Anwendung als **einen einzigen Dienst** plus eine
-PostgreSQL-Datenbank – es gibt keinen separaten Frontend-Dienst. `nixpacks.toml` im Repo-Root
-beschreibt den Build: Python-venv und Backend-Abhängigkeiten installieren, das Angular-Frontend mit
-`npm --prefix frontend run build` bauen, danach per `start.sh` zuerst `flask db upgrade` und dann
-Gunicorn starten. Flask liefert die gebauten Angular-Dateien selbst aus
-(`_register_spa_fallback` in `backend/app/__init__.py`) – daher reicht ein Dienst. Der Build läuft
-über den **Nixpacks-Builder**, gepinnt in `railway.json`; der neuere Railpack-Builder ignoriert
-`nixpacks.toml` und lässt den Container ohne venv/Angular-Build starten (abgesichert am
-12.08.2026: Container-Crashloop mit `cannot open /app/.venv/bin/activate`, behoben durch
-`railway.json` mit `"builder": "NIXPACKS"`). Dokumentation: https://docs.railway.app/
+PostgreSQL-Datenbank – es gibt keinen separaten Frontend-Dienst. Der Build läuft über ein
+`Dockerfile` im Repo-Root (ein zweistufiger Build): Die erste Stufe baut mit `node:22-slim` das
+Angular-Frontend (`npm ci` und `npm run build` in `frontend/`), die zweite Stufe installiert auf
+`python:3.12-slim` die Backend-Abhängigkeiten aus `backend/requirements.txt`, kopiert den
+Backend-Code sowie das aus der ersten Stufe gebaute Frontend nach
+`frontend/dist/frontend/browser` und startet den Container mit `start.sh`, das zuerst
+`flask db upgrade` und danach Gunicorn ausführt. Flask liefert die gebauten Angular-Dateien selbst
+aus (`_register_spa_fallback` in `backend/app/__init__.py`) – daher reicht ein Dienst. Der Build
+läuft über den **Dockerfile-Builder**, gepinnt in `railway.json` (`"builder": "DOCKERFILE"`,
+`"dockerfilePath": "Dockerfile"`), damit Railway die Build-Methode nicht selbst erraten muss. Bis
+zum 20.08.2026 baute das Projekt stattdessen über Nixpacks (`nixpacks.toml`); dieser Ansatz wurde
+verworfen, weil Railway den Nixpacks-Builder inzwischen als veraltet einstuft. Dokumentation:
+https://docs.railway.app/
 
 **Einmalige Einrichtung (macht Julian, Infrastruktur-Rolle):**
 
