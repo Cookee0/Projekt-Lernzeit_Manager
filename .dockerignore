@@ -1,0 +1,17 @@
+.git
+.github
+docs
+*.md
+frontend/node_modules
+frontend/dist
+frontend/e2e
+frontend/.angular
+frontend/coverage
+backend/.venv
+backend/instance
+backend/.pytest_cache
+backend/.ruff_cache
+**/__pycache__
+**/*.pyc
+.env
+.vscode
