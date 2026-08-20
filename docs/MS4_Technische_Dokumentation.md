@@ -370,14 +370,16 @@ im `localStorage` vorhanden ist. Fehlt er, wird auf `/login` weitergeleitet.
 
 Railway ist eine Plattform-as-a-Service, die Docker-Container in der Cloud betreibt.
 
-**Build-Prozess (Nixpacks):**
+**Build-Prozess (Dockerfile):**
 
-1. Nixpacks liest `nixpacks.toml` aus dem Repository-Root
-2. Python 3 und Hilfspakete werden über `apt` installiert; Node.js 22 wird über das NodeSource-Setup-Skript (`curl | bash` + `apt-get install nodejs`) bereitgestellt
-3. Ein Python-Virtualenv (`/app/.venv`) wird angelegt und `pip install -r backend/requirements.txt` ausgeführt
-4. `npm --prefix frontend ci` installiert Angular-Abhängigkeiten
-5. `npm --prefix frontend run build` erstellt den Angular-Produktions-Build
+1. Railway liest `Dockerfile` aus dem Repository-Root (gepinnt über `railway.json`,
+   `"builder": "DOCKERFILE"`)
+2. Erste Build-Stufe (`node:22-slim`): `npm ci` installiert die Angular-Abhängigkeiten,
+   `npm run build` erstellt den Angular-Produktions-Build
    (Output: `frontend/dist/frontend/browser/`)
+3. Zweite Build-Stufe (`python:3.12-slim`): `pip install -r backend/requirements.txt`
+   installiert die Backend-Abhängigkeiten; der Backend-Code und das aus der ersten Stufe
+   gebaute Frontend werden in das Image kopiert
 
 **Start-Prozess (`start.sh`):**
 
