@@ -233,6 +233,10 @@ input, select, textarea, button { font: inherit; }
   margin-top: 0.1rem;
 }
 .form-row { display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.75rem; }
+.form-row.form-stacked { flex-direction: column; gap: 0.75rem; margin-bottom: 0.5rem; }
+.form-row.form-stacked .form-group { min-width: 0; }
+.goal-form-card { padding: 1.25rem; }
+.goal-form-card .form-group { margin-bottom: 0.5rem; }
 .goal-form .btn { margin-top: 0.5rem; }
 .goal-note { margin: 0.5rem 0 0; font-size: 0.9rem; color: #555; }
 .milestone-row { display: flex; align-items: center; gap: 0.75rem; padding: 0.35rem 0; }
