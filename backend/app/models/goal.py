@@ -2,6 +2,7 @@ from datetime import datetime, timezone
 
 from ..extensions import db
 from ..time_utils import iso_utc
+from ..workload import MINUTES_PER_ECTS
 
 VALID_STATUSES = ("open", "in_progress", "achieved")
 VALID_PRIORITIES = ("high", "medium", "low")
@@ -16,6 +17,7 @@ class Goal(db.Model):
     target_date = db.Column(db.Date, nullable=False)
     module_name = db.Column(db.String(255), nullable=False)
     ects = db.Column(db.Integer, default=5)
+    workload_hours = db.Column(db.Integer, nullable=True)
     status = db.Column(db.String(50), default="open")
     priority = db.Column(db.String(10), nullable=True)
     grade = db.Column(db.String(10), nullable=True)
@@ -37,9 +39,22 @@ class Goal(db.Model):
             "target_date": self.target_date.isoformat(),
             "module_name": self.module_name,
             "ects": self.ects,
+            "workload_hours": self.workload_hours,
             "status": self.status,
             "priority": self.priority,
             "grade": self.grade,
             "result_note": self.result_note,
             "created_at": iso_utc(self.created_at),
         }
+
+    def effective_workload_minutes(self) -> int:
+        """Lernaufwand des Ziels in Minuten.
+
+        Ist `workload_hours` gesetzt, ueberschreibt dieser manuell erfasste
+        Wert die Standardformel - z. B. weil ein Modul laut Erfahrung
+        weniger oder mehr Zeit braucht als die Team-Formel annimmt. Ohne
+        gesetzten Override gilt weiterhin exakt `ects * MINUTES_PER_ECTS`.
+        """
+        if self.workload_hours is not None:
+            return self.workload_hours * 60
+        return self.ects * MINUTES_PER_ECTS

@@ -15,7 +15,6 @@ from ..extensions import db
 from ..models.goal import Goal
 from ..models.plan_slot import PlanSlot
 from ..models.study_session import StudySession
-from ..workload import MINUTES_PER_ECTS
 
 stats_bp = Blueprint("stats", __name__)
 
@@ -69,7 +68,7 @@ def stats():
             .scalar()
         )
         total_actual_minutes = total_sec // 60
-        planned_ects_minutes = goal.ects * MINUTES_PER_ECTS
+        planned_ects_minutes = goal.effective_workload_minutes()
         progress_pct = (
             round(total_actual_minutes / planned_ects_minutes * 100)
             if planned_ects_minutes > 0

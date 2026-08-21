@@ -1,5 +1,7 @@
-import { Component, effect, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive, Router } from '@angular/router';
+import { Component, ElementRef, HostListener, effect, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { RouterLink, RouterLinkActive, Router, NavigationStart } from '@angular/router';
+import { filter } from 'rxjs';
 import { AuthService } from '../../core/services/auth.service';
 import { ReminderService } from '../../core/services/reminder.service';
 
@@ -62,6 +64,7 @@ export class NavbarComponent {
   protected auth = inject(AuthService);
   protected reminderService = inject(ReminderService);
   private router = inject(Router);
+  private elementRef = inject(ElementRef);
 
   remindersOpen = signal(false);
 
@@ -75,6 +78,25 @@ export class NavbarComponent {
         this.reminderService.clear();
       }
     });
+
+    // Schliesst das Dropdown, sobald zwischen den Reitern gewechselt wird -
+    // sonst bliebe es beim Navigieren ueber die Navbar-Links sichtbar.
+    this.router.events
+      .pipe(
+        filter((event) => event instanceof NavigationStart),
+        takeUntilDestroyed(),
+      )
+      .subscribe(() => this.remindersOpen.set(false));
+  }
+
+  // Schliesst das Dropdown, wenn ausserhalb der Glocke/des Dropdowns geklickt
+  // wird (z. B. zurueck ins Hauptfeld).
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+    if (!this.remindersOpen()) return;
+    if (!this.elementRef.nativeElement.contains(event.target as Node)) {
+      this.remindersOpen.set(false);
+    }
   }
 
   toggleReminders(): void {

@@ -6,6 +6,7 @@ import {
   validateEmail,
   validateRequiredText,
   validateTargetDate,
+  validateWorkloadHours,
 } from './validation';
 
 describe('validation', () => {
@@ -56,6 +57,13 @@ describe('validation', () => {
     expect(validateClockTime('25:00')).not.toBeNull();
     expect(validateClockTime('14:30')).toBeNull();
     expect(validateClockTime('')).toBeNull();
+  });
+
+  it('laesst den Lernaufwand leer, lehnt aber 0 und ueber 1000 ab', () => {
+    expect(validateWorkloadHours(null)).toBeNull();
+    expect(validateWorkloadHours(0)).not.toBeNull();
+    expect(validateWorkloadHours(1001)).not.toBeNull();
+    expect(validateWorkloadHours(50)).toBeNull();
   });
 
   it('prueft Pflichttexte und Laengen', () => {

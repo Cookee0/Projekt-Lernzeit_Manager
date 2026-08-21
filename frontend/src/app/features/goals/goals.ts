@@ -5,7 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Goal } from '../../core/models';
 import { goalDeleteConfirmText } from '../../core/goal-delete-confirm';
 import { GoalService } from '../../core/services/goal.service';
-import { validateEcts, validateRequiredText, validateTargetDate } from '../../core/validation';
+import { validateEcts, validateRequiredText, validateTargetDate, validateWorkloadHours } from '../../core/validation';
 
 const MONTHS_AHEAD = 6;
 
@@ -79,6 +79,17 @@ function defaultTargetDate(): string {
                     </div>
                     <div class="form-row">
                       <div class="form-group">
+                        <label for="edit-workload-hours" title="Leer lassen, damit ECTS x 30 Stunden gilt">Lernaufwand in Stunden (optional)</label>
+                        <input id="edit-workload-hours" type="number" [(ngModel)]="editForm.workload_hours" name="edit_workload_hours"
+                          (ngModelChange)="clearFieldError('workload_hours')"
+                          [class.input-error]="fieldErrors()['workload_hours']" placeholder="z.B. 50" />
+                        @if (fieldErrors()['workload_hours']) {
+                          <p class="field-error">{{ fieldErrors()['workload_hours'] }}</p>
+                        }
+                      </div>
+                    </div>
+                    <div class="form-row">
+                      <div class="form-group">
                         <label for="edit-status">Status</label>
                         <select id="edit-status" [(ngModel)]="editForm.status" name="edit_status">
                           <option value="open">offen</option>
@@ -123,7 +134,7 @@ function defaultTargetDate(): string {
                     </div>
                     <div class="goal-meta">
                       <span>📅 Ziel: {{ formatDate(goal.target_date) }}</span>
-                      <span title="1 ECTS entspricht ca. 30 Stunden Lernaufwand">🎓 {{ goal.ects }} ECTS ({{ goal.ects * 30 }}h)</span>
+                      <span [title]="goal.workload_hours ? 'Manuell festgelegter Lernaufwand' : '1 ECTS entspricht ca. 30 Stunden Lernaufwand'">🎓 {{ goal.ects }} ECTS ({{ effectiveHours(goal) }}h{{ goal.workload_hours ? ', manuell' : '' }})</span>
                       @if (goal.priority) { <span>⚑ Priorität: {{ priorityLabel(goal.priority) }}</span> }
                       @if (goal.grade) { <span>🏅 Note: {{ goal.grade }}</span> }
                     </div>
@@ -194,6 +205,17 @@ function defaultTargetDate(): string {
                   }
                 </div>
               </div>
+              <div class="form-row form-stacked">
+                <div class="form-group">
+                  <label for="goal-workload-hours" title="Leer lassen, damit ECTS x 30 Stunden gilt">Lernaufwand in Stunden (optional)</label>
+                  <input id="goal-workload-hours" type="number" [(ngModel)]="form.workload_hours" name="workload_hours"
+                    (ngModelChange)="clearFieldError('workload_hours')"
+                    [class.input-error]="fieldErrors()['workload_hours']" placeholder="z.B. 50" />
+                  @if (fieldErrors()['workload_hours']) {
+                    <p class="field-error">{{ fieldErrors()['workload_hours'] }}</p>
+                  }
+                </div>
+              </div>
               <div class="form-group">
                 <label for="goal-priority">Priorität (optional)</label>
                 <select id="goal-priority" [(ngModel)]="form.priority" name="priority">
@@ -229,6 +251,7 @@ export class GoalsComponent implements OnInit {
     title: '',
     module_name: '',
     ects: 5,
+    workload_hours: null as number | null,
     target_date: '',
     status: 'open' as Goal['status'],
     priority: '' as '' | 'high' | 'medium' | 'low',
@@ -254,6 +277,7 @@ export class GoalsComponent implements OnInit {
     title: '',
     module_name: '',
     ects: 5,
+    workload_hours: null as number | null,
     target_date: defaultTargetDate(),
     priority: '' as '' | 'high' | 'medium' | 'low',
   };
@@ -282,10 +306,12 @@ export class GoalsComponent implements OnInit {
     const titleError = validateRequiredText(this.form.title, 'Titel');
     const moduleError = validateRequiredText(this.form.module_name, 'Modul/Kurs');
     const ectsError = validateEcts(this.form.ects);
+    const workloadError = validateWorkloadHours(this.form.workload_hours);
     const dateError = validateTargetDate(this.form.target_date);
     if (titleError) errors['title'] = titleError;
     if (moduleError) errors['module_name'] = moduleError;
     if (ectsError) errors['ects'] = ectsError;
+    if (workloadError) errors['workload_hours'] = workloadError;
     if (dateError) errors['target_date'] = dateError;
     this.fieldErrors.set(errors);
     if (Object.keys(errors).length > 0) return;
@@ -298,7 +324,14 @@ export class GoalsComponent implements OnInit {
         status: 'open',
       });
       this.goals.update(gs => [...gs, goal]);
-      this.form = { title: '', module_name: '', ects: 5, target_date: defaultTargetDate(), priority: '' };
+      this.form = {
+        title: '',
+        module_name: '',
+        ects: 5,
+        workload_hours: null,
+        target_date: defaultTargetDate(),
+        priority: '',
+      };
     } catch (err) {
       const msg = err instanceof HttpErrorResponse ? err.error?.error : undefined;
       this.createError.set(msg ?? 'Fehler beim Speichern.');
@@ -340,6 +373,7 @@ export class GoalsComponent implements OnInit {
       title: goal.title,
       module_name: goal.module_name,
       ects: goal.ects,
+      workload_hours: goal.workload_hours,
       target_date: goal.target_date,
       status: goal.status,
       priority: goal.priority ?? '',
@@ -364,10 +398,12 @@ export class GoalsComponent implements OnInit {
     const titleError = validateRequiredText(this.editForm.title, 'Titel');
     const moduleError = validateRequiredText(this.editForm.module_name, 'Modul/Kurs');
     const ectsError = validateEcts(this.editForm.ects);
+    const workloadError = validateWorkloadHours(this.editForm.workload_hours);
     const dateError = validateTargetDate(this.editForm.target_date, this.editOriginalDate);
     if (titleError) errors['title'] = titleError;
     if (moduleError) errors['module_name'] = moduleError;
     if (ectsError) errors['ects'] = ectsError;
+    if (workloadError) errors['workload_hours'] = workloadError;
     if (dateError) errors['target_date'] = dateError;
     this.fieldErrors.set(errors);
     if (Object.keys(errors).length > 0) return;
@@ -378,6 +414,7 @@ export class GoalsComponent implements OnInit {
         title: this.editForm.title,
         module_name: this.editForm.module_name,
         ects: Number(this.editForm.ects),
+        workload_hours: this.editForm.workload_hours,
         target_date: this.editForm.target_date,
         status: this.editForm.status,
         priority: this.editForm.priority || null,
@@ -397,5 +434,9 @@ export class GoalsComponent implements OnInit {
   priorityLabel(priority: string | null): string {
     if (!priority) return '';
     return { high: 'hoch', medium: 'mittel', low: 'niedrig' }[priority] ?? priority;
+  }
+
+  effectiveHours(goal: Goal): number {
+    return goal.workload_hours ?? goal.ects * 30;
   }
 }

@@ -14,9 +14,10 @@ Abgabeziel: **31.08.2026**.
 > Seiten-Reload, weil der Token beim Start der Anwendung über `GET /api/auth/me` geprüft wird und
 > nur bei einer ausdrücklichen Ablehnung mit HTTP 401 oder 403 abgemeldet wird. Alle Endpunkte
 > außer `/api/health`, `/api/auth/register` und `/api/auth/login` sind geschützt. Umgesetzt sind
-> Lernziele (anlegen, **vollständig bearbeiten** — Titel, Modul, ECTS, Zieldatum, Status,
-> optionale Priorität —, löschen), Grob- und Detailplanung von Lernzeiten, ein Timer mit Start,
-> Pause, Fortsetzen und Stopp (der beim Stoppen eine optionale Notiz aufnimmt), eine
+> Lernziele (anlegen, **vollständig bearbeiten** — Titel, Modul, ECTS, optionaler manueller
+> Lernaufwand in Stunden, Zieldatum, Status, optionale Priorität —, löschen), Grob- und
+> Detailplanung von Lernzeiten, ein Timer mit Start, Pause, Fortsetzen und Stopp (der beim
+> Stoppen eine optionale Notiz aufnimmt), eine
 > Übersichtsseite mit Fortschritt sowie eine Erinnerung bei versäumter Lernzeit (FR-7.1) mit zwei
 > Auslösern: heute geplant und noch nicht gelernt, oder seit mindestens drei Tagen keine Session
 > trotz Planung für den laufenden Monat. Zu einem Lernziel lassen sich außerdem eine Note und eine
@@ -28,9 +29,13 @@ Abgabeziel: **31.08.2026**.
 > Lernziel ein aus dem ECTS-Workload (30 Stunden je ECTS-Punkt) abgeleitetes Wochenbudget, einen
 > automatischen Monatsvorschlag (Restaufwand gleichmäßig auf die Monate bis zum Zieldatum
 > verteilt, Endpunkt `GET /api/plans/proposal`) und die Abweichung zur bereits geplanten Zeit des
-> gewählten Monats; Slots legt der Vorschlag bewusst nicht selbst an. Seit Plan P9 lassen sich
-> Lernzeiten auf der Planungsseite außerdem als Serientermine anlegen (Endpunkt
-> `POST /api/plans/series`) — über ein Tages-Raster mit Mehrfachauswahl und Schnellwahl für
+> gewählten Monats; Slots legt der Vorschlag bewusst nicht selbst an. Seit Plan P14 lässt sich
+> dieser automatisch berechnete Lernaufwand je Lernziel im Formular überschreiben (Feld
+> „Lernaufwand in Stunden (optional)"), z. B. wenn ein Modul erfahrungsgemäß weniger oder mehr
+> Zeit braucht als die Formel annimmt; ohne Angabe gilt weiterhin exakt ECTS × 30 Stunden, und der
+> Override wirkt sich auf Wochenbudget, Dashboard-Fortschritt und Auswertung gleichermaßen aus.
+> Seit Plan P9 lassen sich Lernzeiten auf der Planungsseite außerdem als Serientermine anlegen
+> (Endpunkt `POST /api/plans/series`) — über ein Tages-Raster mit Mehrfachauswahl und Schnellwahl für
 > Werktage oder einzelne Wochentage eines Monats, z. B. „jeden Mittwoch" —, und die Liste
 > „Geplante Lernzeiten" erscheint je Lernziel gruppiert mit Titel, Modul und der insgesamt für
 > dieses Ziel geplanten Zeit. Das Dashboard weist die
@@ -52,9 +57,11 @@ Abgabeziel: **31.08.2026**.
 > nicht gelernt" oder „drei Tage ohne Session", FR-7.2 „Slot beginnt in der nächsten Stunde",
 > FR-7.3 „Zieldatum in ≤ 14 Tagen, Fortschritt < 50 %") erscheinen seit Plan P11 nicht mehr auf
 > dem Dashboard, sondern in einem Glocken-Symbol-Dropdown neben dem Nutzernamen in der
-> Navigationsleiste (ein Zähler-Badge zeigt die Anzahl aktiver Erinnerungen); der Hinweis auf eine
-> laufende Session bleibt auf dem Dashboard. Seit Plan P12 zeigt das Dashboard ab etwa 1000 px
-> Fensterbreite ein Zwei-Spalten-Layout (Kennzahlen, Monatsfortschritt und Wochendiagramm links,
+> Navigationsleiste (ein Zähler-Badge zeigt die Anzahl aktiver Erinnerungen); das Dropdown schließt
+> sich seit Plan P14 automatisch, sobald zwischen den Reitern gewechselt wird oder außerhalb davon
+> geklickt wird. Der Hinweis auf eine laufende Session bleibt auf dem Dashboard. Seit Plan P12
+> zeigt das Dashboard ab etwa 1000 px Fensterbreite ein Zwei-Spalten-Layout (Kennzahlen,
+> Monatsfortschritt und Wochendiagramm links,
 > die Lernziel-Karten rechts, sodass mindestens die erste Zielkarte ohne Scrollen sichtbar ist;
 > unterhalb der Breite bleibt es einspaltig), und die Lernziele-Seite stellt die Zielliste in die
 > Hauptspalte und das Anlege-Formular als schmale Seitenleiste daneben; die geteilten CSS-Klassen
@@ -66,9 +73,10 @@ Abgabeziel: **31.08.2026**.
 > UTC gekennzeichnet (angehängtes `Z`), damit der Browser sie nicht fälschlich als Ortszeit deutet.
 > Die Datenbank enthält die Tabellen `users`, `goals`, `plan_slots`, `study_sessions` und
 > `milestones`, angelegt durch die Migrationen `backend/migrations/versions/0001_ms4_initial_schema.py`,
-> `backend/migrations/versions/0002_goal_prioritaet_ergebnis.py` und
-> `backend/migrations/versions/0003_milestones.py`; nach jedem `git pull` ist in `backend/` bei
-> aktivierter venv `flask db upgrade` auszuführen. Abgeschlossene ExecPlans liegen in
+> `backend/migrations/versions/0002_goal_prioritaet_ergebnis.py`,
+> `backend/migrations/versions/0003_milestones.py` und
+> `backend/migrations/versions/0004_goal_workload_hours.py`; nach jedem `git pull` ist in `backend/`
+> bei aktivierter venv `flask db upgrade` auszuführen. Abgeschlossene ExecPlans liegen in
 > [`docs/ExecPlans/completed/`](docs/ExecPlans/completed/).
 
 > **Dieses README ist die verbindliche Beschreibung des Ist-Zustands.** Wer etwas ändert, das eine
@@ -128,7 +136,8 @@ ist nur das ergänzende technische Board.
 Seit Plan P1 prüft das Backend jede eingehende Eingabe und lehnt Verstöße mit HTTP 400 und
 `{"error": "..."}` ab. Es gelten folgende Grenzen: Die E-Mail-Adresse muss der Form
 `name@domain.de` entsprechen; das Passwort ist 6 bis 128 Zeichen lang; Titel und Modul/Kurs eines
-Lernziels sind 1 bis 255 Zeichen lang; ECTS-Punkte liegen zwischen 1 und 30; das Zieldatum liegt
+Lernziels sind 1 bis 255 Zeichen lang; ECTS-Punkte liegen zwischen 1 und 30; der optionale manuelle
+Lernaufwand in Stunden liegt, sofern angegeben, zwischen 1 und 1000; das Zieldatum liegt
 heute oder in der Zukunft, höchstens zehn Jahre voraus — außer es bleibt beim Bearbeiten
 unverändert, dann bleibt auch ein bereits verstrichenes Datum gültig; die Priorität eines
 Lernziels ist `high`, `medium`, `low` oder leer; die Note ist höchstens 10 Zeichen lang; die

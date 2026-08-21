@@ -60,6 +60,7 @@ describe('ReminderService.refresh', () => {
             title: 'Mathe I',
             module_name: 'Mathe',
             ects: 5,
+            workload_hours: null,
             status: 'open',
             priority: null,
             grade: null,

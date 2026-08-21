@@ -84,7 +84,7 @@ def plan_proposal():
             .scalar()
         )
         actual_minutes = actual_sec // 60
-        rest = remaining_minutes(goal.ects, actual_minutes)
+        rest = remaining_minutes(goal.effective_workload_minutes(), actual_minutes)
         suggested = round(rest / months_until(goal.target_date, year, month))
         planned = (
             db.session.query(func.coalesce(func.sum(PlanSlot.duration_minutes), 0))
@@ -97,7 +97,11 @@ def plan_proposal():
                 "title": goal.title,
                 "module_name": goal.module_name,
                 "weekly_budget_minutes": weekly_budget_minutes(
-                    goal.ects, actual_minutes, goal.target_date, today, goal.status
+                    goal.effective_workload_minutes(),
+                    actual_minutes,
+                    goal.target_date,
+                    today,
+                    goal.status,
                 ),
                 "suggested_month_minutes": suggested,
                 "planned_minutes": planned,
