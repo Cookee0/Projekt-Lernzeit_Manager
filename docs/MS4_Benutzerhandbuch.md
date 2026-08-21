@@ -110,14 +110,21 @@ Auf der (nicht im Bearbeiten-Modus befindlichen) Zielkarte:
 - Klicke **"▶ In Arbeit"**, um ein offenes Ziel zu starten.
 - Klicke **"✓ Erreicht"**, um ein Ziel als abgeschlossen zu markieren.
 
+Über **"Bearbeiten"** (Abschnitt 3.2) lässt sich der Status jederzeit frei wählen, auch von
+"Erreicht" zurück auf "In Arbeit" oder "Offen" — falls sich z. B. eine Prüfung doch noch
+verschiebt. Die Schnell-Buttons oben verschwinden nach "Erreicht"; der Rückweg führt dann über
+"Bearbeiten".
+
 ### 3.4 Lernziel löschen
 
 Klicke auf **"🗑 Löschen"** beim jeweiligen Lernziel. Eine Sicherheitsabfrage erscheint —
 bestätige mit "OK", um das Ziel endgültig zu entfernen. Sind dem Ziel noch offene Zwischenziele
 zugeordnet, weist die Abfrage explizit darauf hin.
 
-**Achtung:** Beim Löschen werden auch alle zugehörigen Lernzeiten, Planungseinträge und
-Zwischenziele gelöscht. Dieser Vorgang kann nicht rückgängig gemacht werden.
+**Achtung:** Beim Löschen werden auch alle zugehörigen Lernzeiten und Planungseinträge gelöscht.
+Zugehörige Zwischenziele werden **nicht** gelöscht — sie bleiben als Zwischenziele ohne
+Lernziel-Zuordnung bestehen und zählen weiterhin in der Zwischenziele-Kachel. Das Löschen der
+Lernzeiten und Planungseinträge kann nicht rückgängig gemacht werden.
 
 ---
 

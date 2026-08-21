@@ -256,11 +256,11 @@ nicht umgesetzt, siehe Abschnitt 8). Ein Klick auf eine Erinnerung führt zur Ti
 | Regel | Beschreibung |
 |---|---|
 | GR-1 | Es kann immer nur eine aktive oder pausierte Session gleichzeitig existieren. Ein erneuter Start-Versuch wird mit einem Fehler abgelehnt (HTTP 409). |
-| GR-2 | Beim Löschen eines Lernziels werden alle zugehörigen Planungseinträge, Lernsessions und Zwischenziele automatisch mitgelöscht (Cascade Delete). Eine laufende Session blockiert das Löschen nicht. Das Löschen-Formular weist explizit darauf hin, wenn dem Ziel noch Zwischenziele zugeordnet sind. |
+| GR-2 | Beim Löschen eines Lernziels werden alle zugehörigen Planungseinträge und Lernsessions automatisch mitgelöscht (Cascade Delete). Zugehörige Zwischenziele werden **nicht** mitgelöscht — sie bleiben bestehen und verlieren nur ihre Zuordnung zum Lernziel (`goal_id` wird `null`), sichtbar auf der Planungsseite und weiterhin in der Zwischenziele-Kachel gezählt. Eine laufende Session blockiert das Löschen nicht. Das Löschen-Formular weist explizit darauf hin, wenn dem Ziel noch Zwischenziele zugeordnet sind. |
 | GR-3 | Das Zieldatum eines Lernziels muss beim Anlegen und bei jeder echten Änderung heute oder in der Zukunft liegen (höchstens zehn Jahre voraus). Bleibt das Datum bei einer Bearbeitung unverändert, gilt diese Prüfung nicht — sonst ließe sich ein Lernziel mit bereits verstrichenem Termin nicht mehr umbenennen. |
-| GR-4 | Passwörter werden serverseitig gehasht (Werkzeug `generate_password_hash`) und nie im Klartext gespeichert. |
+| GR-4 | Passwörter werden serverseitig gehasht (Werkzeug `generate_password_hash`, Standardverfahren `scrypt` in der eingesetzten Werkzeug-Version 3.1) und nie im Klartext gespeichert oder ausgegeben. |
 | GR-5 | Alle Endpunkte außer Registrierung, Login und Health-Check erfordern einen gültigen JWT-Token. Abgelaufene oder fehlende Token werden mit HTTP 401 abgelehnt. Token haben eine Laufzeit von 8 Stunden. |
-| GR-6 | Nutzer sehen ausschließlich ihre eigenen Daten. Zugriffe auf fremde Ressourcen werden mit HTTP 404 abgelehnt (Existenz wird nicht verraten, kein HTTP 403). |
+| GR-6 | Nutzer sehen ausschließlich ihre eigenen Daten. Zugriffe auf fremde oder nicht existierende Ressourcen werden mit HTTP 404 abgelehnt (Existenz wird nicht verraten, kein HTTP 403); da diese Fälle über `first_or_404()` laufen und kein eigener 404-Error-Handler registriert ist, ist die Antwort dabei Flasks HTML-Standardseite, kein einheitliches JSON-Fehlerobjekt wie bei Validierungsfehlern. |
 | GR-7 | Der manuelle Lernaufwand-Override (`workload_hours`, Abschnitt 2.4) überschreibt die ECTS-Formel vollständig, sobald er gesetzt ist — es gibt keine Mischrechnung. Ein leeres Feld (oder das explizite Löschen des Wertes) stellt die Formel wieder her. |
 
 ---

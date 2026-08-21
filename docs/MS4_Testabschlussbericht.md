@@ -13,7 +13,7 @@
 |---|---|---|---|
 | Backend Unit-Tests (pytest) | 138 | 138 | 0 |
 | Frontend Unit-Tests (Vitest) | 43 | 43 | 0 |
-| Playwright E2E-Tests | 13 | 13 | 0 |
+| Playwright E2E-Tests | 12 | 12 (Stand 2026-08-11) | 0 |
 | Manueller Systemtest | 14 | 14 | 0 |
 
 Backend- und Frontend-Zahlen sind Stand 2026-08-21, ermittelt durch `pytest -q` (Backend, 138
@@ -161,20 +161,32 @@ und `core/services/*.spec.ts`.
 
 ## 5. Playwright E2E-Testfälle
 
-**Ausführungsdatum:** 2026-08-11  
+**Aktueller Dateibestand (verifiziert 2026-08-21 durch Zählen der `test(`-Blöcke in
+`frontend/e2e/*.spec.ts`):** 12 Tests in 4 Dateien — `auth.spec.ts` 3, `goals.spec.ts` 4,
+`planning.spec.ts` 2, `timer.spec.ts` 3. `auth.spec.ts` hatte zur ursprünglichen MS4-Auslieferung
+noch 4 Tests; einer entfiel im Rahmen von Plan P4 (siehe Nachtrag unten), seither sind es 3.
+
+**Ausführungsdatum des letzten vollständigen, tatsächlichen Playwright-Laufs:** 2026-08-11  
 **Tester:** Assis Ramadan  
-**Umgebung:** Railway-Produktionsumgebung (`https://projekt-lernzeitmanager-production.up.railway.app`)  
+**Umgebung:** Railway-Produktionsumgebung (`https://projekt-lernzeitmanager-production.up.railway.app` —
+siehe Korrektur zur Produktions-URL in Abschnitt 1)  
 **Browser:** Chromium (Playwright 1.49)  
 **Befehl:** `cd frontend && npx playwright test`
 
-### 5.1 Authentifizierung (auth.spec.ts)
+Die folgenden Tabellen sind der historische Nachweis dieses Laufs vom 2026-08-11, als
+`auth.spec.ts` noch 4 statt 3 Tests enthielt (der vierte, "Direktzugriff /goals ohne Token →
+Weiterleitung auf /login", entfiel danach — vermutlich abgelöst durch den heutigen T-E2E-03,
+der denselben Sachverhalt prüft). Die Test-IDs T-E2E-01 bis T-E2E-13 entsprechen deshalb nicht
+mehr 1:1 den heutigen Dateien; maßgeblich für den aktuellen Stand ist der Dateibestand oben.
+
+### 5.1 Authentifizierung (auth.spec.ts, Stand 2026-08-11 — heute nur noch 3 Tests, siehe oben)
 
 | Test-ID | Anforderung | Beschreibung | Status |
 |---|---|---|---|
 | T-E2E-01 | FR-0 | Registrierung → Dashboard erscheint, Name in Navbar sichtbar | ✅ Bestanden |
 | T-E2E-02 | FR-0 | Abmelden → Login-Seite; erneuter Login → Dashboard | ✅ Bestanden |
 | T-E2E-03 | FR-0 | Login mit falschen Daten → Fehlermeldung sichtbar | ✅ Bestanden |
-| T-E2E-04 | FR-0 | Direktzugriff /goals ohne Token → Weiterleitung auf /login | ✅ Bestanden |
+| T-E2E-04 | FR-0 | Direktzugriff /goals ohne Token → Weiterleitung auf /login (seither entfernt) | ✅ Bestanden (2026-08-11) |
 
 ### 5.2 Lernziele (goals.spec.ts)
 
@@ -200,7 +212,8 @@ und `core/services/*.spec.ts`.
 | T-E2E-12 | FR-4.1, FR-4.3 | Pause und Fortsetzen → Status wechselt korrekt | ✅ Bestanden |
 | T-E2E-13 | FR-4.1, FR-4.2 | Session stoppen → erscheint in "Zuletzt gelernt" | ✅ Bestanden |
 
-**Gesamtergebnis Playwright (Railway-Produktionsumgebung, 2026-08-11):** 13 von 13 Tests bestanden ✅
+**Gesamtergebnis Playwright (Railway-Produktionsumgebung, 2026-08-11):** 13 von 13 Tests bestanden
+✅ — Stand jener Datei-Version; heute (2026-08-21) sind es 12 Tests, siehe Hinweis oben.
 
 Diese Tests werden manuell gegen eine laufende Umgebung ausgeführt und sind **nicht** Bestandteil
 der GitHub-Actions-CI-Pipeline (siehe `.github/workflows/ci.yml` sowie den Hinweis in Abschnitt 1).

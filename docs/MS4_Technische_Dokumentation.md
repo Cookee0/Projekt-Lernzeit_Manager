@@ -100,8 +100,14 @@ Ortszeit interpretiert.
 
 Jeder Nutzer besitzt beliebig viele Ziele, Planungseinträge, Lernsessions und Zwischenziele.
 Ein Zwischenziel kann, muss aber nicht einem Lernziel zugeordnet sein (`goal_id` ist nullable).
-Beim Löschen eines Nutzers oder Ziels werden alle zugehörigen Datensätze automatisch
-mitgelöscht (Cascade Delete, siehe Geschäftsregel GR-2 in der Fachlichen Dokumentation).
+Beim Löschen eines Nutzers werden alle zugehörigen Datensätze automatisch mitgelöscht (Cascade
+Delete, `cascade="all, delete-orphan"` auf allen vier Relationships in
+`backend/app/models/user.py`). Beim Löschen eines Ziels gilt das nur für dessen Planungseinträge
+und Lernsessions (`cascade="all, delete-orphan"` in `backend/app/models/goal.py`); die
+Relationship `Goal.milestones` trägt bewusst **kein** Cascade. Zugehörige Zwischenziele bleiben
+deshalb bestehen und verlieren nur ihre Zuordnung (`goal_id` wird `null`) — belegt durch
+`backend/tests/test_milestones.py::test_deleting_a_goal_keeps_its_milestones` (siehe
+Geschäftsregel GR-2 in der Fachlichen Dokumentation).
 
 Das Schema entsteht aus vier Migrationen (`backend/migrations/versions/`), die in dieser
 Reihenfolge angewendet werden:
@@ -228,8 +234,9 @@ Response (201): das erstellte Goal-Objekt, alle Spalten aus 2.2 als JSON.
 geändert (`title`, `module_name`, `target_date`, `ects`, `workload_hours`, `status`,
 `priority`, `grade`, `result_note`).
 
-**DELETE /api/goals/&lt;id&gt;** — Ziel löschen (inkl. Sessions, Planungseinträgen und
-Zwischenzielen, Cascade Delete). Response (204).
+**DELETE /api/goals/&lt;id&gt;** — Ziel löschen (inkl. Sessions und Planungseinträgen, Cascade
+Delete; zugehörige Zwischenziele bleiben bestehen und verlieren nur ihre Zuordnung, siehe
+Abschnitt 2.1). Response (204).
 
 ### 3.3 Planung
 
