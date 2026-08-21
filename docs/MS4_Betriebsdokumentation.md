@@ -3,7 +3,7 @@
 **Projekt:** Lernzeit-Manager · ISEF01  
 **Meilenstein:** MS 4  
 **Team:** Elias Ebertshäuser · Assis Ramadan · Julian Wagner  
-**Datum:** August 2026
+**Stand:** 2026-08-21 (nachgeführt nach Plan P14; ursprüngliche MS4-Auslieferung: August 2026)
 
 ---
 
@@ -157,46 +157,48 @@ Im Railway-Dashboard unter dem Projekt → **Variables**:
     DATABASE_URL    → Wird automatisch gesetzt, wenn das PostgreSQL-Add-on hinzugefügt wird
     JWT_SECRET_KEY  → Langen, zufälligen String eingeben (z. B. mit `openssl rand -hex 32` erzeugen)
     FLASK_ENV       → production
-    CORS_ORIGINS    → https://projekt-lernzeitmanager-production.up.railway.app
+    CORS_ORIGINS    → https://projekt-lernzeitmanager-production-0412.up.railway.app
 
 ---
 
 ## 5. Railway-Deployment
 
-### 5.1 Erstmaliges Deployment
+Railway baut die Anwendung als **einen einzigen Dienst** (Frontend und Backend zusammen, siehe
+`MS4_Technische_Dokumentation.md` Abschnitt 5.2) über ein `Dockerfile` im Repository-Root; der
+Builder ist in `railway.json` fest auf `"DOCKERFILE"` gepinnt, damit Railway die Build-Methode
+nicht selbst erraten muss. Bis 2026-08-20 baute das Projekt stattdessen über Nixpacks; dieser
+Ansatz wurde verworfen, weil Railway den Nixpacks-Builder inzwischen als veraltet einstuft
+(Plan P13).
 
-1. Railway-Account erstellen: https://railway.app (kostenloser Tier ausreichend)
+### 5.1 Erstmaliges Deployment (bereits erledigt, Julian)
 
-2. Railway CLI installieren:
-
-        npm install -g @railway/cli
-        railway login
-
-3. Im Repository-Root ein neues Projekt erstellen:
-
-        railway init
-
-4. PostgreSQL-Add-on hinzufügen (im Railway-Dashboard: **+ New** → **Database** →
-   **PostgreSQL**). Railway setzt `DATABASE_URL` automatisch.
-
-5. Umgebungsvariablen setzen (s. Abschnitt 4.2).
-
-6. Deployen:
-
-        railway up
-
-7. Die App-URL erscheint im Railway-Dashboard (Format: `https://xxx.railway.app`).
+1. Railway-Account erstellen: https://railway.app (kostenloser Tier ausreichend) und mit dem
+   GitHub-Account anmelden.
+2. **New Project** → **Deploy from GitHub repo** → dieses Repository auswählen. Das
+   Root-Verzeichnis bleibt der Repository-Root (nicht `backend/` oder `frontend/`), da das
+   `Dockerfile` dort liegt.
+3. **New** → **Database** → **Add PostgreSQL** hinzufügen. Railway setzt `DATABASE_URL` für
+   den eigenen Dienst nicht automatisch — dafür im Backend-Dienst unter **Variables**
+   `DATABASE_URL=${{Postgres.DATABASE_URL}}` referenzieren.
+4. Übrige Umgebungsvariablen setzen (siehe Abschnitt 4.2).
+5. Unter **Settings → Networking** → **Generate Domain** die öffentliche URL erzeugen.
 
 ### 5.2 Folgende Deployments
 
-Nach jedem Merge auf `main` wird die CI/CD-Pipeline ausgelöst. Ist diese grün, deployt
-Railway automatisch die neue Version. Kein manueller Eingriff nötig.
+Deployment passiert automatisch bei jedem Push auf `main` (GitHub-Integration, kein manuelles
+`railway up` nötig): Railway baut das `Dockerfile` neu und startet `start.sh`, das zuerst
+`flask db upgrade` und danach Gunicorn ausführt. Geht ein Deploy schief: `railway logs` lesen,
+Fix auf einem Branch, PR, Merge — kein Hotfix direkt auf `main`.
 
-### 5.3 Logs einsehen
+### 5.3 Alltag mit der Railway-CLI
 
-    railway logs
+Die CLI ist für Deployment selbst nicht nötig (das übernimmt die GitHub-Integration), aber
+nützlich für Logs und lokale Befehle mit Produktions-Umgebungsvariablen:
 
-Oder im Railway-Dashboard unter **Deployments** → **View Logs**.
+    railway login
+    railway link          # Repo einmalig mit dem Railway-Projekt verknüpfen
+    railway logs          # Live-Logs des Dienstes
+    railway run <befehl>  # Befehl lokal mit Railway-Env-Variablen ausführen
 
 ### 5.4 Datenbankzugriff
 
@@ -215,7 +217,7 @@ ausschließlich fiktive Daten ohne Bezug zu realen Personen.
 
 | Feld | Wert |
 |---|---|
-| URL | https://projekt-lernzeitmanager-production.up.railway.app |
+| URL | https://projekt-lernzeitmanager-production-0412.up.railway.app |
 | E-Mail | tutor@test.lernzeit.de |
 | Passwort | Tutor2026! |
 | Name | Tutor Testaccount |
@@ -231,6 +233,18 @@ ausschließlich fiktive Daten ohne Bezug zu realen Personen.
 > **Hinweis:** Beide Accounts sind eingerichtet. Im primären Account (tutor@test.lernzeit.de)
 > sind Beispiel-Lernziele, Planungseinträge und Lernsessions vorhanden, damit der Tutor alle
 > Funktionen direkt im Browser ausprobieren kann.
+
+> **Korrektur 2026-08-21:** Die zuvor hier dokumentierte URL
+> (`projekt-lernzeitmanager-production.up.railway.app`, ohne `-0412`) antwortet inzwischen mit
+> HTTP 404 — sie ist nicht mehr die aktuelle Produktions-URL. Die oben stehende URL mit
+> `-0412` wurde am 2026-08-21 als tatsächlich erreichbar verifiziert (`GET /api/health` liefert
+> `{"status":"ok"}`, `GET /api/stats` liefert HTTP 401 statt 404 und beweist damit, dass der
+> Dienst mindestens den Stand von Plan P11 ausliefert). **Nicht verifiziert** wurde in dieser
+> Sitzung, ob die oben gelisteten Zugangsdaten auf dieser URL tatsächlich funktionieren — das
+> hängt davon ab, ob es sich um dieselbe Datenbank/denselben Railway-Dienst handelt oder ob
+> dieser beim Wechsel von Nixpacks auf den Dockerfile-Builder (Plan P13) neu angelegt wurde.
+> Vor der Redmine-Abgabe unbedingt manuell mit den Zugangsdaten einloggen und prüfen, ob die
+> Beispieldaten noch vorhanden sind; ggf. die Accounts neu anlegen.
 
 > **Datenschutz:** Die Passwörter werden serverseitig gehasht gespeichert. Im Repository
 > sind sie in diesem Dokument als Plaintext nur für das Tutor-Review aufgeführt, da es sich

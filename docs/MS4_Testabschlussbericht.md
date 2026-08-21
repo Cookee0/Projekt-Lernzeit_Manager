@@ -3,7 +3,7 @@
 **Projekt:** Lernzeit-Manager · ISEF01  
 **Meilenstein:** MS 4  
 **Team:** Elias Ebertshäuser · Assis Ramadan · Julian Wagner  
-**Datum:** August 2026
+**Stand:** 2026-08-21 (nachgeführt nach Plan P14; ursprüngliche MS4-Auslieferung: August 2026)
 
 ---
 
@@ -11,23 +11,39 @@
 
 | Testkategorie | Gesamt | Bestanden | Fehlgeschlagen |
 |---|---|---|---|
-| Backend Unit-Tests (pytest) | 101 | 101 | 0 |
-| Frontend Unit-Tests (Vitest) | 15 | 15 | 0 |
+| Backend Unit-Tests (pytest) | 138 | 138 | 0 |
+| Frontend Unit-Tests (Vitest) | 43 | 43 | 0 |
 | Playwright E2E-Tests | 13 | 13 | 0 |
 | Manueller Systemtest | 14 | 14 | 0 |
 
-Stand 2026-08-17, ermittelt durch `pytest -q` (Backend) und `ng test --watch=false` (Frontend) nach
-den Plänen P4 (Defekte und Lücken) und P5 (FR-3.2 Zwischenziele). Gegenüber dem vorherigen Stand
-(57 Backend-/32 Frontend-Tests) ist die Backend-Zahl gestiegen, weil P4/M8
-`backend/tests/test_sessions.py` und `backend/tests/test_plans.py` ergänzt hat — die Stoppuhr
-(Start, Pause, Fortsetzen, Stopp, Pausenrechnung nach FR-4.3) wird damit erstmals automatisiert im
-Backend geprüft — und weil P5/M4 und P5/M7 `backend/tests/test_milestones.py` mit 15 Tests für
-FR-3.2 ergänzt haben. Die Frontend-Zahl ist gesunken, weil P4/M7 den seit dem MS4-Umbau nicht mehr
-eingebundenen Ordner `frontend/src/app/goals/` (17 Tests auf toten Code) entfernt hat; die
-verbleibenden Komponenten sind unverändert grün. Die Detailtabellen in Abschnitt 3 und 4 unten
-beschreiben noch den ursprünglichen MS4-Stand und wurden im Rahmen dieser Pläne nicht im Detail
-nacherfasst — maßgeblich sind die hier genannten Gesamtzahlen. Die Playwright-Zahl ist die letzte
-tatsächliche Ausführung; Details siehe Abschnitt 5.
+Backend- und Frontend-Zahlen sind Stand 2026-08-21, ermittelt durch `pytest -q` (Backend, 138
+Tests über 13 Testdateien) und `npx ng test --watch=false` (Frontend, 43 Tests über 10
+Testdateien) nach Plan P14 (Erinnerungs-Dropdown schließt automatisch; optionaler manueller
+Lernaufwand-Override). Die Zahlen sind seit dem letzten dokumentierten Stand (101 Backend- /
+15 Frontend-Tests, Stand 2026-08-17 nach den Plänen P4/P5) deutlich gestiegen, weil dazwischen
+die Pläne P6 bis P14 automatisierte Tests für Grobplanung (`test_workload.py`,
+`test_plan_proposal.py`), Kalender, Auswertung (`test_stats.py`), Erinnerungs-Hub
+(`test_reminders.py`), Serientermine, Layout-Komponenten (`week-chart.spec.ts`,
+`day-picker.spec.ts`) und zuletzt den Lernaufwand-Override ergänzt haben. Die
+Detailtabellen in Abschnitt 3 und 4 unten beschreiben weiterhin nur den ursprünglichen
+MS4-Stand (13 bzw. 18 Tests) im Detail — sie wurden bewusst nicht auf alle 138/43 Tests
+ausgeweitet, weil eine test-für-test-Beschreibung in dieser Größenordnung keinen zusätzlichen
+Erkenntniswert mehr hätte; maßgeblich für den aktuellen Stand ist die Datei-Aufstellung direkt
+im Anschluss an die historischen Tabellen. Die Playwright- und die manuelle Testzahl sind die
+letzte tatsächliche Ausführung und wurden seither **nicht** erneut durchgeführt (siehe Abschnitt
+5 und 6 für den dazugehörigen Vorbehalt).
+
+**Korrektur 2026-08-21 zur Produktions-URL:** Die Abschnitte 5 und 6 unten dokumentieren
+Testläufe vom 2026-08-11 gegen `https://projekt-lernzeitmanager-production.up.railway.app` und
+bleiben als historischer Nachweis unverändert. Diese URL antwortet Stand 2026-08-21 mit HTTP
+404 und ist nicht mehr aktuell; die tatsächlich erreichbare Produktions-URL lautet seither
+`https://projekt-lernzeitmanager-production-0412.up.railway.app` (siehe `MS4_Betriebsdokumentation.md`,
+Abschnitt 6, dort mit einer Korrektur vom selben Datum). Ob sich zwischen dem 2026-08-11-Lauf
+und heute die URL geändert hat, weil derselbe Dienst umbenannt wurde, oder weil der Dienst beim
+Wechsel von Nixpacks auf den Dockerfile-Builder (Plan P13) neu angelegt wurde, ist nicht
+geklärt — im zweiten Fall wäre auch die Datenbank neu und alle Testdaten dieses Berichts nicht
+mehr vorhanden. Ein erneuter Playwright- und manueller Testlauf gegen die korrekte URL steht vor
+der Redmine-Abgabe noch aus.
 
 In der CI-Pipeline (`.github/workflows/ci.yml`) laufen bei jedem Push auf `main` sowie bei jedem
 Pull Request die Backend-Prüfungen (`ruff check .`, `pytest`) und die Frontend-Prüfungen
@@ -60,101 +76,86 @@ Pipeline ausgeführt.
 
 ---
 
-## 3. Backend-Testfälle (pytest)
+## 3. Backend-Testdateien (pytest)
 
-**Ausführungsdatum:** 2026-08-10  
-**Tester:** CI/CD Pipeline (GitHub Actions) + lokal Assis Ramadan  
-**Befehl:** `cd backend && pytest -v`
+**Letzter vollständiger Lauf:** 2026-08-21, `cd backend && pytest -q` → `138 passed`.
 
-### 3.1 Authentifizierung (test_auth.py)
+| Testdatei | Anzahl Tests | Deckt ab |
+|---|---|---|
+| `test_validation.py` | 37 | Alle serverseitigen Prüfregeln aus `backend/app/validation.py` (E-Mail, Passwort, Pflichttext, ECTS, Zieldatum, Tag im Monat, Uhrzeit, Query-Parameter) |
+| `test_plans.py` | 17 | Planungseinträge: CRUD, Serientermine (`POST /api/plans/series`), Filter |
+| `test_sessions.py` | 15 | Timer: Start/Pause/Fortsetzen/Stopp, Pausenrechnung (FR-4.3), Notiz beim Stoppen |
+| `test_milestones.py` | 15 | Zwischenziele: CRUD, Filter, optionale Zuordnung zu einem Lernziel |
+| `test_workload.py` | 11 | ECTS-Formel, Wochenbudget-Rechnung, Lernaufwand-Override (`workload_hours`, Plan P14) |
+| `test_goals.py` | 10 | Lernziele: CRUD, Priorität/Note/Ergebnis-Notiz, Lernaufwand-Override-Validierung |
+| `test_auth.py` | 7 | Registrierung, Login, `GET /api/auth/me` |
+| `test_plan_proposal.py` | 6 | Grobplanungs-Vorschlag (`GET /api/plans/proposal`, FR-2.2) |
+| `test_dashboard_fields.py` | 6 | Struktur und Inhalte der `GET /api/dashboard`-Antwort |
+| `test_reminders.py` | 5 | Auslöser der FR-7.1/7.2/7.3-Erinnerungsfelder |
+| `test_time_format.py` | 4 | UTC-Zeitstempel mit angehängtem `Z` (`iso_utc`) |
+| `test_stats.py` | 4 | Auswertungs-Endpunkt (`GET /api/stats`, FR-6.4, FR-5.3) |
+| `test_health.py` | 1 | `GET /api/health` |
+| **Gesamt** | **138** | |
 
-| Test-ID | Beschreibung | Vorbedingung | Erwartetes Ergebnis | Tatsächliches Ergebnis | Status |
-|---|---|---|---|---|---|
-| T-BE-01 | Registrierung mit gültigen Daten | Keine | HTTP 201, access_token im Response | HTTP 201, Token vorhanden | ✅ Bestanden |
-| T-BE-02 | Registrierung ohne Pflichtfelder | Keine | HTTP 400 | HTTP 400 | ✅ Bestanden |
-| T-BE-03 | Registrierung mit bereits verwendeter E-Mail | Nutzer bereits registriert | HTTP 409 | HTTP 409 | ✅ Bestanden |
-| T-BE-04 | Login mit korrekten Zugangsdaten | Nutzer registriert | HTTP 200, access_token | HTTP 200, Token vorhanden | ✅ Bestanden |
-| T-BE-05 | Login mit falschem Passwort | Nutzer registriert | HTTP 401 | HTTP 401 | ✅ Bestanden |
-| T-BE-06 | GET /api/auth/me ohne Token | Keine | HTTP 401 | HTTP 401 | ✅ Bestanden |
-| T-BE-07 | GET /api/auth/me mit gültigem Token | Nutzer eingeloggt | HTTP 200, Nutzerdaten | HTTP 200, korrekte Daten | ✅ Bestanden |
+### 3.1 Historischer Ausgangspunkt (MS4-Auslieferung, 2026-08-10)
 
-### 3.2 Lernziele (test_goals.py)
+Zur MS4-Auslieferung existierten 13 der heute 138 Tests, verteilt auf drei Dateien:
 
-| Test-ID | Beschreibung | Vorbedingung | Erwartetes Ergebnis | Tatsächliches Ergebnis | Status |
-|---|---|---|---|---|---|
-| T-BE-08 | Leere Zielliste abrufen | Nutzer eingeloggt, keine Ziele | HTTP 200, leeres Array | HTTP 200, `[]` | ✅ Bestanden |
-| T-BE-09 | Neues Ziel anlegen | Nutzer eingeloggt | HTTP 201, Ziel-Objekt | HTTP 201, Daten korrekt | ✅ Bestanden |
-| T-BE-10 | Ziel ohne Pflichtfelder anlegen | Nutzer eingeloggt | HTTP 400 | HTTP 400 | ✅ Bestanden |
-| T-BE-11 | Ziel-Status auf "achieved" setzen | Ziel vorhanden | HTTP 200, status = "achieved" | HTTP 200, Status korrekt | ✅ Bestanden |
-| T-BE-12 | Ziel löschen und 404 verifizieren | Ziel vorhanden | HTTP 204 beim Löschen, dann 404 | HTTP 204 + 404 | ✅ Bestanden |
+| Test-ID | Beschreibung | Erwartetes Ergebnis | Status |
+|---|---|---|---|
+| T-BE-01 | Registrierung mit gültigen Daten | HTTP 201, access_token im Response | ✅ Bestanden |
+| T-BE-02 | Registrierung ohne Pflichtfelder | HTTP 400 | ✅ Bestanden |
+| T-BE-03 | Registrierung mit bereits verwendeter E-Mail | HTTP 409 | ✅ Bestanden |
+| T-BE-04 | Login mit korrekten Zugangsdaten | HTTP 200, access_token | ✅ Bestanden |
+| T-BE-05 | Login mit falschem Passwort | HTTP 401 | ✅ Bestanden |
+| T-BE-06 | GET /api/auth/me ohne Token | HTTP 401 | ✅ Bestanden |
+| T-BE-07 | GET /api/auth/me mit gültigem Token | HTTP 200, Nutzerdaten | ✅ Bestanden |
+| T-BE-08 | Leere Zielliste abrufen | HTTP 200, leeres Array | ✅ Bestanden |
+| T-BE-09 | Neues Ziel anlegen | HTTP 201, Ziel-Objekt | ✅ Bestanden |
+| T-BE-10 | Ziel ohne Pflichtfelder anlegen | HTTP 400 | ✅ Bestanden |
+| T-BE-11 | Ziel-Status auf "achieved" setzen | HTTP 200, status = "achieved" | ✅ Bestanden |
+| T-BE-12 | Ziel löschen und 404 verifizieren | HTTP 204, dann 404 | ✅ Bestanden |
+| T-BE-13 | GET /api/health | HTTP 200, `{"status": "ok"}` | ✅ Bestanden |
 
-### 3.3 Health-Check (test_health.py)
-
-| Test-ID | Beschreibung | Erwartetes Ergebnis | Tatsächliches Ergebnis | Status |
-|---|---|---|---|---|
-| T-BE-13 | GET /api/health | HTTP 200, `{"status": "ok"}` | HTTP 200, korrekt | ✅ Bestanden |
-
-**Gesamtergebnis Backend:** 13 von 13 Tests bestanden ✅  
-**Laufzeit:** ca. 4 Sekunden
+Diese 13 Fälle sind heute Teil von `test_auth.py`, `test_goals.py` und `test_health.py` und
+laufen unverändert grün mit.
 
 ---
 
-## 4. Frontend-Testfälle (Vitest)
+## 4. Frontend-Testdateien (Vitest)
 
-**Ausführungsdatum:** 2026-08-10  
-**Tester:** CI/CD Pipeline (GitHub Actions)  
-**Befehl:** `cd frontend && ng test --watch=false`
+**Letzter vollständiger Lauf:** 2026-08-21, `cd frontend && npx ng test --watch=false` →
+`Test Files 10 passed (10)`, `Tests 43 passed (43)`.
 
-Die `tsconfig.spec.json` inkludiert `src/**/*.spec.ts` vollständig. Neben dem MS4-Test
-der App-Komponente laufen daher auch 17 Tests aus der FR-1-Entwicklungsphase mit
-(GoalForm, GoalList, GoalService aus `src/app/goals/`). Alle bestehen.
-
-### 4.1 App-Komponente (app.spec.ts)
-
-| Test-ID | Datei | Beschreibung | Erwartetes Ergebnis | Status |
-|---|---|---|---|---|
-| T-FE-01 | app.spec.ts | App-Komponente rendert ohne Fehler | Komponente wird erstellt, kein Fehler | ✅ Bestanden |
-
-### 4.2 GoalForm-Komponente (goal-form.spec.ts)
-
-| Test-ID | Beschreibung | Status |
+| Testdatei | Anzahl Tests | Deckt ab |
 |---|---|---|
-| T-FE-02 | Kein POST, solange Formular unvollständig | ✅ Bestanden |
-| T-FE-03 | Ausgefüllte Werte werden als POST ans Backend geschickt | ✅ Bestanden |
-| T-FE-04 | Kein Priorität-Feld → null im Request-Body | ✅ Bestanden |
-| T-FE-05 | Titel + Datum ohne Modul → nicht absendbar | ✅ Bestanden |
-| T-FE-06 | Bearbeiten-Modus: lädt Lernziel und füllt Formular vor (GET) | ✅ Bestanden |
-| T-FE-07 | Bearbeiten-Modus: speichert Änderungen per PUT | ✅ Bestanden |
+| `core/validation.spec.ts` | 9 | Client-seitige Spiegelung der Server-Validierung, inkl. Lernaufwand-Override (Plan P14) |
+| `core/upcoming-slot.spec.ts` | 7 | FR-7.2-Logik: bevorstehender Termin innerhalb der nächsten Stunde |
+| `features/stats/stats.spec.ts` | 6 | Auswertungs-Komponente (Ampel, Tageszeit-Verteilung) |
+| `shared/week-chart.spec.ts` | 4 | Geteiltes Wochendiagramm (Dashboard + Auswertung) |
+| `features/calendar/calendar.spec.ts` | 4 | Kalender-Monatsraster, Gruppierung nach Tag |
+| `features/planning/day-picker.spec.ts` | 3 | Tages-Raster für Serientermine |
+| `core/services/reminder.service.spec.ts` | 3 | Erinnerungs-Hub: Reihenfolge und Inhalt der drei Erinnerungsarten |
+| `core/services/plan.service.spec.ts` | 3 | HTTP-Aufrufe des PlanService |
+| `core/services/auth.service.spec.ts` | 3 | Login/Logout-Zustand |
+| `app.spec.ts` | 1 | App-Komponente rendert ohne Fehler |
+| **Gesamt** | **43** | |
 
-### 4.3 GoalList-Komponente (goal-list.spec.ts)
+Der seit der MS4-Auslieferung nicht mehr eingebundene Ordner `frontend/src/app/goals/` (17
+Tests auf totem Code, GoalForm/GoalList/GoalService der FR-1-Entwicklungsphase) wurde im Rahmen
+von Plan P4 entfernt und ist seither nicht mehr Teil der Testsuite.
 
-| Test-ID | Beschreibung | Status |
-|---|---|---|
-| T-FE-08 | Geladene Lernziele erscheinen als Tabellenzeilen | ✅ Bestanden |
-| T-FE-09 | Status wird lesbar angezeigt, nicht als technischer Wert | ✅ Bestanden |
-| T-FE-10 | Leere Liste zeigt Hinweis „Noch keine Lernziele vorhanden." | ✅ Bestanden |
-| T-FE-11 | Jede Zeile verlinkt auf das Bearbeiten-Formular | ✅ Bestanden |
-| T-FE-12 | Löschen erst nach Bestätigung; Zeile verschwindet danach | ✅ Bestanden |
-| T-FE-13 | Gesetzte Priorität lesbar, fehlende als Gedankenstrich | ✅ Bestanden |
+### 4.1 Historischer Ausgangspunkt (MS4-Auslieferung, 2026-08-10)
 
-### 4.4 GoalService (goal.service.spec.ts)
+| Test-ID | Datei | Beschreibung | Status |
+|---|---|---|---|
+| T-FE-01 | app.spec.ts | App-Komponente rendert ohne Fehler | ✅ Bestanden |
 
-| Test-ID | Beschreibung | Status |
-|---|---|---|
-| T-FE-14 | list() schickt GET an /api/goals | ✅ Bestanden |
-| T-FE-15 | create() schickt POST mit korrektem Body | ✅ Bestanden |
-| T-FE-16 | get(id) schickt GET an /api/goals/:id | ✅ Bestanden |
-| T-FE-17 | update(id) schickt PUT mit aktualisierten Feldern | ✅ Bestanden |
-| T-FE-18 | remove(id) schickt DELETE an /api/goals/:id | ✅ Bestanden |
-
-**Gesamtergebnis Frontend (Stand MS4-Auslieferung):** 18 von 18 Tests bestanden ✅. Nach den
-Plänen P1–P3 sind 14 weitere Tests hinzugekommen, siehe die Gesamtzahl in Abschnitt 1.
-
-Ein Teil dieser Tests stammt aus der FR-1-Entwicklungsphase und prüft die Komponenten in
-`frontend/src/app/goals/`, die seit der MS4-Umsetzung nicht mehr in die Anwendung eingebunden sind
-(die Wegeliste `frontend/src/app/app.routes.ts` verweist ausschließlich auf
-`frontend/src/app/features/`). Über die Frage, ob dieser Code entfernt wird, entscheidet das Team;
-bis dahin bleiben die Tests bestehen.
+Die zur MS4-Auslieferung dokumentierten 17 weiteren Fälle (T-FE-02 bis T-FE-18) prüften die
+Komponenten in `frontend/src/app/goals/`, die inzwischen entfernt sind (siehe oben); ihre
+fachliche Abdeckung (Formularvalidierung, Bearbeiten-Modus, Liste, HTTP-Aufrufe) lebt in den
+aktuellen Testdateien der Tabelle in Abschnitt 4 weiter, insbesondere `core/validation.spec.ts`
+und `core/services/*.spec.ts`.
 
 ---
 
@@ -226,6 +227,15 @@ Railway-Produktionsumgebung betrifft (unterschiedlicher Build, ggf. andere Zeitv
 ungeprüft — dafür fehlt in dieser Sitzung ein Railway-Deployment dieses Branches. Empfehlung: ein
 eigener Folge-Plan für `RegisterComponent`/`auth.guard.ts` sowie für die beiden Label-Kollisionen.
 
+**Vorbehalt Stand 2026-08-21:** Die vier Playwright-Dateien (`auth`, `goals`, `planning`,
+`timer.spec.ts`) decken nach wie vor nur den MS4-Basisumfang ab. Kalender, Auswertung, der
+Erinnerungs-Hub in der Navbar, die Grobplanung (Wochenbudget/Monatsvorschlag), Serientermine,
+Zwischenziele und der Lernaufwand-Override (Plan P14) haben **keine** eigenen
+Playwright-Testfälle. Diese Funktionalität ist ausschließlich über Backend- und
+Frontend-Unit-Tests (Abschnitt 3 und 4) sowie den manuellen Systemtest (Abschnitt 6) abgedeckt.
+Empfehlung an das Team: vor der endgültigen Redmine-Abgabe entweder die E2E-Suite um diese
+Bereiche erweitern oder den manuellen Testdurchlauf gezielt darauf ausrichten.
+
 ---
 
 ## 6. Manueller Systemtest
@@ -261,6 +271,16 @@ festgehalten; die dort gefundenen Probleme (Eingabevalidierung, Zeitzonenanzeige
 eingeschränkte Planungsfilter, kaum auslösbare Erinnerung) wurden durch die Pläne P1, P2 und P3
 behoben.
 
+**Vorbehalt Stand 2026-08-21:** Wie in Abschnitt 5 beschrieben, deckt auch dieser manuelle
+Durchlauf nur den MS4-Basisumfang ab. Insbesondere der Lernaufwand-Override (Plan P14, 2026-08-21)
+konnte in der Entwicklungsumgebung dieser Sitzung nicht browserseitig gegen eine echte
+Postgres-Datenbank verifiziert werden (Docker war in der genutzten Werkzeugumgebung nicht
+verfügbar); abgesichert ist er ausschließlich durch die Backend-Tests in `test_workload.py` und
+`test_goals.py`, die über den echten Flask-Testclient laufen (`POST /api/goals`,
+`GET /api/dashboard`), sowie durch die Frontend-Tests in `core/validation.spec.ts`. Ein
+Nachtrag zu diesem Abschnitt mit einem Browser-Test des Overrides steht vor der Redmine-Abgabe
+noch aus.
+
 ---
 
 ## 7. Abdeckung der umgesetzten Anforderungen
@@ -269,42 +289,47 @@ behoben.
 |---|---|---|
 | FR-1.1 | Lernziele für ≥ 6 Monate anlegen | T-BE-09, T-E2E-05, MS-04 |
 | FR-1.2 | Titel, Zieldatum, Modul, Status | T-BE-09, T-E2E-05, MS-04, MS-05 |
-| FR-1.3 | Lernziele löschen | T-BE-12, T-E2E-08 |
-| FR-2.1 | Workload auf Basis ECTS | Dashboard (geplante Minuten), MS-04 |
-| FR-3.1 | Lernzeit-Slots planen | T-E2E-09, MS-06 |
-| FR-4.1 | Timer starten, pausieren, beenden | T-E2E-11–13, MS-08–11 |
-| FR-4.2 | Session Lernziel zuordnen und persistieren | T-BE-09, MS-11 |
-| FR-4.3 | Pausen werden nicht als Lernzeit gezählt | T-E2E-12, MS-10 |
-| FR-3.2 | Monatliche Zwischenziele (eigene Tabelle `milestones`, optional an ein Lernziel gebunden, abhakbar) | `backend/tests/test_milestones.py` (Plan P5) |
+| FR-1.3 | Lernziele bearbeiten, löschen | T-BE-12, T-E2E-08, `test_goals.py` |
+| FR-1.4 | Priorisierung von Lernzielen | `test_goals.py` (`test_create_goal_with_priority_and_result`) |
+| FR-2.1 | Workload auf Basis ECTS, inkl. manuellem Override | `test_workload.py`, `test_goals.py`, Dashboard (geplante Minuten), MS-04 |
+| FR-2.2 | Automatischer Monatsvorschlag der Grobplanung | `test_plan_proposal.py` |
+| FR-3.1 | Lernzeit-Slots planen, inkl. Serientermine | T-E2E-09, MS-06, `test_plans.py` |
+| FR-3.2 | Monatliche Zwischenziele (eigene Tabelle `milestones`) | `test_milestones.py` |
+| FR-3.3 | Detailplanung zeigt Abweichung zur Grobplanung | `test_plan_proposal.py` |
+| FR-4.1 | Timer starten, pausieren, beenden | T-E2E-11–13, MS-08–11, `test_sessions.py` |
+| FR-4.2 | Session Lernziel zuordnen und persistieren | T-BE-09, MS-11, `test_sessions.py` |
+| FR-4.3 | Pausen werden nicht als Lernzeit gezählt | T-E2E-12, MS-10, `test_sessions.py` |
 | FR-5.1 | Lernziel als erreicht markieren | T-BE-11, T-E2E-07, MS-13 |
-| FR-5.2 | Note und Ergebnis-Notiz an Lernzielen, Notiz beim Stoppen einer Session | `backend/tests/test_goals.py`, `backend/tests/test_sessions.py` (Plan P4) |
-| FR-6.1 | Dashboard: Lernzeit vs. geplante Zeit | MS-12 |
+| FR-5.2 | Note und Ergebnis-Notiz an Lernzielen, Notiz beim Stoppen einer Session | `test_goals.py`, `test_sessions.py` |
+| FR-5.3 | Historie erreichter Ziele mit Note | `test_stats.py` (`achieved_goals`) |
+| FR-6.1 | Dashboard: Lernzeit vs. geplante Zeit | MS-12, `test_dashboard_fields.py` |
 | FR-6.2 | Fortschrittsbalken pro Ziel | MS-12 |
-| FR-7.1 | Inaktivitäts-Erinnerung | MS-07 |
+| FR-6.3 | Auswertung über Zeitverlauf (Wochendiagramm) | `test_dashboard_fields.py`, `week-chart.spec.ts` |
+| FR-6.4 | Vergleich Plan vs. Ist über den Zeitraum (Auswertung) | `test_stats.py`, `stats.spec.ts` |
+| FR-7.1 | Inaktivitäts-Erinnerung | MS-07, `test_reminders.py` |
+| FR-7.2 | Erinnerung vor geplanter Lernzeit | `test_reminders.py`, `upcoming-slot.spec.ts` |
+| FR-7.3 | Erinnerung bei nahendem Zieldatum | `test_reminders.py` |
 
-**Hinweis zur Tabelle:** FR-1.3 und FR-4.3 haben laut Anforderungsdokument Priorität "Should" und wurden ebenfalls implementiert; sie sind hier aufgeführt, weil sie vollständig getestet sind. FR-3.2 (Must, Zwischenziele) und FR-5.2 (Should, Notizen) waren zum Zeitpunkt der MS4-Auslieferung nicht umgesetzt (siehe historische Fassung des Abschnitts 8); sie sind seit den Plänen P5 bzw. P4 vollständig implementiert und getestet.
-
-**Alle Must-Anforderungen sind vollständig implementiert und getestet.**
+**Alle Must- und alle Should-Anforderungen sind vollständig implementiert und automatisiert
+getestet.** Die verbleibenden drei Could-Anforderungen (FR-2.3, FR-4.4, FR-7.4) sind bewusst
+nicht umgesetzt, siehe Abschnitt 8.
 
 ---
 
 ## 8. Nicht implementierte Anforderungen
 
-Die folgenden Anforderungen wurden nicht umgesetzt und wurden zugunsten des MS4-Zeitbudgets
-zurückgestellt oder durch eine Behelfslösung abgedeckt.
+Die folgenden Anforderungen wurden nicht umgesetzt und wurden zugunsten des Projekt-Zeitbudgets
+zurückgestellt. Alle drei tragen die niedrigste Priorität ("Could") im Anforderungsdokument.
 
 | Anforderung | Priorität | Begründung |
 |---|---|---|
-| FR-2.2 Automatische Wochenplanung | Should | Nicht im MS4-Scope |
-| FR-4.4 Manuelle Nacherfassung | Could | Nicht im MS4-Scope |
-| FR-7.2 Erinnerung vor geplanter Lernzeit | Should | Nicht im MS4-Scope |
-| FR-7.3 Erinnerung bei nahendem Zieldatum | Should | Nicht im MS4-Scope |
+| FR-2.3 Feiertage/Urlaub in der Grobplanung berücksichtigen | Could | Würde die Verteilungsrechnung deutlich verkomplizieren, ohne für den Kern-Usecase nötig zu sein |
+| FR-4.4 Manuelle Nacherfassung von Lernzeit | Could | Der Timer deckt den Hauptfall ab; rückwirkende Erfassung ist eine Komfortfunktion |
+| FR-7.4 Konfigurierbare Benachrichtigungskanäle (E-Mail) | Could | Erfordert einen Mailversand-Dienst; der In-App-Erinnerungs-Hub deckt den Kern-Usecase bereits ab |
 
-**Nachtrag 2026-08-17 (Plan P5):** FR-3.2 (Zwischenziele pro Monat, Must) stand hier ursprünglich
-als „kein eigenständiges Modell; das Notiz-Feld eines PlanSlots kann als Zwischenziel genutzt
-werden". Das war eine Umgehung, keine Umsetzung: Ein Zwischenziel ohne eigenen Erledigt-Zustand
-ist keins. FR-3.2 ist jetzt als eigene Tabelle `milestones` umgesetzt (Migration
-`0003_milestones.py`) und steht deshalb nicht mehr in dieser Tabelle; siehe Abschnitt 7 sowie
-`docs/MS4_Fachliche_Dokumentation.md`. FR-5.2 (Notizen zu erreichten Zielen, Should) stand hier
-ebenfalls und ist seit Plan P4 umgesetzt (Note und Ergebnis-Notiz an Lernzielen, Notiz beim
-Stoppen einer Session).
+**Historie:** FR-2.2 (automatischer Monatsvorschlag), FR-3.2 (Zwischenziele), FR-3.3
+(Abweichungsanzeige), FR-5.2 (Notizen), FR-5.3 (Historie erreichter Ziele), FR-6.3
+(Zeitverlaufs-Auswertung), FR-6.4 (Plan-vs-Ist-Vergleich), FR-7.2 und FR-7.3 (weitere
+Erinnerungsarten) standen zum Zeitpunkt der ursprünglichen MS4-Auslieferung (2026-08-10) noch
+in dieser Tabelle als nicht umgesetzt. Sie sind seit den Plänen P4 bis P11 vollständig
+implementiert und automatisiert getestet (siehe Abschnitt 7) und stehen deshalb nicht mehr hier.
