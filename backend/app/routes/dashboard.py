@@ -10,7 +10,7 @@ from ..models.milestone import Milestone
 from ..models.plan_slot import PlanSlot
 from ..models.study_session import StudySession
 from ..time_utils import iso_utc
-from ..workload import MINUTES_PER_ECTS, weekly_budget_minutes
+from ..workload import weekly_budget_minutes
 
 dashboard_bp = Blueprint("dashboard", __name__)
 
@@ -106,9 +106,13 @@ def dashboard():
             {
                 **goal.to_dict(),
                 "total_actual_minutes": actual_goal_minutes,
-                "planned_ects_minutes": goal.ects * MINUTES_PER_ECTS,
+                "planned_ects_minutes": goal.effective_workload_minutes(),
                 "weekly_budget_minutes": weekly_budget_minutes(
-                    goal.ects, actual_goal_minutes, goal.target_date, today, goal.status
+                    goal.effective_workload_minutes(),
+                    actual_goal_minutes,
+                    goal.target_date,
+                    today,
+                    goal.status,
                 ),
                 "milestones": milestones_by_goal.get(goal.id, []),
             }
@@ -116,7 +120,7 @@ def dashboard():
 
         # FR-7.3: nahender Zieltermin ohne entsprechenden Fortschritt.
         days_left = (goal.target_date - today).days
-        workload = goal.ects * MINUTES_PER_ECTS
+        workload = goal.effective_workload_minutes()
         progress = actual_goal_minutes / workload if workload > 0 else 1.0
         if (
             goal.status != "achieved"

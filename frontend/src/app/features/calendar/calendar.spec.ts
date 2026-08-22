@@ -13,6 +13,7 @@ function goal(overrides: Partial<Goal>): Goal {
     title: 'Mathe II',
     module_name: 'DLBM',
     ects: 5,
+    workload_hours: null,
     status: 'open',
     priority: null,
     grade: null,

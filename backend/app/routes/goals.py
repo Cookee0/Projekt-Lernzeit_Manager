@@ -4,6 +4,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 from ..extensions import db
 from ..models.goal import VALID_PRIORITIES, VALID_STATUSES, Goal
 from ..validation import (
+    optional_int_arg,
     optional_text,
     require_future_date,
     require_int_in_range,
@@ -32,6 +33,7 @@ def create_goal():
     module_name = require_text(data.get("module_name"), "Modul/Kurs", 255)
     target_date = require_future_date(data.get("target_date"), "Zieldatum")
     ects = require_int_in_range(data.get("ects"), "ECTS-Punkte", 1, 30, default=5)
+    workload_hours = optional_int_arg(data.get("workload_hours"), "Lernaufwand in Stunden", 1, 1000)
     status = data.get("status") or "open"
 
     if status not in VALID_STATUSES:
@@ -50,6 +52,7 @@ def create_goal():
         module_name=module_name,
         target_date=target_date,
         ects=ects,
+        workload_hours=workload_hours,
         status=status,
         priority=priority,
         grade=grade,
@@ -83,6 +86,10 @@ def update_goal(goal_id: int):
         )
     if "ects" in data:
         goal.ects = require_int_in_range(data["ects"], "ECTS-Punkte", 1, 30)
+    if "workload_hours" in data:
+        goal.workload_hours = optional_int_arg(
+            data["workload_hours"], "Lernaufwand in Stunden", 1, 1000
+        )
     if "status" in data:
         if data["status"] not in VALID_STATUSES:
             return jsonify({"error": f"status muss einer von {VALID_STATUSES} sein"}), 400

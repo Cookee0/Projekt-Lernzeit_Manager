@@ -10,6 +10,7 @@ export interface Goal {
   title: string;
   module_name: string;
   ects: number;
+  workload_hours: number | null;
   status: 'open' | 'in_progress' | 'achieved';
   priority: 'high' | 'medium' | 'low' | null;
   grade: string | null;

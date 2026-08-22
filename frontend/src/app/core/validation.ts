@@ -42,6 +42,14 @@ export function validateEcts(value: number | null): string | null {
   return null;
 }
 
+export function validateWorkloadHours(value: number | null): string | null {
+  if (value === null || value === undefined || (value as unknown as string) === '') return null;
+  const hours = Number(value);
+  if (!Number.isInteger(hours)) return 'Lernaufwand muss eine ganze Zahl sein';
+  if (hours < 1 || hours > 1000) return 'Lernaufwand muss zwischen 1 und 1000 Stunden liegen';
+  return null;
+}
+
 export function validateTargetDate(value: string, current?: string): string | null {
   if (!value) return 'Zieldatum ist ein Pflichtfeld';
   const parsed = new Date(`${value}T00:00:00`);
